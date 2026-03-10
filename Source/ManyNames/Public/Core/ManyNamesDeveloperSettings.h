@@ -38,6 +38,15 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
 	FString EndingGatesJsonPath = TEXT("Data/ending_gates.json");
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
+	FString DialogueScenesJsonPath = TEXT("Data/dialogue_scenes.json");
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
+	FString CharacterCastJsonPath = TEXT("Data/character_cast.json");
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
+	FString AmbientProfilesJsonPath = TEXT("Data/ambient_profiles.json");
+
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Save")
 	FString DefaultSaveSlot = TEXT("ManyNames_Autosave");
 };

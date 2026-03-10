@@ -1,0 +1,40 @@
+{
+  "named": {
+    "OpeningWitness": "/Game/MetaHumans/OpeningWitness/OpeningWitness/Body/SKM_OpeningWitness_BodyMesh.SKM_OpeningWitness_BodyMesh",
+    "ArchiveKeeper": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
+    "FloodplainPetitioner": "/Game/MetaHumans/FloodplainPetitioner/FloodplainPetitioner/Body/SKM_FloodplainPetitioner_BodyMesh.SKM_FloodplainPetitioner_BodyMesh",
+    "StormHerald": "/Game/MetaHumans/StormHerald/StormHerald/Body/SKM_StormHerald_BodyMesh.SKM_StormHerald_BodyMesh",
+    "WarbandEnvoy": "/Game/MetaHumans/WarbandEnvoy/WarbandEnvoy/Body/SKM_WarbandEnvoy_BodyMesh.SKM_WarbandEnvoy_BodyMesh",
+    "MeasureKeeper": "/Game/MetaHumans/MeasureKeeper/MeasureKeeper/Body/SKM_MeasureKeeper_BodyMesh.SKM_MeasureKeeper_BodyMesh",
+    "BoundaryElder": "/Game/MetaHumans/BoundaryElder/BoundaryElder/Body/SKM_BoundaryElder_BodyMesh.SKM_BoundaryElder_BodyMesh",
+    "BridgeWatcher": "/Game/MetaHumans/BridgeWatcher/BridgeWatcher/Body/SKM_BridgeWatcher_BodyMesh.SKM_BridgeWatcher_BodyMesh",
+    "SystemsRemnant": "/Game/MetaHumans/SystemsRemnant/SystemsRemnant/Body/SKM_SystemsRemnant_BodyMesh.SKM_SystemsRemnant_BodyMesh"
+  },
+  "ambient": {
+    "Opening.Survivors": "/Game/MetaHumans/OpeningWitness/OpeningWitness/Body/SKM_OpeningWitness_BodyMesh.SKM_OpeningWitness_BodyMesh",
+    "Opening.Guards": "/Game/MetaHumans/OpeningWitness/OpeningWitness/Body/SKM_OpeningWitness_BodyMesh.SKM_OpeningWitness_BodyMesh",
+    "Egypt.Priests": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
+    "Egypt.Scribes": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
+    "Egypt.Vendors": "/Game/MetaHumans/FloodplainPetitioner/FloodplainPetitioner/Body/SKM_FloodplainPetitioner_BodyMesh.SKM_FloodplainPetitioner_BodyMesh",
+    "Egypt.Guards": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
+    "Greece.Heralds": "/Game/MetaHumans/StormHerald/StormHerald/Body/SKM_StormHerald_BodyMesh.SKM_StormHerald_BodyMesh",
+    "Greece.Pilgrims": "/Game/MetaHumans/StormHerald/StormHerald/Body/SKM_StormHerald_BodyMesh.SKM_StormHerald_BodyMesh",
+    "Greece.Guards": "/Game/MetaHumans/WarbandEnvoy/WarbandEnvoy/Body/SKM_WarbandEnvoy_BodyMesh.SKM_WarbandEnvoy_BodyMesh",
+    "Italic.Guards": "/Game/MetaHumans/MeasureKeeper/MeasureKeeper/Body/SKM_MeasureKeeper_BodyMesh.SKM_MeasureKeeper_BodyMesh",
+    "Italic.Workers": "/Game/MetaHumans/MeasureKeeper/MeasureKeeper/Body/SKM_MeasureKeeper_BodyMesh.SKM_MeasureKeeper_BodyMesh",
+    "Italic.Ritual": "/Game/MetaHumans/BoundaryElder/BoundaryElder/Body/SKM_BoundaryElder_BodyMesh.SKM_BoundaryElder_BodyMesh",
+    "Convergence.Remnants": "/Game/MetaHumans/BridgeWatcher/BridgeWatcher/Body/SKM_BridgeWatcher_BodyMesh.SKM_BridgeWatcher_BodyMesh"
+  },
+  "named_character_assets": {
+    "OpeningWitness": "/Game/Characters/MetaHumans/OpeningWitness.OpeningWitness",
+    "ArchiveKeeper": "/Game/Characters/MetaHumans/ArchiveKeeper.ArchiveKeeper",
+    "FloodplainPetitioner": "/Game/Characters/MetaHumans/FloodplainPetitioner.FloodplainPetitioner",
+    "StormHerald": "/Game/Characters/MetaHumans/StormHerald.StormHerald",
+    "WarbandEnvoy": "/Game/Characters/MetaHumans/WarbandEnvoy.WarbandEnvoy",
+    "MeasureKeeper": "/Game/Characters/MetaHumans/MeasureKeeper.MeasureKeeper",
+    "BoundaryElder": "/Game/Characters/MetaHumans/BoundaryElder.BoundaryElder",
+    "BridgeWatcher": "/Game/Characters/MetaHumans/BridgeWatcher.BridgeWatcher",
+    "SystemsRemnant": "/Game/Characters/MetaHumans/SystemsRemnant.SystemsRemnant"
+  },
+  "ambient_character_assets": {}
+}

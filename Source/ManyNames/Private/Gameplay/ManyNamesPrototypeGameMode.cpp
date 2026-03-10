@@ -3,6 +3,7 @@
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Gameplay/ManyNamesDialogueController.h"
+#include "Gameplay/ManyNamesEnvironmentController.h"
 #include "Gameplay/ManyNamesFirstPersonCharacter.h"
 #include "GameplayTagsManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -288,6 +289,11 @@ bool AManyNamesPrototypeGameMode::IsDialogueOpen() const
 	return DialogueController && DialogueController->IsDialogueOpen();
 }
 
+bool AManyNamesPrototypeGameMode::IsDialogueMovementLocked() const
+{
+	return DialogueController && DialogueController->IsMovementLocked();
+}
+
 FText AManyNamesPrototypeGameMode::GetMenuPromptText() const
 {
 	if (DialogueController && DialogueController->IsDialogueOpen())
@@ -306,6 +312,22 @@ FText AManyNamesPrototypeGameMode::GetMenuPromptText() const
 	}
 
 	return FText::GetEmpty();
+}
+
+void AManyNamesPrototypeGameMode::ApplyWeatherState(FName WeatherStateId)
+{
+	if (AManyNamesEnvironmentController* EnvironmentController = GetEnvironmentController())
+	{
+		EnvironmentController->ApplyWeatherState(WeatherStateId);
+	}
+}
+
+void AManyNamesPrototypeGameMode::RestoreBaselineWeather()
+{
+	if (AManyNamesEnvironmentController* EnvironmentController = GetEnvironmentController())
+	{
+		EnvironmentController->ApplyBaselineState();
+	}
 }
 
 FString AManyNamesPrototypeGameMode::GetJournalSummary() const
@@ -554,6 +576,11 @@ UManyNamesWorldStateSubsystem* AManyNamesPrototypeGameMode::GetWorldStateSubsyst
 UManyNamesMythSubsystem* AManyNamesPrototypeGameMode::GetMythSubsystem() const
 {
 	return GetGameInstance() ? GetGameInstance()->GetSubsystem<UManyNamesMythSubsystem>() : nullptr;
+}
+
+AManyNamesEnvironmentController* AManyNamesPrototypeGameMode::GetEnvironmentController() const
+{
+	return GetWorld() ? Cast<AManyNamesEnvironmentController>(UGameplayStatics::GetActorOfClass(GetWorld(), AManyNamesEnvironmentController::StaticClass())) : nullptr;
 }
 
 bool AManyNamesPrototypeGameMode::IsConvergenceUnlocked() const

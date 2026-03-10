@@ -32,6 +32,24 @@ public:
 	TArray<FManyNamesDialogueChoiceRow> GetDialogueChoicesForQuest(FName QuestId) const;
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	bool GetDialogueSceneForQuest(FName QuestId, FManyNamesDialogueSceneRecord& OutRecord) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesDialogueSceneRecord> GetAllDialogueScenes() const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	bool GetCharacterCastRecord(FName CharacterId, FManyNamesCharacterCastRecord& OutRecord) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesCharacterCastRecord> GetAllCharacterCastRecords() const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	bool GetAmbientProfile(FName ProfileId, FManyNamesAmbientProfileRecord& OutRecord) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesAmbientProfileRecord> GetAllAmbientProfiles() const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
 	TArray<FManyNamesQuestStepRecord> GetQuestStepsForQuest(FName QuestId) const;
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
@@ -63,6 +81,9 @@ private:
 	bool LoadQuestSteps();
 	bool LoadChoiceConsequences();
 	bool LoadEndingGates();
+	bool LoadDialogueScenes();
+	bool LoadCharacterCast();
+	bool LoadAmbientProfiles();
 	FString ResolveDataPath(const FString& RelativePath) const;
 
 	UPROPERTY(Transient)
@@ -98,4 +119,22 @@ private:
 
 	UPROPERTY(Transient)
 	TMap<FName, FManyNamesEndingGateRecord> EndingGatesById;
+
+	UPROPERTY(Transient)
+	TArray<FManyNamesDialogueSceneRecord> DialogueScenes;
+
+	UPROPERTY(Transient)
+	TMap<FName, FManyNamesDialogueSceneRecord> DialogueScenesByQuestId;
+
+	UPROPERTY(Transient)
+	TArray<FManyNamesCharacterCastRecord> CharacterCast;
+
+	UPROPERTY(Transient)
+	TMap<FName, FManyNamesCharacterCastRecord> CharacterCastById;
+
+	UPROPERTY(Transient)
+	TArray<FManyNamesAmbientProfileRecord> AmbientProfiles;
+
+	UPROPERTY(Transient)
+	TMap<FName, FManyNamesAmbientProfileRecord> AmbientProfilesById;
 };

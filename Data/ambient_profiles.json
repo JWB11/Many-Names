@@ -1,0 +1,106 @@
+[
+  {
+    "ProfileId": "Opening.Survivors",
+    "RegionId": "Opening",
+    "OccupationTag": "Survivor",
+    "CharacterIds": ["OpeningWitness"],
+    "ClothingVariantId": "opening_survivor_group",
+    "StanceId": "ambient_survivor"
+  },
+  {
+    "ProfileId": "Opening.Guards",
+    "RegionId": "Opening",
+    "OccupationTag": "Guard",
+    "CharacterIds": ["OpeningWitness"],
+    "ClothingVariantId": "opening_guard_group",
+    "StanceId": "ambient_guard"
+  },
+  {
+    "ProfileId": "Egypt.Priests",
+    "RegionId": "Egypt",
+    "OccupationTag": "Priest",
+    "CharacterIds": ["ArchiveKeeper"],
+    "ClothingVariantId": "egypt_priest_group",
+    "StanceId": "ambient_ritual"
+  },
+  {
+    "ProfileId": "Egypt.Scribes",
+    "RegionId": "Egypt",
+    "OccupationTag": "Scribe",
+    "CharacterIds": ["ArchiveKeeper"],
+    "ClothingVariantId": "egypt_scribe_group",
+    "StanceId": "ambient_scribe"
+  },
+  {
+    "ProfileId": "Egypt.Vendors",
+    "RegionId": "Egypt",
+    "OccupationTag": "Vendor",
+    "CharacterIds": ["FloodplainPetitioner"],
+    "ClothingVariantId": "egypt_market_group",
+    "StanceId": "ambient_vendor"
+  },
+  {
+    "ProfileId": "Egypt.Guards",
+    "RegionId": "Egypt",
+    "OccupationTag": "Guard",
+    "CharacterIds": ["ArchiveKeeper"],
+    "ClothingVariantId": "egypt_guard_group",
+    "StanceId": "ambient_guard"
+  },
+  {
+    "ProfileId": "Greece.Heralds",
+    "RegionId": "Greece",
+    "OccupationTag": "Herald",
+    "CharacterIds": ["StormHerald"],
+    "ClothingVariantId": "greece_ritual_group",
+    "StanceId": "ambient_ritual"
+  },
+  {
+    "ProfileId": "Greece.Pilgrims",
+    "RegionId": "Greece",
+    "OccupationTag": "Pilgrim",
+    "CharacterIds": ["StormHerald", "WarbandEnvoy"],
+    "ClothingVariantId": "greece_pilgrim_group",
+    "StanceId": "ambient_pilgrim"
+  },
+  {
+    "ProfileId": "Greece.Guards",
+    "RegionId": "Greece",
+    "OccupationTag": "Guard",
+    "CharacterIds": ["WarbandEnvoy"],
+    "ClothingVariantId": "greece_guard_group",
+    "StanceId": "ambient_guard"
+  },
+  {
+    "ProfileId": "Italic.Guards",
+    "RegionId": "ItalicWest",
+    "OccupationTag": "Guard",
+    "CharacterIds": ["MeasureKeeper"],
+    "ClothingVariantId": "italic_guard_group",
+    "StanceId": "ambient_guard"
+  },
+  {
+    "ProfileId": "Italic.Workers",
+    "RegionId": "ItalicWest",
+    "OccupationTag": "Worker",
+    "CharacterIds": ["MeasureKeeper", "BoundaryElder"],
+    "ClothingVariantId": "italic_worker_group",
+    "StanceId": "ambient_worker"
+  },
+  {
+    "ProfileId": "Italic.Ritual",
+    "RegionId": "ItalicWest",
+    "OccupationTag": "RitualWitness",
+    "CharacterIds": ["BoundaryElder"],
+    "ClothingVariantId": "italic_ritual_group",
+    "StanceId": "ambient_ritual"
+  },
+  {
+    "ProfileId": "Convergence.Remnants",
+    "RegionId": "Convergence",
+    "OccupationTag": "Remnant",
+    "CharacterIds": ["BridgeWatcher", "SystemsRemnant"],
+    "ClothingVariantId": "convergence_remnant_group",
+    "StanceId": "ambient_uncanny"
+  }
+]

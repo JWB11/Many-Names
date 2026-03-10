@@ -38,6 +38,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ManyNames|Camera", meta=(AllowPrivateAccess="true"))
 	TObjectPtr<class UCameraComponent> CameraComponent;
 
+	UPROPERTY(EditDefaultsOnly, Category="ManyNames|Movement")
+	float BaseWalkSpeed = 520.0f;
+
 	UPROPERTY(EditDefaultsOnly, Category="ManyNames|Interaction")
 	float InteractionRange = 500.0f;
 };

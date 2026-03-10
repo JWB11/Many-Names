@@ -51,7 +51,16 @@ public:
 	bool IsDialogueOpen() const;
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Flow")
+	bool IsDialogueMovementLocked() const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Flow")
 	FText GetMenuPromptText() const;
+
+	UFUNCTION(BlueprintCallable, Category="ManyNames|Flow")
+	void ApplyWeatherState(FName WeatherStateId);
+
+	UFUNCTION(BlueprintCallable, Category="ManyNames|Flow")
+	void RestoreBaselineWeather();
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Flow")
 	FString GetJournalSummary() const;
@@ -79,6 +88,7 @@ private:
 	class UManyNamesQuestSubsystem* GetQuestSubsystem() const;
 	class UManyNamesWorldStateSubsystem* GetWorldStateSubsystem() const;
 	class UManyNamesMythSubsystem* GetMythSubsystem() const;
+	class AManyNamesEnvironmentController* GetEnvironmentController() const;
 
 	bool bAwaitingRegionSelection = false;
 };

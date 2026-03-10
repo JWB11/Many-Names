@@ -68,13 +68,29 @@ enum class EManyNamesEndingId : uint8
 	FragmentLegacy
 };
 
+UENUM(BlueprintType)
+enum class EManyNamesWeatherPrecipitation : uint8
+{
+	None,
+	Dust,
+	Rain,
+	Snow,
+	Ash
+};
+
 USTRUCT(BlueprintType)
 struct FManyNamesNpcVisualProfile
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ProfileId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag RoleTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bPreferMetaHuman = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<USkeletalMesh> SkeletalMesh;
@@ -96,6 +112,12 @@ struct FManyNamesNpcVisualProfile
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 PoseVariant = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CameraAnchorTag = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bLockFacingToPlayer = true;
 };
 
 USTRUCT(BlueprintType)
@@ -132,6 +154,78 @@ struct FManyNamesRegionArtProfile
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString StyleNotes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName BaselineWeatherStateId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName HeroWeatherStateId = NAME_None;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesWeatherState
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName StateId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SunPitch = -32.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SunYaw = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SunIntensity = 8.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SkyIntensity = 1.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FogDensity = 0.01f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor KeyLightTint = FLinearColor::White;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor FogTint = FLinearColor(0.92f, 0.82f, 0.72f, 1.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float WindIntensity = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesWeatherPrecipitation Precipitation = EManyNamesWeatherPrecipitation::None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PrecipitationIntensity = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float GroundWetness = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float GroundSnow = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TraversalSpeedMultiplier = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bAffectsTraversal = false;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesEnvironmentProfile
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FManyNamesWeatherState BaselineState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FManyNamesWeatherState HeroState;
 };
 
 USTRUCT(BlueprintType)
@@ -351,6 +445,141 @@ struct FManyNamesDialogueChoiceRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTagContainer ResultTags;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesDialogueSceneRecord
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName SceneId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName QuestId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CharacterId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText SpeakerName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText SpeakerRole;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText BodyText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName LocationId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CameraAnchorTag = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName WeatherStateId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> ChoiceIds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bLockMovement = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bUseRoamingCamera = true;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesCharacterCastRecord
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CharacterId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bNamedCharacter = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Occupation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Origin;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Presentation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText AgeRange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText PhysicalBuild;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText SkinToneNotes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText HairNotes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText GroomingNotes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText WardrobeNotes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText DemeanorNotes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName OccupationTag = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag RoleTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ClothingVariantId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName StanceId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<USkeletalMesh> PreferredSkeletalMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<UAnimationAsset> IdleAnimation;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesAmbientProfileRecord
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ProfileId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName OccupationTag = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGameplayTag RoleTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> CharacterIds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ClothingVariantId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName StanceId = NAME_None;
 };
 
 USTRUCT(BlueprintType)

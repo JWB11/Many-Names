@@ -34,6 +34,12 @@ public:
 	UFUNCTION(BlueprintPure, Category="ManyNames|Dialogue")
 	FText GetChoiceMenuText() const;
 
+	UFUNCTION(BlueprintPure, Category="ManyNames|Dialogue")
+	const FManyNamesDialogueSceneRecord& GetCurrentScene() const { return CurrentScene; }
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Dialogue")
+	bool IsMovementLocked() const { return bDialogueOpen && CurrentScene.bLockMovement; }
+
 private:
 	bool HasRequiredDomains(const FManyNamesDialogueChoiceRow& Choice) const;
 	void ApplyConsequenceRecord(const FManyNamesDialogueChoiceRow& ChoiceRow);
@@ -53,6 +59,9 @@ private:
 
 	UPROPERTY(Transient)
 	FText CurrentPrompt;
+
+	UPROPERTY(Transient)
+	FManyNamesDialogueSceneRecord CurrentScene;
 
 	UPROPERTY(Transient)
 	bool bDialogueOpen = false;

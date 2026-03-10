@@ -17,13 +17,32 @@ void AManyNamesDialogueController::OpenDialogue(FName QuestId, const FText& Prom
 	CurrentQuestId = QuestId;
 	CurrentChoices = GetAvailableChoices(QuestId);
 	CurrentPrompt = PromptOverride;
+	CurrentScene = FManyNamesDialogueSceneRecord();
+
+	if (UManyNamesContentSubsystem* ContentSubsystem = GetContentSubsystem())
+	{
+		ContentSubsystem->GetDialogueSceneForQuest(QuestId, CurrentScene);
+	}
 
 	if (CurrentPrompt.IsEmpty() && CurrentChoices.Num() > 0)
 	{
-		CurrentPrompt = CurrentChoices[0].Prompt;
+		CurrentPrompt = !CurrentScene.BodyText.IsEmpty() ? CurrentScene.BodyText : CurrentChoices[0].Prompt;
+	}
+
+	if (CurrentPrompt.IsEmpty() && !CurrentScene.BodyText.IsEmpty())
+	{
+		CurrentPrompt = CurrentScene.BodyText;
 	}
 
 	bDialogueOpen = CurrentChoices.Num() > 0;
+
+	if (bDialogueOpen && !CurrentScene.WeatherStateId.IsNone())
+	{
+		if (AManyNamesPrototypeGameMode* GameMode = GetManyNamesGameMode())
+		{
+			GameMode->ApplyWeatherState(CurrentScene.WeatherStateId);
+		}
+	}
 }
 
 TArray<FManyNamesDialogueChoiceRow> AManyNamesDialogueController::GetAvailableChoices(FName QuestId) const
@@ -60,7 +79,13 @@ void AManyNamesDialogueController::CloseDialogue()
 	CurrentChoices.Reset();
 	CurrentQuestId = NAME_None;
 	CurrentPrompt = FText::GetEmpty();
+	CurrentScene = FManyNamesDialogueSceneRecord();
 	bDialogueOpen = false;
+
+	if (AManyNamesPrototypeGameMode* GameMode = GetManyNamesGameMode())
+	{
+		GameMode->RestoreBaselineWeather();
+	}
 }
 
 FText AManyNamesDialogueController::GetCurrentPrompt() const
@@ -70,7 +95,18 @@ FText AManyNamesDialogueController::GetCurrentPrompt() const
 
 FText AManyNamesDialogueController::GetChoiceMenuText() const
 {
-	TStringBuilder<1024> Builder;
+	TStringBuilder<2048> Builder;
+	if (!CurrentScene.SpeakerName.IsEmpty())
+	{
+		Builder.Append(CurrentScene.SpeakerName.ToString());
+		if (!CurrentScene.SpeakerRole.IsEmpty())
+		{
+			Builder.Append(TEXT(" - "));
+			Builder.Append(CurrentScene.SpeakerRole.ToString());
+		}
+		Builder.Append(TEXT("\n"));
+	}
+
 	if (!CurrentPrompt.IsEmpty())
 	{
 		Builder.Append(CurrentPrompt.ToString());

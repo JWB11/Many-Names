@@ -72,6 +72,22 @@ bool FManyNamesPrimaryContentLoadTest::RunTest(const FString& Parameters)
 	const TArray<FManyNamesDialogueChoiceRow> ItalicChoices = ContentSubsystem->GetDialogueChoicesForQuest(TEXT("italic_main_01"));
 	TestTrue(TEXT("Italic main quest has dialogue choices"), ItalicChoices.Num() > 0);
 
+	FManyNamesDialogueSceneRecord OpeningWitnessScene;
+	TestTrue(TEXT("Opening witness scene exists"), ContentSubsystem->GetDialogueSceneForQuest(TEXT("opening_side_01"), OpeningWitnessScene));
+	TestEqual(TEXT("Opening witness scene references two choices"), OpeningWitnessScene.ChoiceIds.Num(), 2);
+
+	FManyNamesDialogueSceneRecord ConvergenceScene;
+	TestTrue(TEXT("Convergence scene exists"), ContentSubsystem->GetDialogueSceneForQuest(TEXT("convergence_main_01"), ConvergenceScene));
+	TestEqual(TEXT("Convergence scene exposes five ending choices"), ConvergenceScene.ChoiceIds.Num(), 5);
+
+	FManyNamesCharacterCastRecord ArchiveKeeperCast;
+	TestTrue(TEXT("Archive keeper cast exists"), ContentSubsystem->GetCharacterCastRecord(TEXT("ArchiveKeeper"), ArchiveKeeperCast));
+	TestEqual(TEXT("Archive keeper is in Egypt"), ArchiveKeeperCast.RegionId, EManyNamesRegionId::Egypt);
+
+	FManyNamesAmbientProfileRecord EgyptPriestsProfile;
+	TestTrue(TEXT("Egypt priests ambient profile exists"), ContentSubsystem->GetAmbientProfile(TEXT("Egypt.Priests"), EgyptPriestsProfile));
+	TestEqual(TEXT("Egypt priests ambient profile targets Egypt"), EgyptPriestsProfile.RegionId, EManyNamesRegionId::Egypt);
+
 	bool bFoundLightChoice = false;
 	bool bFoundDeceptionChoice = false;
 	const FGameplayTag DeceptionTag = UGameplayTagsManager::Get().RequestGameplayTag(TEXT("Domain.Deception"), false);

@@ -4,8 +4,10 @@
 #include "Components/CapsuleComponent.h"
 #include "Engine/Engine.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Gameplay/ManyNamesEnvironmentController.h"
 #include "Gameplay/ManyNamesPrototypeGameMode.h"
 #include "Interaction/ManyNamesInteractable.h"
+#include "Kismet/GameplayStatics.h"
 #include "Systems/ManyNamesGameInstance.h"
 
 AManyNamesFirstPersonCharacter::AManyNamesFirstPersonCharacter()
@@ -19,6 +21,7 @@ AManyNamesFirstPersonCharacter::AManyNamesFirstPersonCharacter()
 
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
@@ -31,6 +34,14 @@ void AManyNamesFirstPersonCharacter::BeginPlay()
 void AManyNamesFirstPersonCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	float TraversalMultiplier = 1.0f;
+	if (const AManyNamesEnvironmentController* EnvironmentController = GetWorld() ? Cast<AManyNamesEnvironmentController>(UGameplayStatics::GetActorOfClass(GetWorld(), AManyNamesEnvironmentController::StaticClass())) : nullptr)
+	{
+		TraversalMultiplier = EnvironmentController->GetTraversalSpeedMultiplier();
+	}
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed * TraversalMultiplier;
+
 	UpdateInteractionPrompt();
 }
 
@@ -56,11 +67,25 @@ void AManyNamesFirstPersonCharacter::SetupPlayerInputComponent(UInputComponent* 
 
 void AManyNamesFirstPersonCharacter::MoveForward(float Value)
 {
+	if (const AManyNamesPrototypeGameMode* GameMode = GetWorld() ? Cast<AManyNamesPrototypeGameMode>(GetWorld()->GetAuthGameMode()) : nullptr)
+	{
+		if (GameMode->IsDialogueMovementLocked())
+		{
+			return;
+		}
+	}
 	AddMovementInput(GetActorForwardVector(), Value);
 }
 
 void AManyNamesFirstPersonCharacter::MoveRight(float Value)
 {
+	if (const AManyNamesPrototypeGameMode* GameMode = GetWorld() ? Cast<AManyNamesPrototypeGameMode>(GetWorld()->GetAuthGameMode()) : nullptr)
+	{
+		if (GameMode->IsDialogueMovementLocked())
+		{
+			return;
+		}
+	}
 	AddMovementInput(GetActorRightVector(), Value);
 }
 

@@ -148,11 +148,20 @@ bool UManyNamesContentSubsystem::ReloadSupplementalContent()
 	ChoiceConsequencesByChoiceId.Reset();
 	EndingGates.Reset();
 	EndingGatesById.Reset();
+	DialogueScenes.Reset();
+	DialogueScenesByQuestId.Reset();
+	CharacterCast.Reset();
+	CharacterCastById.Reset();
+	AmbientProfiles.Reset();
+	AmbientProfilesById.Reset();
 
 	const bool bQuestStepsLoaded = LoadQuestSteps();
 	const bool bConsequencesLoaded = LoadChoiceConsequences();
 	const bool bEndingGatesLoaded = LoadEndingGates();
-	return bQuestStepsLoaded && bConsequencesLoaded && bEndingGatesLoaded;
+	const bool bDialogueScenesLoaded = LoadDialogueScenes();
+	const bool bCharacterCastLoaded = LoadCharacterCast();
+	const bool bAmbientProfilesLoaded = LoadAmbientProfiles();
+	return bQuestStepsLoaded && bConsequencesLoaded && bEndingGatesLoaded && bDialogueScenesLoaded && bCharacterCastLoaded && bAmbientProfilesLoaded;
 }
 
 bool UManyNamesContentSubsystem::GetRegionRow(EManyNamesRegionId RegionId, FManyNamesRegionRow& OutRow) const
@@ -192,6 +201,54 @@ TArray<FManyNamesDialogueChoiceRow> UManyNamesContentSubsystem::GetDialogueChoic
 	}
 
 	return {};
+}
+
+bool UManyNamesContentSubsystem::GetDialogueSceneForQuest(FName QuestId, FManyNamesDialogueSceneRecord& OutRecord) const
+{
+	if (const FManyNamesDialogueSceneRecord* Record = DialogueScenesByQuestId.Find(QuestId))
+	{
+		OutRecord = *Record;
+		return true;
+	}
+
+	return false;
+}
+
+TArray<FManyNamesDialogueSceneRecord> UManyNamesContentSubsystem::GetAllDialogueScenes() const
+{
+	return DialogueScenes;
+}
+
+bool UManyNamesContentSubsystem::GetCharacterCastRecord(FName CharacterId, FManyNamesCharacterCastRecord& OutRecord) const
+{
+	if (const FManyNamesCharacterCastRecord* Record = CharacterCastById.Find(CharacterId))
+	{
+		OutRecord = *Record;
+		return true;
+	}
+
+	return false;
+}
+
+TArray<FManyNamesCharacterCastRecord> UManyNamesContentSubsystem::GetAllCharacterCastRecords() const
+{
+	return CharacterCast;
+}
+
+bool UManyNamesContentSubsystem::GetAmbientProfile(FName ProfileId, FManyNamesAmbientProfileRecord& OutRecord) const
+{
+	if (const FManyNamesAmbientProfileRecord* Record = AmbientProfilesById.Find(ProfileId))
+	{
+		OutRecord = *Record;
+		return true;
+	}
+
+	return false;
+}
+
+TArray<FManyNamesAmbientProfileRecord> UManyNamesContentSubsystem::GetAllAmbientProfiles() const
+{
+	return AmbientProfiles;
 }
 
 TArray<FManyNamesQuestStepRecord> UManyNamesContentSubsystem::GetQuestStepsForQuest(FName QuestId) const
@@ -459,6 +516,57 @@ bool UManyNamesContentSubsystem::LoadEndingGates()
 	for (const FManyNamesEndingGateRecord& Record : EndingGates)
 	{
 		EndingGatesById.Add(Record.EndingId, Record);
+	}
+
+	return true;
+}
+
+bool UManyNamesContentSubsystem::LoadDialogueScenes()
+{
+	const UManyNamesDeveloperSettings* Settings = GetDefault<UManyNamesDeveloperSettings>();
+	if (!LoadJsonArrayFile(ResolveDataPath(Settings->DialogueScenesJsonPath), DialogueScenes))
+	{
+		return false;
+	}
+
+	for (const FManyNamesDialogueSceneRecord& Record : DialogueScenes)
+	{
+		if (!Record.QuestId.IsNone())
+		{
+			DialogueScenesByQuestId.Add(Record.QuestId, Record);
+		}
+	}
+
+	return true;
+}
+
+bool UManyNamesContentSubsystem::LoadCharacterCast()
+{
+	const UManyNamesDeveloperSettings* Settings = GetDefault<UManyNamesDeveloperSettings>();
+	if (!LoadJsonArrayFile(ResolveDataPath(Settings->CharacterCastJsonPath), CharacterCast))
+	{
+		return false;
+	}
+
+	for (const FManyNamesCharacterCastRecord& Record : CharacterCast)
+	{
+		CharacterCastById.Add(Record.CharacterId, Record);
+	}
+
+	return true;
+}
+
+bool UManyNamesContentSubsystem::LoadAmbientProfiles()
+{
+	const UManyNamesDeveloperSettings* Settings = GetDefault<UManyNamesDeveloperSettings>();
+	if (!LoadJsonArrayFile(ResolveDataPath(Settings->AmbientProfilesJsonPath), AmbientProfiles))
+	{
+		return false;
+	}
+
+	for (const FManyNamesAmbientProfileRecord& Record : AmbientProfiles)
+	{
+		AmbientProfilesById.Add(Record.ProfileId, Record);
 	}
 
 	return true;

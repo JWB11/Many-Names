@@ -8,6 +8,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "Data"
 CONTENT = ROOT / "Content" / "Characters" / "MetaHumans"
+MANIFEST_PATH = DATA / "metahuman_manifest.json"
 
 
 def load_json(name: str):
@@ -32,6 +33,7 @@ def main():
     scenes = load_json("dialogue_scenes.json")
     cast = load_json("character_cast.json")
     ambient = load_json("ambient_profiles.json")
+    manifest = load_json("metahuman_manifest.json")
 
     quest_ids = [row["QuestId"] for row in quests]
     choice_ids = [row["ChoiceId"] for row in dialogue]
@@ -52,6 +54,7 @@ def main():
     scene_quest_ids = {row["QuestId"] for row in scenes if row.get("QuestId")}
     cast_id_set = {row["CharacterId"] for row in cast}
     non_human_projection_ids = {"ConvergenceCore", "LegacyProjection", "OracleFragment"}
+    required_named_runtime_ids = sorted(cast_id_set - non_human_projection_ids)
 
     for row in steps:
         if row["QuestId"] not in quest_id_set:
@@ -86,6 +89,14 @@ def main():
         asset_path = CONTENT / f"{character_id}.uasset"
         if not asset_path.exists():
             raise SystemExit(f"missing MetaHumanCharacter asset for: {character_id}")
+
+    manifest_named = manifest.get("named", {})
+    manifest_authored = manifest.get("named_character_assets", {})
+    for character_id in required_named_runtime_ids:
+        if character_id not in manifest_authored or not manifest_authored[character_id]:
+            raise SystemExit(f"manifest missing authored named character asset: {character_id}")
+        if character_id not in manifest_named or not manifest_named[character_id]:
+            raise SystemExit(f"manifest missing runtime named character mesh: {character_id}")
 
     for row in ambient:
         profile_id = row["ProfileId"]

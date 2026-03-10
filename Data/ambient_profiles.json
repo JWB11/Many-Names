@@ -3,104 +3,117 @@
     "ProfileId": "Opening.Survivors",
     "RegionId": "Opening",
     "OccupationTag": "Survivor",
-    "CharacterIds": ["OpeningWitness"],
+    "CharacterIds": ["OpeningWitness", "OpeningHealer", "OpeningQuartermaster"],
     "ClothingVariantId": "opening_survivor_group",
-    "StanceId": "ambient_survivor"
+    "StanceId": "ambient_survivor",
+    "CrowdCountHint": 8
   },
   {
     "ProfileId": "Opening.Guards",
     "RegionId": "Opening",
     "OccupationTag": "Guard",
-    "CharacterIds": ["OpeningWitness"],
+    "CharacterIds": ["OpeningQuartermaster", "OpeningWitness"],
     "ClothingVariantId": "opening_guard_group",
-    "StanceId": "ambient_guard"
+    "StanceId": "ambient_guard",
+    "CrowdCountHint": 5
   },
   {
     "ProfileId": "Egypt.Priests",
     "RegionId": "Egypt",
     "OccupationTag": "Priest",
-    "CharacterIds": ["ArchiveKeeper"],
+    "CharacterIds": ["ArchiveKeeper", "TempleCantor"],
     "ClothingVariantId": "egypt_priest_group",
-    "StanceId": "ambient_ritual"
+    "StanceId": "ambient_ritual",
+    "CrowdCountHint": 10
   },
   {
     "ProfileId": "Egypt.Scribes",
     "RegionId": "Egypt",
     "OccupationTag": "Scribe",
-    "CharacterIds": ["ArchiveKeeper"],
+    "CharacterIds": ["ArchiveKeeper", "GranarySteward"],
     "ClothingVariantId": "egypt_scribe_group",
-    "StanceId": "ambient_scribe"
+    "StanceId": "ambient_scribe",
+    "CrowdCountHint": 8
   },
   {
     "ProfileId": "Egypt.Vendors",
     "RegionId": "Egypt",
     "OccupationTag": "Vendor",
-    "CharacterIds": ["FloodplainPetitioner"],
+    "CharacterIds": ["FloodplainPetitioner", "GranarySteward", "TempleCantor"],
     "ClothingVariantId": "egypt_market_group",
-    "StanceId": "ambient_vendor"
+    "StanceId": "ambient_vendor",
+    "CrowdCountHint": 12
   },
   {
     "ProfileId": "Egypt.Guards",
     "RegionId": "Egypt",
     "OccupationTag": "Guard",
-    "CharacterIds": ["ArchiveKeeper"],
+    "CharacterIds": ["ArchiveKeeper", "GranarySteward"],
     "ClothingVariantId": "egypt_guard_group",
-    "StanceId": "ambient_guard"
+    "StanceId": "ambient_guard",
+    "CrowdCountHint": 6
   },
   {
     "ProfileId": "Greece.Heralds",
     "RegionId": "Greece",
     "OccupationTag": "Herald",
-    "CharacterIds": ["StormHerald"],
+    "CharacterIds": ["StormHerald", "SanctuaryKeeper", "WarSinger"],
     "ClothingVariantId": "greece_ritual_group",
-    "StanceId": "ambient_ritual"
+    "StanceId": "ambient_ritual",
+    "CrowdCountHint": 8
   },
   {
     "ProfileId": "Greece.Pilgrims",
     "RegionId": "Greece",
     "OccupationTag": "Pilgrim",
-    "CharacterIds": ["StormHerald", "WarbandEnvoy"],
+    "CharacterIds": ["StormHerald", "WarbandEnvoy", "WarSinger", "SanctuaryKeeper"],
     "ClothingVariantId": "greece_pilgrim_group",
-    "StanceId": "ambient_pilgrim"
+    "StanceId": "ambient_pilgrim",
+    "CrowdCountHint": 10
   },
   {
     "ProfileId": "Greece.Guards",
     "RegionId": "Greece",
     "OccupationTag": "Guard",
-    "CharacterIds": ["WarbandEnvoy"],
+    "CharacterIds": ["WarbandEnvoy", "SanctuaryKeeper"],
     "ClothingVariantId": "greece_guard_group",
-    "StanceId": "ambient_guard"
+    "StanceId": "ambient_guard",
+    "CrowdCountHint": 6
   },
   {
     "ProfileId": "Italic.Guards",
     "RegionId": "ItalicWest",
     "OccupationTag": "Guard",
-    "CharacterIds": ["MeasureKeeper"],
+    "CharacterIds": ["MeasureKeeper", "RoadSurveyor"],
     "ClothingVariantId": "italic_guard_group",
-    "StanceId": "ambient_guard"
+    "StanceId": "ambient_guard",
+    "CrowdCountHint": 6
   },
   {
     "ProfileId": "Italic.Workers",
     "RegionId": "ItalicWest",
     "OccupationTag": "Worker",
-    "CharacterIds": ["MeasureKeeper", "BoundaryElder"],
+    "CharacterIds": ["MeasureKeeper", "BoundaryElder", "ForgeMatron", "RoadSurveyor"],
     "ClothingVariantId": "italic_worker_group",
-    "StanceId": "ambient_worker"
+    "StanceId": "ambient_worker",
+    "CrowdCountHint": 10
   },
   {
     "ProfileId": "Italic.Ritual",
     "RegionId": "ItalicWest",
     "OccupationTag": "RitualWitness",
-    "CharacterIds": ["BoundaryElder"],
+    "CharacterIds": ["BoundaryElder", "ForgeMatron"],
     "ClothingVariantId": "italic_ritual_group",
-    "StanceId": "ambient_ritual"
+    "StanceId": "ambient_ritual",
+    "CrowdCountHint": 8
   },
   {
     "ProfileId": "Convergence.Remnants",
     "RegionId": "Convergence",
     "OccupationTag": "Remnant",
-    "CharacterIds": ["BridgeWatcher", "SystemsRemnant"],
+    "CharacterIds": ["BridgeWatcher", "SystemsRemnant", "CompanionChorus"],
     "ClothingVariantId": "convergence_remnant_group",
-    "StanceId": "ambient_uncanny"
+    "StanceId": "ambient_uncanny",
+    "CrowdCountHint": 4
   }
 ]

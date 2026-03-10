@@ -15,6 +15,7 @@ bool FManyNamesDefaultWorldStateTest::RunTest(const FString& Parameters)
 	FManyNamesWorldState WorldState;
 	TestTrue(TEXT("Default world state starts with no region visits"), WorldState.RegionVisitOrder.IsEmpty());
 	TestTrue(TEXT("Default world state starts with no eligible endings"), WorldState.EligibleEndings.IsEmpty());
+	TestFalse(TEXT("Default world state starts without a dominant antagonist"), WorldState.bHasDominantAntagonist);
 	return true;
 }
 
@@ -68,6 +69,7 @@ bool FManyNamesPrimaryContentLoadTest::RunTest(const FString& Parameters)
 
 	const TArray<FManyNamesDialogueChoiceRow> GreeceChoices = ContentSubsystem->GetDialogueChoicesForQuest(TEXT("greece_main_01"));
 	TestTrue(TEXT("Greece main quest has dialogue choices"), GreeceChoices.Num() > 0);
+	TestTrue(TEXT("Greece main quest has expanded branch count"), GreeceChoices.Num() >= 4);
 
 	const TArray<FManyNamesDialogueChoiceRow> ItalicChoices = ContentSubsystem->GetDialogueChoicesForQuest(TEXT("italic_main_01"));
 	TestTrue(TEXT("Italic main quest has dialogue choices"), ItalicChoices.Num() > 0);
@@ -84,9 +86,18 @@ bool FManyNamesPrimaryContentLoadTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Archive keeper cast exists"), ContentSubsystem->GetCharacterCastRecord(TEXT("ArchiveKeeper"), ArchiveKeeperCast));
 	TestEqual(TEXT("Archive keeper is in Egypt"), ArchiveKeeperCast.RegionId, EManyNamesRegionId::Egypt);
 
+	FManyNamesCharacterCastRecord TempleCantorCast;
+	TestTrue(TEXT("Temple cantor cast exists"), ContentSubsystem->GetCharacterCastRecord(TEXT("TempleCantor"), TempleCantorCast));
+	TestEqual(TEXT("Temple cantor is in Egypt"), TempleCantorCast.RegionId, EManyNamesRegionId::Egypt);
+
+	FManyNamesCharacterCastRecord ForgeMatronCast;
+	TestTrue(TEXT("Forge matron cast exists"), ContentSubsystem->GetCharacterCastRecord(TEXT("ForgeMatron"), ForgeMatronCast));
+	TestEqual(TEXT("Forge matron is in Italic West"), ForgeMatronCast.RegionId, EManyNamesRegionId::ItalicWest);
+
 	FManyNamesAmbientProfileRecord EgyptPriestsProfile;
 	TestTrue(TEXT("Egypt priests ambient profile exists"), ContentSubsystem->GetAmbientProfile(TEXT("Egypt.Priests"), EgyptPriestsProfile));
 	TestEqual(TEXT("Egypt priests ambient profile targets Egypt"), EgyptPriestsProfile.RegionId, EManyNamesRegionId::Egypt);
+	TestTrue(TEXT("Egypt priests ambient profile has multiple cast sources"), EgyptPriestsProfile.CharacterIds.Num() >= 2);
 
 	bool bFoundLightChoice = false;
 	bool bFoundDeceptionChoice = false;

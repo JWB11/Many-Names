@@ -28,10 +28,16 @@ public:
 	float GetTraversalSpeedMultiplier() const { return CurrentTraversalSpeedMultiplier; }
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Environment")
+	EManyNamesRenderPath GetActiveRenderPath() const { return ActiveRenderPath; }
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Environment")
 	const FManyNamesEnvironmentProfile& GetEnvironmentProfile() const { return EnvironmentProfile; }
 
 private:
 	void ApplyWeatherData(const FManyNamesWeatherState& State);
+	void ApplyRenderFeatureToggles();
+	EManyNamesRenderPath ResolveRenderPath() const;
+	void SetConsoleVariableInt(const TCHAR* Name, int32 Value) const;
 	class ADirectionalLight* FindDirectionalLight() const;
 	class ASkyLight* FindSkyLight() const;
 	class AExponentialHeightFog* FindHeightFog() const;
@@ -41,4 +47,7 @@ private:
 
 	UPROPERTY(Transient)
 	float CurrentTraversalSpeedMultiplier = 1.0f;
+
+	UPROPERTY(Transient)
+	EManyNamesRenderPath ActiveRenderPath = EManyNamesRenderPath::Auto;
 };

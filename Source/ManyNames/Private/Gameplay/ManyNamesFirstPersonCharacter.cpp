@@ -7,6 +7,7 @@
 #include "Gameplay/ManyNamesEnvironmentController.h"
 #include "Gameplay/ManyNamesPrototypeGameMode.h"
 #include "Interaction/ManyNamesInteractable.h"
+#include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Systems/ManyNamesGameInstance.h"
 
@@ -21,6 +22,11 @@ AManyNamesFirstPersonCharacter::AManyNamesFirstPersonCharacter()
 
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->bUseFlatBaseForFloorChecks = false;
+	GetCharacterMovement()->PerchRadiusThreshold = 12.0f;
+	GetCharacterMovement()->MaxStepHeight = 50.0f;
+	GetCharacterMovement()->SetWalkableFloorAngle(52.0f);
+	GetCharacterMovement()->bMaintainHorizontalGroundVelocity = true;
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
@@ -35,12 +41,26 @@ void AManyNamesFirstPersonCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	if (bSpawnRecoveryActive)
+	{
+		SpawnRecoveryElapsed += DeltaSeconds;
+		TryRecoverInvalidSpawn();
+		if (SpawnRecoveryElapsed >= SpawnRecoveryWindowSeconds)
+		{
+			bSpawnRecoveryActive = false;
+		}
+	}
+
 	float TraversalMultiplier = 1.0f;
 	if (const AManyNamesEnvironmentController* EnvironmentController = GetWorld() ? Cast<AManyNamesEnvironmentController>(UGameplayStatics::GetActorOfClass(GetWorld(), AManyNamesEnvironmentController::StaticClass())) : nullptr)
 	{
 		TraversalMultiplier = EnvironmentController->GetTraversalSpeedMultiplier();
 	}
 	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed * TraversalMultiplier;
+	if (HasGroundSupport(GroundProbeDistance))
+	{
+		GetCharacterMovement()->bUseSeparateBrakingFriction = false;
+	}
 
 	UpdateInteractionPrompt();
 }
@@ -231,6 +251,41 @@ bool AManyNamesFirstPersonCharacter::CanUsePower(EManyNamesPowerId PowerId) cons
 	}
 
 	return false;
+}
+
+bool AManyNamesFirstPersonCharacter::HasGroundSupport(float TraceDistance) const
+{
+	if (!GetWorld())
+	{
+		return false;
+	}
+
+	const FVector Start = GetActorLocation() + FVector(0.0f, 0.0f, 80.0f);
+	const FVector End = Start - FVector(0.0f, 0.0f, TraceDistance);
+	FHitResult HitResult;
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(ManyNamesSpawnGroundTrace), false, this);
+	return GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params) && HitResult.bBlockingHit;
+}
+
+void AManyNamesFirstPersonCharacter::TryRecoverInvalidSpawn()
+{
+	if (HasGroundSupport(SpawnRecoveryTraceDistance) && GetActorLocation().Z > SpawnFailureZ)
+	{
+		return;
+	}
+
+	AActor* PlayerStartActor = UGameplayStatics::GetActorOfClass(GetWorld(), APlayerStart::StaticClass());
+	if (!PlayerStartActor)
+	{
+		return;
+	}
+
+	const FVector RecoveryLocation = PlayerStartActor->GetActorLocation() + FVector(0.0f, 0.0f, SpawnRecoveryLift);
+	SetActorLocation(RecoveryLocation, false, nullptr, ETeleportType::TeleportPhysics);
+	SetActorRotation(PlayerStartActor->GetActorRotation());
+	GetCharacterMovement()->StopMovementImmediately();
+	ShowMessage(TEXT("Recovered to a valid spawn point."), FColor::Yellow);
+	bSpawnRecoveryActive = false;
 }
 
 void AManyNamesFirstPersonCharacter::ShowMessage(const FString& Message, FColor Color) const

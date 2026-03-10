@@ -120,6 +120,8 @@ Use these domains instead of adding alignment systems or expanding into broad sp
 ## Visual And World Build Tooling
 
 - Dynamic lighting is the project default for prototype maps.
+- Nanite is enabled at the project level for environment-scale static meshes where supported.
+- PCG, Landmass, Water, Geometry Scripting, and Niagara Fluids are enabled for terrain/world expansion work.
 - Lighting warning fix already applied:
   - `Force No Precomputed Lighting`
   - movable sun and sky light
@@ -132,7 +134,14 @@ Use these domains instead of adding alignment systems or expanding into broad sp
   - falls back to project primitives when necessary
   - stages all five maps
   - applies dynamic sky/fog/light setup
+  - creates project-owned PCG graph assets under `Content/PCG`
+  - spawns route spline actors from terrain profiles
+  - creates real `ALandscape` terrain foundations for all five maps
+  - enables Nanite on eligible structural meshes referenced by terrain profiles
+  - projects and validates `PlayerStart` against blocking ground
   - places quest anchors, travel gates, ambient NPCs, and region set dressing
+- Terrain is now generated from real commandlet-created Landscape actors plus hard-route overlays and structural staging.
+- PCG is currently implemented as generated graph assets plus placed PCG volumes/profile scaffolding; deeper node-authored scatter graphs are still a later pass.
 - If imported asset names change, fix the commandlet path assumptions rather than hand-correcting maps silently.
 
 ## Current Session Outcomes
@@ -156,6 +165,11 @@ The following work is already implemented and should be treated as current proje
 - role-based NPC visual profile support added
 - idle and death animation usage added for staged mannequin stand-ins
 - automation coverage expanded for staged region map references
+- runtime spawn recovery added to the first-person character
+- opening spawn bug fixed by moving and validating `PlayerStart` over blocking terrain
+- thin primary ground planes replaced with thick collision-bearing terrain foundations in generated maps
+- terrain profile scaffolding added for future Landscape/PCG/Landmass rollout
+- all five generated maps now include real Landscape-backed terrain, route spline anchors, and project-owned PCG graph assets
 - world build commandlet now completes with `0 errors, 0 warnings`
 
 ## Controls And Flow
@@ -185,6 +199,9 @@ The following work is already implemented and should be treated as current proje
 - Map check target:
   - no lighting rebuild warnings
   - `0 errors, 0 warnings` during commandlet map processing
+- Spawn safety target:
+  - every map must contain exactly one `PlayerStart`
+  - that `PlayerStart` must validate against blocking ground during world build
 
 ## Implementation Constraints
 
@@ -201,6 +218,7 @@ The following work is already implemented and should be treated as current proje
 - Ambient population is still simple staged idle presence, not full AI simulation.
 - Egypt is ahead of the other regions in architectural specificity; Greece, Italic West, and Convergence are staged and playable but still need deeper art passes.
 - Some structures remain hybrid Fab-plus-greybox because the current Fab library is heavier on isolated assets than complete modular regional kits.
+- Landscape is now live in the generated maps, but Landmass shaping, authored PCG node graphs, and Geometry Script-generated connective meshes still need a deeper follow-up pass.
 - Blueprint wrappers exist, but deeper UI polish and presentation are still pending.
 
 ## Guidance For Future Agents

@@ -1,4 +1,5 @@
 import json
+import os
 import time
 from pathlib import Path
 
@@ -15,6 +16,18 @@ AUTHORING_ROOT = "/Game/Characters/MetaHumans"
 BUILD_ROOT = "/Game/MetaHumans"
 COMMON_ROOT = "/Game/MetaHumans/Common"
 SKIP_IDS = {"ConvergenceCore", "LegacyProjection", "OracleFragment"}
+BALANCED_BATCH = {
+    "OpeningHealer",
+    "OpeningQuartermaster",
+    "TempleCantor",
+    "GranarySteward",
+    "SanctuaryKeeper",
+    "WarSinger",
+    "ForgeMatron",
+    "RoadSurveyor",
+    "CompanionChorus",
+}
+PIPELINE_OVERRIDE_ENV = "MH_PIPELINE_OVERRIDE_CLASS"
 
 
 def _load_json(path: Path):
@@ -63,10 +76,20 @@ def _request_textures(character, subsystem) -> None:
 def _build_character(character, subsystem) -> None:
     params = unreal.MetaHumanCharacterEditorBuildParameters()
     params.pipeline_type = unreal.MetaHumanDefaultPipelineType.OPTIMIZED
-    params.pipeline_quality = unreal.MetaHumanQualityLevel.HIGH
+    params.pipeline_quality = unreal.MetaHumanQualityLevel.MEDIUM
     params.absolute_build_path = f"{BUILD_ROOT}/{character.get_name()}"
     params.common_folder_path = COMMON_ROOT
     params.enable_wardrobe_item_validation = False
+    pipeline_override_path = os.environ.get(PIPELINE_OVERRIDE_ENV, "").strip()
+    if pipeline_override_path:
+        pipeline_override = unreal.load_class(None, pipeline_override_path)
+        if not pipeline_override:
+            unreal.log_warning(
+                f"[MetaHumanCastComplete] Failed to load pipeline override class "
+                f"{pipeline_override_path}; using default pipeline"
+            )
+        else:
+            params.pipeline_override = pipeline_override
     subsystem.build_meta_human(character=character, params=params)
 
 
@@ -120,24 +143,9 @@ def _complete_character(character_id: str, manifest: dict, subsystem) -> None:
         _close_for_edit(character, subsystem)
 
 
-def main():
-    cast_records = _load_json(CAST_PATH)
-    ambient_profiles = _load_json(AMBIENT_PATH)
-    subsystem = unreal.get_editor_subsystem(unreal.MetaHumanCharacterEditorSubsystem)
-
-    manifest = {
-        "named": {},
-        "ambient": {},
-        "named_character_assets": {},
-        "ambient_character_assets": {},
-    }
-
-    for record in cast_records:
-        character_id = record["CharacterId"]
-        if character_id in SKIP_IDS:
-            continue
-        _complete_character(character_id, manifest, subsystem)
-
+def _refresh_ambient_manifest(ambient_profiles, manifest: dict) -> None:
+    manifest["ambient"] = {}
+    manifest["ambient_character_assets"] = {}
     for profile in ambient_profiles:
         profile_id = profile["ProfileId"]
         for character_id in profile.get("CharacterIds", []):
@@ -150,8 +158,55 @@ def main():
                 manifest["ambient_character_assets"][profile_id] = authored_asset
                 break
 
+
+def _persist_manifest(manifest: dict, ambient_profiles) -> None:
+    _refresh_ambient_manifest(ambient_profiles, manifest)
     _save_json(MANIFEST_PATH, manifest)
-    unreal.log(f"[MetaHumanCastComplete] Wrote manifest to {MANIFEST_PATH}")
+    unreal.log(f"[MetaHumanCastComplete] Persisted manifest to {MANIFEST_PATH}")
+
+
+def main():
+    cast_records = _load_json(CAST_PATH)
+    ambient_profiles = _load_json(AMBIENT_PATH)
+    subsystem = unreal.get_editor_subsystem(unreal.MetaHumanCharacterEditorSubsystem)
+    existing_manifest = _load_json(MANIFEST_PATH) if MANIFEST_PATH.exists() else {}
+
+    manifest = {
+        "named": dict(existing_manifest.get("named", {})),
+        "ambient": {},
+        "named_character_assets": dict(existing_manifest.get("named_character_assets", {})),
+        "ambient_character_assets": dict(existing_manifest.get("ambient_character_assets", {})),
+    }
+
+    requested_ids = {
+        item.strip()
+        for item in os.environ.get("MH_CHARACTER_IDS", "").split(",")
+        if item.strip()
+    }
+
+    prioritized_records = []
+    deferred_records = []
+    for record in cast_records:
+        if requested_ids and record["CharacterId"] not in requested_ids:
+            continue
+        if record["CharacterId"] in BALANCED_BATCH:
+            prioritized_records.append(record)
+        else:
+            deferred_records.append(record)
+
+    for record in prioritized_records + deferred_records:
+        character_id = record["CharacterId"]
+        if character_id in SKIP_IDS:
+            continue
+        if character_id in manifest["named"]:
+            authored_asset = manifest["named_character_assets"].get(character_id, f"{AUTHORING_ROOT}/{character_id}.{character_id}")
+            manifest["named_character_assets"][character_id] = authored_asset
+            _persist_manifest(manifest, ambient_profiles)
+            continue
+        _complete_character(character_id, manifest, subsystem)
+        _persist_manifest(manifest, ambient_profiles)
+
+    _persist_manifest(manifest, ambient_profiles)
 
 
 if __name__ == "__main__":

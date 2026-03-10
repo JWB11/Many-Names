@@ -5,6 +5,31 @@
 #include "Components/SceneComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Engine/World.h"
+
+namespace
+{
+void SnapActorToGround(AActor* Actor, float MaxTraceDistance)
+{
+	if (!Actor || !Actor->GetWorld())
+	{
+		return;
+	}
+
+	const FVector Start = Actor->GetActorLocation() + FVector(0.0f, 0.0f, 240.0f);
+	const FVector End = Start - FVector(0.0f, 0.0f, MaxTraceDistance);
+	FHitResult HitResult;
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(ManyNamesNpcGrounding), false, Actor);
+	if (Actor->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params) && HitResult.bBlockingHit)
+	{
+		const FVector GroundedLocation(HitResult.ImpactPoint.X, HitResult.ImpactPoint.Y, HitResult.ImpactPoint.Z + 2.0f);
+		Actor->SetActorLocation(GroundedLocation, false, nullptr, ETeleportType::TeleportPhysics);
+		const FRotator CurrentRotation = Actor->GetActorRotation();
+		const FRotator GroundRotation = HitResult.ImpactNormal.Rotation();
+		Actor->SetActorRotation(FRotator(FMath::Clamp(GroundRotation.Pitch - 90.0f, -8.0f, 8.0f), CurrentRotation.Yaw, FMath::Clamp(GroundRotation.Roll, -8.0f, 8.0f)));
+	}
+}
+}
 
 AManyNamesScenicActor::AManyNamesScenicActor()
 {
@@ -16,6 +41,7 @@ AManyNamesScenicActor::AManyNamesScenicActor()
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMeshComponent->SetupAttachment(SceneRoot);
 	StaticMeshComponent->SetCollisionProfileName(TEXT("BlockAll"));
+	StaticMeshComponent->SetMobility(EComponentMobility::Movable);
 
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	SkeletalMeshComponent->SetupAttachment(SceneRoot);
@@ -67,6 +93,16 @@ void AManyNamesScenicActor::ApplyNpcVisualProfile()
 			SkeletalMeshComponent->SetRelativeScale3D(NpcVisualProfile.RelativeScale);
 			SkeletalMeshComponent->SetVisibility(true);
 			SkeletalMeshComponent->SetHiddenInGame(false);
+			SkeletalMeshComponent->SetAllowClothActors(NpcVisualProfile.bEnableClothSimulation);
+			SkeletalMeshComponent->bDisableClothSimulation = !NpcVisualProfile.bEnableClothSimulation;
+			if (NpcVisualProfile.bEnableClothSimulation)
+			{
+				SkeletalMeshComponent->ResumeClothingSimulation();
+			}
+			else
+			{
+				SkeletalMeshComponent->SuspendClothingSimulation();
+			}
 			StaticMeshComponent->SetVisibility(false);
 			StaticMeshComponent->SetHiddenInGame(true);
 
@@ -88,6 +124,7 @@ void AManyNamesScenicActor::ApplyNpcVisualProfile()
 				}
 			}
 
+			SnapActorToGround(this, 2400.0f);
 			return;
 		}
 	}
@@ -96,4 +133,5 @@ void AManyNamesScenicActor::ApplyNpcVisualProfile()
 	SkeletalMeshComponent->SetHiddenInGame(true);
 	StaticMeshComponent->SetVisibility(true);
 	StaticMeshComponent->SetHiddenInGame(false);
+	SnapActorToGround(this, 2400.0f);
 }

@@ -8,6 +8,27 @@
 #include "Gameplay/ManyNamesPrototypeGameMode.h"
 #include "Systems/ManyNamesWorldStateSubsystem.h"
 
+namespace
+{
+void SnapActorToGround(AActor* Actor, float MaxTraceDistance)
+{
+	if (!Actor || !Actor->GetWorld())
+	{
+		return;
+	}
+
+	const FVector Start = Actor->GetActorLocation() + FVector(0.0f, 0.0f, 240.0f);
+	const FVector End = Start - FVector(0.0f, 0.0f, MaxTraceDistance);
+	FHitResult HitResult;
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(ManyNamesInteractableGrounding), false, Actor);
+	if (Actor->GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params) && HitResult.bBlockingHit)
+	{
+		const FVector GroundedLocation(HitResult.ImpactPoint.X, HitResult.ImpactPoint.Y, HitResult.ImpactPoint.Z + 2.0f);
+		Actor->SetActorLocation(GroundedLocation, false, nullptr, ETeleportType::TeleportPhysics);
+	}
+}
+}
+
 AManyNamesInteractableActor::AManyNamesInteractableActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -155,6 +176,16 @@ void AManyNamesInteractableActor::ApplyNpcVisualProfile()
 			SkeletalMeshComponent->SetRelativeScale3D(NpcVisualProfile.RelativeScale);
 			SkeletalMeshComponent->SetVisibility(true);
 			SkeletalMeshComponent->SetHiddenInGame(false);
+			SkeletalMeshComponent->SetAllowClothActors(NpcVisualProfile.bEnableClothSimulation);
+			SkeletalMeshComponent->bDisableClothSimulation = !NpcVisualProfile.bEnableClothSimulation;
+			if (NpcVisualProfile.bEnableClothSimulation)
+			{
+				SkeletalMeshComponent->ResumeClothingSimulation();
+			}
+			else
+			{
+				SkeletalMeshComponent->SuspendClothingSimulation();
+			}
 			MeshComponent->SetVisibility(false);
 			MeshComponent->SetHiddenInGame(true);
 
@@ -176,6 +207,7 @@ void AManyNamesInteractableActor::ApplyNpcVisualProfile()
 				}
 			}
 
+			SnapActorToGround(this, 2400.0f);
 			return;
 		}
 	}
@@ -184,4 +216,5 @@ void AManyNamesInteractableActor::ApplyNpcVisualProfile()
 	SkeletalMeshComponent->SetHiddenInGame(true);
 	MeshComponent->SetVisibility(true);
 	MeshComponent->SetHiddenInGame(false);
+	SnapActorToGround(this, 2400.0f);
 }

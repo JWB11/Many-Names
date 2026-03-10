@@ -7,6 +7,7 @@
 #include "Engine/ExponentialHeightFog.h"
 #include "Engine/SkyLight.h"
 #include "EngineUtils.h"
+#include "HAL/IConsoleManager.h"
 
 AManyNamesEnvironmentController::AManyNamesEnvironmentController()
 {
@@ -22,6 +23,7 @@ void AManyNamesEnvironmentController::BeginPlay()
 void AManyNamesEnvironmentController::SetEnvironmentProfile(const FManyNamesEnvironmentProfile& InProfile)
 {
 	EnvironmentProfile = InProfile;
+	ApplyRenderFeatureToggles();
 	ApplyBaselineState();
 }
 
@@ -49,6 +51,8 @@ void AManyNamesEnvironmentController::ApplyBaselineState()
 
 void AManyNamesEnvironmentController::ApplyWeatherData(const FManyNamesWeatherState& State)
 {
+	ApplyRenderFeatureToggles();
+
 	if (ADirectionalLight* Sun = FindDirectionalLight())
 	{
 		Sun->SetActorRotation(FRotator(State.SunPitch, State.SunYaw, 0.0f));
@@ -80,6 +84,50 @@ void AManyNamesEnvironmentController::ApplyWeatherData(const FManyNamesWeatherSt
 	CurrentTraversalSpeedMultiplier = State.bAffectsTraversal
 		? FMath::Clamp(State.TraversalSpeedMultiplier, 0.5f, 1.0f)
 		: 1.0f;
+}
+
+void AManyNamesEnvironmentController::ApplyRenderFeatureToggles()
+{
+	ActiveRenderPath = ResolveRenderPath();
+	const bool bWindowsHighEnd = ActiveRenderPath == EManyNamesRenderPath::WindowsHighEnd;
+
+	SetConsoleVariableInt(TEXT("r.HeterogeneousVolumes"), EnvironmentProfile.bAllowHeterogeneousVolumes ? 1 : 0);
+	SetConsoleVariableInt(TEXT("r.Translucency.HeterogeneousVolumes"), EnvironmentProfile.bAllowHeterogeneousVolumes ? 1 : 0);
+	SetConsoleVariableInt(TEXT("r.HeterogeneousVolumes.Shadows"), EnvironmentProfile.bAllowHeterogeneousVolumes ? 1 : 0);
+	SetConsoleVariableInt(TEXT("r.MegaLights.EnableForProject"), bWindowsHighEnd && EnvironmentProfile.bAllowMegaLights ? 1 : 0);
+	SetConsoleVariableInt(TEXT("r.MegaLights.HardwareRayTracing"), bWindowsHighEnd && EnvironmentProfile.bAllowMegaLights ? 1 : 0);
+	SetConsoleVariableInt(TEXT("r.MegaLights.Volume"), bWindowsHighEnd && EnvironmentProfile.bAllowMegaLights ? 1 : 0);
+	SetConsoleVariableInt(TEXT("r.VolumetricFog"), 1);
+}
+
+EManyNamesRenderPath AManyNamesEnvironmentController::ResolveRenderPath() const
+{
+	switch (EnvironmentProfile.PreferredRenderPath)
+	{
+	case EManyNamesRenderPath::WindowsHighEnd:
+#if PLATFORM_WINDOWS
+		return EManyNamesRenderPath::WindowsHighEnd;
+#else
+		return EManyNamesRenderPath::MacFallback;
+#endif
+	case EManyNamesRenderPath::MacFallback:
+		return EManyNamesRenderPath::MacFallback;
+	case EManyNamesRenderPath::Auto:
+	default:
+#if PLATFORM_WINDOWS
+		return EManyNamesRenderPath::WindowsHighEnd;
+#else
+		return EManyNamesRenderPath::MacFallback;
+#endif
+	}
+}
+
+void AManyNamesEnvironmentController::SetConsoleVariableInt(const TCHAR* Name, int32 Value) const
+{
+	if (IConsoleVariable* ConsoleVariable = IConsoleManager::Get().FindConsoleVariable(Name))
+	{
+		ConsoleVariable->Set(Value, ECVF_SetByCode);
+	}
 }
 
 ADirectionalLight* AManyNamesEnvironmentController::FindDirectionalLight() const

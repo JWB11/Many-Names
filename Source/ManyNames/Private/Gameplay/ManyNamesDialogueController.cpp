@@ -34,6 +34,33 @@ void AManyNamesDialogueController::OpenDialogue(FName QuestId, const FText& Prom
 		CurrentPrompt = CurrentScene.BodyText;
 	}
 
+	if (QuestId == TEXT("convergence_main_01"))
+	{
+		if (const UManyNamesWorldStateSubsystem* WorldStateSubsystem = GetWorldStateSubsystem())
+		{
+			const FManyNamesWorldState WorldState = WorldStateSubsystem->GetWorldState();
+			if (WorldState.bHasDominantAntagonist)
+			{
+				FString AntagonistLine;
+				switch (WorldState.DominantAntagonist)
+				{
+				case EManyNamesCompanionId::SkyRuler:
+					AntagonistLine = TEXT("\n\nThe loudest hostile signal in the chamber now comes from the storm-ruler branch: spectacle, punishment, and weather as obedience.");
+					break;
+				case EManyNamesCompanionId::BronzeLawgiver:
+					AntagonistLine = TEXT("\n\nThe loudest hostile signal in the chamber now comes from the lawgiver branch: measured coercion, public order, and systems that never stop counting.");
+					break;
+				case EManyNamesCompanionId::OracleAI:
+				default:
+					AntagonistLine = TEXT("\n\nThe loudest hostile signal in the chamber now comes from the oracle branch: secrecy, curated truth, and memory controlled as infrastructure.");
+					break;
+				}
+
+				CurrentPrompt = FText::FromString(CurrentPrompt.ToString() + AntagonistLine);
+			}
+		}
+	}
+
 	bDialogueOpen = CurrentChoices.Num() > 0;
 
 	if (bDialogueOpen && !CurrentScene.WeatherStateId.IsNone())
@@ -193,6 +220,8 @@ void AManyNamesDialogueController::ApplyConsequenceRecord(const FManyNamesDialog
 		}
 	}
 
+	WorldStateSubsystem->RefreshDominantAntagonist();
+
 	FManyNamesQuestRow QuestRow;
 	if (ContentSubsystem->GetQuestRow(ChoiceRow.QuestId, QuestRow))
 	{
@@ -235,10 +264,25 @@ void AManyNamesDialogueController::ApplyCompanionOutput(FName OutputId) const
 	else if (Parts[2] == TEXT("Opposed"))
 	{
 		WorldStateSubsystem->SetCompanionAllianceState(CompanionId, EManyNamesAllianceState::Opposed);
+		WorldStateSubsystem->AddCompanionEscalation(CompanionId, 4);
 	}
 	else if (Parts[2] == TEXT("Replaced"))
 	{
 		WorldStateSubsystem->SetCompanionAllianceState(CompanionId, EManyNamesAllianceState::Replaced);
+		WorldStateSubsystem->AddCompanionEscalation(CompanionId, 3);
+	}
+	else if (Parts[2] == TEXT("TruthRevealed"))
+	{
+		WorldStateSubsystem->SetCompanionTruthRevealed(CompanionId, true);
+		WorldStateSubsystem->AddCompanionEscalation(CompanionId, 2);
+	}
+	else if (Parts[2] == TEXT("Ascendant"))
+	{
+		WorldStateSubsystem->AddCompanionEscalation(CompanionId, 5);
+	}
+	else if (Parts[2] == TEXT("Dominant"))
+	{
+		WorldStateSubsystem->AddCompanionEscalation(CompanionId, 8);
 	}
 }
 

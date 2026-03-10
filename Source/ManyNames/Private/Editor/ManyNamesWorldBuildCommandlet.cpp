@@ -7,12 +7,14 @@
 #include "Components/PointLightComponent.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/SkyLightComponent.h"
+#include "Components/SplineComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Editor.h"
 #include "Engine/Brush.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/ExponentialHeightFog.h"
+#include "Engine/HitResult.h"
 #include "Engine/PointLight.h"
 #include "Engine/SkyLight.h"
 #include "Engine/SkeletalMesh.h"
@@ -25,13 +27,22 @@
 #include "Gameplay/ManyNamesInteractableActor.h"
 #include "Gameplay/ManyNamesScenicActor.h"
 #include "GameplayTagsManager.h"
+#include "Landscape.h"
+#include "LandscapeConfigHelper.h"
+#include "LandscapeDataAccess.h"
 #include "Materials/MaterialInterface.h"
 #include "Misc/PackageName.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Modules/ModuleManager.h"
+#include "PCGComponent.h"
+#include "PCGGraph.h"
+#include "PCGVolume.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
+#include "StaticMeshEditorSubsystem.h"
+#include "UObject/SavePackage.h"
+#include "AssetToolsModule.h"
 
 namespace
 {
@@ -97,6 +108,12 @@ namespace
 		FGameplayTag AmbientRitual;
 	};
 
+	struct FManyNamesSpawnValidationResult
+	{
+		bool bHasGround = false;
+		FVector GroundLocation = FVector::ZeroVector;
+	};
+
 	template <typename AssetType>
 	AssetType* LoadAsset(const TCHAR* AssetPath)
 	{
@@ -142,11 +159,37 @@ namespace
 		}
 	}
 
+	void EnableNaniteIfSupported(UStaticMesh* Mesh)
+	{
+		if (!Mesh || Mesh->GetNaniteSettings().bEnabled)
+		{
+			return;
+		}
+
+		if (UStaticMeshEditorSubsystem* StaticMeshEditorSubsystem = GEditor ? GEditor->GetEditorSubsystem<UStaticMeshEditorSubsystem>() : nullptr)
+		{
+			FMeshNaniteSettings NaniteSettings = StaticMeshEditorSubsystem->GetNaniteSettings(Mesh);
+			NaniteSettings.bEnabled = true;
+			StaticMeshEditorSubsystem->SetNaniteSettings(Mesh, NaniteSettings, true);
+		}
+	}
+
 	void AddAssetPath(TArray<FSoftObjectPath>& Paths, const UObject* Asset)
 	{
 		if (Asset)
 		{
 			Paths.Add(FSoftObjectPath(Asset->GetPathName()));
+		}
+	}
+
+	void EnableNaniteForPaths(const TArray<FSoftObjectPath>& Paths)
+	{
+		for (const FSoftObjectPath& Path : Paths)
+		{
+			if (UStaticMesh* Mesh = Cast<UStaticMesh>(Path.TryLoad()))
+			{
+				EnableNaniteIfSupported(Mesh);
+			}
 		}
 	}
 
@@ -197,6 +240,18 @@ namespace
 			{
 				FString AssetPath;
 				if (!Pair.Value.IsValid() || !Pair.Value->TryGetString(AssetPath))
+				{
+					continue;
+				}
+
+				FString PackageName = AssetPath;
+				int32 DotIndex = INDEX_NONE;
+				if (AssetPath.FindChar(TEXT('.'), DotIndex))
+				{
+					PackageName = AssetPath.Left(DotIndex);
+				}
+
+				if (!PackageName.IsEmpty() && !FPackageName::DoesPackageExist(PackageName))
 				{
 					continue;
 				}
@@ -292,7 +347,7 @@ namespace
 	{
 		if (const USkeletalMesh* const* Found = Assets.CharacterMeshesById.Find(CharacterId))
 		{
-			return *Found;
+			return const_cast<USkeletalMesh*>(*Found);
 		}
 
 		switch (FallbackSlot)
@@ -310,7 +365,7 @@ namespace
 	{
 		if (const USkeletalMesh* const* Found = Assets.AmbientMeshesByProfileId.Find(ProfileId))
 		{
-			return *Found;
+			return const_cast<USkeletalMesh*>(*Found);
 		}
 
 		return (FallbackSlot % 2 == 0) ? Assets.Quinn : Assets.Manny;
@@ -325,11 +380,17 @@ namespace
 		const FVector& RelativeLocation = FVector(0.0f, 0.0f, -88.0f),
 		bool bPreferMetaHuman = false,
 		FName ProfileId = NAME_None,
-		FName CameraAnchorTag = NAME_None)
+		FName CameraAnchorTag = NAME_None,
+		FName CharacterId = NAME_None,
+		FName ClothingVariantId = NAME_None,
+		FName StanceId = NAME_None,
+		EManyNamesCrowdBehaviorTier CrowdBehaviorTier = EManyNamesCrowdBehaviorTier::StaticScenic,
+		bool bEnableClothSimulation = false)
 	{
 		FManyNamesNpcVisualProfile Profile;
 		Profile.ProfileId = ProfileId;
 		Profile.RoleTag = RoleTag;
+		Profile.CharacterId = CharacterId.IsNone() ? ProfileId : CharacterId;
 		Profile.bPreferMetaHuman = bPreferMetaHuman;
 		Profile.SkeletalMesh = SkeletalMesh;
 		Profile.IdleAnimation = IdleAnimation;
@@ -337,6 +398,10 @@ namespace
 		Profile.RelativeScale = RelativeScale;
 		Profile.RelativeLocation = RelativeLocation;
 		Profile.CameraAnchorTag = CameraAnchorTag;
+		Profile.ClothingVariantId = ClothingVariantId;
+		Profile.StanceId = StanceId;
+		Profile.CrowdBehaviorTier = CrowdBehaviorTier;
+		Profile.bEnableClothSimulation = bEnableClothSimulation;
 		return Profile;
 	}
 
@@ -357,6 +422,7 @@ namespace
 			Profile.StyleNotes = TEXT("Crash ravine with dusty firelight, scorched metal, and a hard travel palette.");
 			Profile.BaselineWeatherStateId = TEXT("Opening.Baseline");
 			Profile.HeroWeatherStateId = TEXT("Opening.Hero");
+			Profile.HubPopulationDensity = 0.8f;
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.CaveRock);
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.HighDetailRock);
 			AddAssetPath(Profile.PropMeshPaths, Assets.Rock001);
@@ -370,6 +436,7 @@ namespace
 			Profile.StyleNotes = TEXT("Layered sacred masonry, warm dust, solar authority, and controlled ceremonial density.");
 			Profile.BaselineWeatherStateId = TEXT("Egypt.Baseline");
 			Profile.HeroWeatherStateId = TEXT("Egypt.Hero");
+			Profile.HubPopulationDensity = 1.35f;
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.EgyptWallA);
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.EgyptColumn);
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.MastabaEntrance);
@@ -385,6 +452,7 @@ namespace
 			Profile.StyleNotes = TEXT("Bright sky exposure, cliff silhouettes, ritual stone, banners, and storm spectacle.");
 			Profile.BaselineWeatherStateId = TEXT("Greece.Baseline");
 			Profile.HeroWeatherStateId = TEXT("Greece.Hero");
+			Profile.HubPopulationDensity = 1.15f;
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.GreeceDolmen);
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.HighDetailRock);
 			AddAssetPath(Profile.PropMeshPaths, Assets.AncientCarvedStone);
@@ -398,6 +466,7 @@ namespace
 			Profile.StyleNotes = TEXT("Timber-stone pragmatism, boundary markers, civic repetition, road discipline, and forge fire.");
 			Profile.BaselineWeatherStateId = TEXT("ItalicWest.Baseline");
 			Profile.HeroWeatherStateId = TEXT("ItalicWest.Hero");
+			Profile.HubPopulationDensity = 1.1f;
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.ItalicChurchRock);
 			AddAssetPath(Profile.PropMeshPaths, Assets.ItalicBollard);
 			AddAssetPath(Profile.PropMeshPaths, Assets.ConvergenceDestroyedWood);
@@ -412,6 +481,7 @@ namespace
 			Profile.StyleNotes = TEXT("Buried ruin shell, severe descent core, stripped archaeological sci-fi, and cold reflected light.");
 			Profile.BaselineWeatherStateId = TEXT("Convergence.Baseline");
 			Profile.HeroWeatherStateId = TEXT("Convergence.Hero");
+			Profile.HubPopulationDensity = 0.55f;
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.ConvergenceDestroyedWood);
 			AddAssetPath(Profile.StructuralMeshPaths, Assets.CaveRock);
 			AddAssetPath(Profile.PropMeshPaths, Assets.PyramidStone);
@@ -461,29 +531,179 @@ namespace
 
 		FManyNamesEnvironmentProfile Profile;
 		Profile.RegionId = RegionId;
+		Profile.PreferredRenderPath = EManyNamesRenderPath::Auto;
+		Profile.bAllowHeterogeneousVolumes = true;
+		Profile.bAllowNaniteAssemblies = true;
+		Profile.bAllowNaniteSkinnedMeshes = true;
+		Profile.bAllowNaniteVoxels = true;
 
 		switch (RegionId)
 		{
 		case EManyNamesRegionId::Opening:
+			Profile.bAllowMegaLights = true;
+			Profile.bPreferMegaLightLocalLights = true;
 			Profile.BaselineState = MakeWeatherState(TEXT("Opening.Baseline"), -34.0f, -18.0f, 9.2f, 1.0f, 0.012f, FLinearColor(1.0f, 0.94f, 0.85f, 1.0f), FLinearColor(0.75f, 0.68f, 0.60f, 1.0f), 0.35f, EManyNamesWeatherPrecipitation::Dust, 0.2f, 0.0f, 0.0f, 1.0f, false);
 			Profile.HeroState = MakeWeatherState(TEXT("Opening.Hero"), -22.0f, -10.0f, 6.8f, 0.8f, 0.02f, FLinearColor(0.90f, 0.88f, 0.82f, 1.0f), FLinearColor(0.52f, 0.49f, 0.44f, 1.0f), 0.9f, EManyNamesWeatherPrecipitation::Ash, 0.55f, 0.0f, 0.0f, 0.9f, true);
 			break;
 		case EManyNamesRegionId::Egypt:
+			Profile.bAllowMegaLights = true;
+			Profile.bPreferMegaLightLocalLights = true;
 			Profile.BaselineState = MakeWeatherState(TEXT("Egypt.Baseline"), -38.0f, -28.0f, 10.5f, 1.35f, 0.009f, FLinearColor(1.0f, 0.93f, 0.80f, 1.0f), FLinearColor(0.95f, 0.85f, 0.70f, 1.0f), 0.25f, EManyNamesWeatherPrecipitation::Dust, 0.15f, 0.0f, 0.0f, 1.0f, false);
 			Profile.HeroState = MakeWeatherState(TEXT("Egypt.Hero"), -31.0f, -12.0f, 8.0f, 1.0f, 0.018f, FLinearColor(0.96f, 0.82f, 0.62f, 1.0f), FLinearColor(0.84f, 0.70f, 0.54f, 1.0f), 0.8f, EManyNamesWeatherPrecipitation::Dust, 0.5f, 0.0f, 0.0f, 0.92f, true);
 			break;
 		case EManyNamesRegionId::Greece:
+			Profile.bAllowMegaLights = true;
+			Profile.bPreferMegaLightLocalLights = true;
 			Profile.BaselineState = MakeWeatherState(TEXT("Greece.Baseline"), -32.0f, 42.0f, 9.8f, 1.45f, 0.007f, FLinearColor(0.97f, 0.95f, 0.90f, 1.0f), FLinearColor(0.78f, 0.83f, 0.88f, 1.0f), 0.4f, EManyNamesWeatherPrecipitation::None, 0.0f, 0.0f, 0.0f, 1.0f, false);
 			Profile.HeroState = MakeWeatherState(TEXT("Greece.Hero"), -18.0f, 60.0f, 5.8f, 0.82f, 0.018f, FLinearColor(0.72f, 0.78f, 0.90f, 1.0f), FLinearColor(0.32f, 0.38f, 0.48f, 1.0f), 1.0f, EManyNamesWeatherPrecipitation::Rain, 0.8f, 0.5f, 0.0f, 0.84f, true);
 			break;
 		case EManyNamesRegionId::ItalicWest:
+			Profile.bAllowMegaLights = true;
+			Profile.bPreferMegaLightLocalLights = true;
 			Profile.BaselineState = MakeWeatherState(TEXT("ItalicWest.Baseline"), -30.0f, -12.0f, 8.7f, 1.1f, 0.011f, FLinearColor(0.98f, 0.91f, 0.82f, 1.0f), FLinearColor(0.72f, 0.69f, 0.62f, 1.0f), 0.35f, EManyNamesWeatherPrecipitation::None, 0.0f, 0.0f, 0.0f, 1.0f, false);
 			Profile.HeroState = MakeWeatherState(TEXT("ItalicWest.Hero"), -16.0f, -6.0f, 5.4f, 0.76f, 0.019f, FLinearColor(0.82f, 0.86f, 0.92f, 1.0f), FLinearColor(0.48f, 0.50f, 0.56f, 1.0f), 0.85f, EManyNamesWeatherPrecipitation::Snow, 0.45f, 0.15f, 0.35f, 0.82f, true);
 			break;
 		case EManyNamesRegionId::Convergence:
 		default:
+			Profile.bAllowMegaLights = true;
+			Profile.bPreferMegaLightLocalLights = true;
 			Profile.BaselineState = MakeWeatherState(TEXT("Convergence.Baseline"), -18.0f, 130.0f, 6.2f, 0.9f, 0.016f, FLinearColor(0.80f, 0.88f, 0.95f, 1.0f), FLinearColor(0.35f, 0.42f, 0.50f, 1.0f), 0.55f, EManyNamesWeatherPrecipitation::Ash, 0.15f, 0.0f, 0.0f, 1.0f, false);
 			Profile.HeroState = MakeWeatherState(TEXT("Convergence.Hero"), -8.0f, 148.0f, 4.8f, 0.65f, 0.026f, FLinearColor(0.70f, 0.82f, 0.92f, 1.0f), FLinearColor(0.22f, 0.29f, 0.36f, 1.0f), 1.0f, EManyNamesWeatherPrecipitation::Snow, 0.3f, 0.05f, 0.25f, 0.88f, true);
+			break;
+		}
+
+		return Profile;
+	}
+
+	FManyNamesTerrainProfile BuildTerrainProfile(EManyNamesRegionId RegionId, const FManyNamesBuildAssets& Assets)
+	{
+		FManyNamesTerrainProfile Profile;
+		Profile.RegionId = RegionId;
+		Profile.SharedPcgGraphId = TEXT("PCG.Shared.RouteBreakup");
+		Profile.SharedPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Shared/PCG_Shared_RouteBreakup.PCG_Shared_RouteBreakup"));
+		Profile.SpawnTraceHeight = 1400.0f;
+		Profile.SpawnTraceDepth = 2600.0f;
+		Profile.SpawnSafetyLift = 120.0f;
+		Profile.LandscapeQuadsPerSection = 63;
+		Profile.LandscapeSectionsPerComponent = 1;
+		Profile.LandscapeComponentCount = FIntPoint(12, 10);
+		Profile.LandscapeScale = FVector(100.0f, 100.0f, 100.0f);
+
+		switch (RegionId)
+		{
+		case EManyNamesRegionId::Opening:
+			Profile.LandscapeMaterial = Assets.AshStone;
+			Profile.RegionPcgGraphId = TEXT("PCG.Opening.AshScatter");
+			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Opening_AshScatter.PCG_Opening_AshScatter"));
+			Profile.TerrainOrigin = FVector(-600.0f, 0.0f, -260.0f);
+			Profile.TerrainExtent = FVector(76000.0f, 52000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(14, 10);
+			Profile.HeightAmplitude = 860.0f;
+			Profile.HeightBias = -30.0f;
+			Profile.PrimaryHubLocation = FVector(-2800.0f, 1200.0f, 0.0f);
+			Profile.PrimarySpawnLocation = FVector(-6200.0f, -180.0f, 220.0f);
+			Profile.bEnableNaniteFoliage = true;
+			Profile.RouteSplines = {
+				{ TEXT("Opening.SpawnToWitness"), { FVector(-6200.0f, -180.0f, 0.0f), FVector(-5200.0f, -40.0f, 0.0f), FVector(-4300.0f, 220.0f, 0.0f), FVector(-2800.0f, 1200.0f, 0.0f) }, 700.0f, TEXT("Primary survivor route from spawn to witness camp.") },
+				{ TEXT("Opening.WitnessToCrash"), { FVector(-2800.0f, 1200.0f, 0.0f), FVector(-1400.0f, 760.0f, 0.0f), FVector(-120.0f, 180.0f, 0.0f), FVector(980.0f, -60.0f, 0.0f) }, 720.0f, TEXT("Descending route from the witness camp into the impact trench.") },
+				{ TEXT("Opening.WitnessToGates"), { FVector(-2800.0f, 1200.0f, 0.0f), FVector(-800.0f, 640.0f, 0.0f), FVector(1800.0f, 160.0f, 0.0f), FVector(5200.0f, -260.0f, 0.0f) }, 800.0f, TEXT("Exit route from camp to regional gates.") }
+			};
+			Profile.TerrainNotes = TEXT("Impact ravine, witness rise, and crash trench shelves.");
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.CaveRock);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.HighDetailRock);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.RealisticRock);
+			AddAssetPath(Profile.FoliageScatterMeshPaths, Assets.Rock001);
+			break;
+		case EManyNamesRegionId::Egypt:
+			Profile.LandscapeMaterial = Assets.SandStone;
+			Profile.RegionPcgGraphId = TEXT("PCG.Egypt.DryScatter");
+			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Egypt_DryScatter.PCG_Egypt_DryScatter"));
+			Profile.TerrainOrigin = FVector(0.0f, 0.0f, -260.0f);
+			Profile.TerrainExtent = FVector(92000.0f, 62000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(16, 12);
+			Profile.HeightAmplitude = 620.0f;
+			Profile.PrimaryHubLocation = FVector(0.0f, -220.0f, 0.0f);
+			Profile.PrimarySpawnLocation = FVector(-9800.0f, -600.0f, 180.0f);
+			Profile.bEnableNaniteFoliage = true;
+			Profile.RouteSplines = {
+				{ TEXT("Egypt.SpawnToTemple"), { FVector(-9800.0f, -600.0f, 0.0f), FVector(-7200.0f, -520.0f, 0.0f), FVector(-3600.0f, -280.0f, 0.0f), FVector(0.0f, -220.0f, 0.0f) }, 760.0f, TEXT("Approach from arrival point to temple district.") },
+				{ TEXT("Egypt.TempleToArchive"), { FVector(0.0f, -220.0f, 0.0f), FVector(900.0f, -160.0f, 0.0f), FVector(1800.0f, -80.0f, 0.0f), FVector(2800.0f, 0.0f, 0.0f) }, 650.0f, TEXT("Ceremonial road connecting temple court and archive.") },
+				{ TEXT("Egypt.TempleToNecropolis"), { FVector(0.0f, -220.0f, 0.0f), FVector(120.0f, 1100.0f, 0.0f), FVector(0.0f, 2600.0f, 0.0f), FVector(0.0f, 6200.0f, 0.0f) }, 760.0f, TEXT("Necropolis ascent from the civic core.") },
+				{ TEXT("Egypt.TempleToCanalEdge"), { FVector(0.0f, -220.0f, 0.0f), FVector(-1800.0f, -1200.0f, 0.0f), FVector(-4200.0f, -2200.0f, 0.0f), FVector(-7000.0f, -2600.0f, 0.0f) }, 740.0f, TEXT("Managed floodplain route and canal-facing approach.") }
+			};
+			Profile.TerrainNotes = TEXT("Temple plateau, archive road, market terraces, and necropolis ridge.");
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.EgyptWallA);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.EgyptColumn);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.MastabaEntrance);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.BentPyramid);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.CaveRock);
+			AddAssetPath(Profile.FoliageScatterMeshPaths, Assets.PyramidStone);
+			break;
+		case EManyNamesRegionId::Greece:
+			Profile.LandscapeMaterial = Assets.Plaster;
+			Profile.RegionPcgGraphId = TEXT("PCG.Greece.MediterraneanScatter");
+			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Greece_MediterraneanScatter.PCG_Greece_MediterraneanScatter"));
+			Profile.TerrainOrigin = FVector(0.0f, 0.0f, -320.0f);
+			Profile.TerrainExtent = FVector(86000.0f, 62000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(15, 12);
+			Profile.HeightAmplitude = 980.0f;
+			Profile.PrimaryHubLocation = FVector(0.0f, -180.0f, 0.0f);
+			Profile.PrimarySpawnLocation = FVector(-9200.0f, -200.0f, 220.0f);
+			Profile.bEnableNaniteFoliage = true;
+			Profile.RouteSplines = {
+				{ TEXT("Greece.SpawnToSanctuary"), { FVector(-9200.0f, -200.0f, 0.0f), FVector(-6200.0f, -120.0f, 0.0f), FVector(-2400.0f, 140.0f, 0.0f), FVector(0.0f, -180.0f, 0.0f) }, 760.0f, TEXT("Main ascent into the sanctuary court.") },
+				{ TEXT("Greece.SanctuaryToShrine"), { FVector(0.0f, -180.0f, 0.0f), FVector(1200.0f, 620.0f, 0.0f), FVector(2100.0f, 1400.0f, 0.0f), FVector(3600.0f, 3200.0f, 0.0f) }, 700.0f, TEXT("Cliff route from sanctuary to the upper shrine court.") },
+				{ TEXT("Greece.SanctuaryToStormRidge"), { FVector(0.0f, -180.0f, 0.0f), FVector(-600.0f, -1200.0f, 0.0f), FVector(-200.0f, -2800.0f, 0.0f), FVector(800.0f, -4600.0f, 0.0f) }, 700.0f, TEXT("Exposed storm-ridge route beneath the divine landmark.") }
+			};
+			Profile.TerrainNotes = TEXT("Sanctuary terrace, mountain route, and cliff shelf rise.");
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.GreeceDolmen);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.HighDetailRock);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.RealisticRock);
+			AddAssetPath(Profile.FoliageScatterMeshPaths, Assets.AncientCarvedStone);
+			break;
+		case EManyNamesRegionId::ItalicWest:
+			Profile.LandscapeMaterial = Assets.AshStone;
+			Profile.RegionPcgGraphId = TEXT("PCG.Italic.RoadsideScatter");
+			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Italic_RoadsideScatter.PCG_Italic_RoadsideScatter"));
+			Profile.TerrainOrigin = FVector(0.0f, 0.0f, -280.0f);
+			Profile.TerrainExtent = FVector(84000.0f, 56000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(15, 11);
+			Profile.HeightAmplitude = 700.0f;
+			Profile.PrimaryHubLocation = FVector(-1200.0f, -600.0f, 0.0f);
+			Profile.PrimarySpawnLocation = FVector(-9200.0f, -300.0f, 210.0f);
+			Profile.bEnableNaniteFoliage = true;
+			Profile.RouteSplines = {
+				{ TEXT("Italic.SpawnToSettlement"), { FVector(-9200.0f, -300.0f, 0.0f), FVector(-6200.0f, -360.0f, 0.0f), FVector(-2800.0f, -520.0f, 0.0f), FVector(-1200.0f, -600.0f, 0.0f) }, 700.0f, TEXT("Primary road into the hill settlement.") },
+				{ TEXT("Italic.SettlementToBoundary"), { FVector(-1200.0f, -600.0f, 0.0f), FVector(-400.0f, 620.0f, 0.0f), FVector(800.0f, 1180.0f, 0.0f), FVector(3800.0f, 2400.0f, 0.0f) }, 700.0f, TEXT("Ritual road and boundary field approach.") },
+				{ TEXT("Italic.SettlementToForge"), { FVector(-1200.0f, -600.0f, 0.0f), FVector(-200.0f, -420.0f, 0.0f), FVector(1000.0f, -260.0f, 0.0f), FVector(1800.0f, -200.0f, 0.0f) }, 620.0f, TEXT("Civic route linking the settlement and forge-law chamber.") }
+			};
+			Profile.TerrainNotes = TEXT("Hill settlement, civic road embankment, forge shelf, and boundary field.");
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.ItalicChurchRock);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.CaveRock);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.ConvergenceDestroyedWood);
+			AddAssetPath(Profile.FoliageScatterMeshPaths, Assets.ItalicBollard);
+			break;
+		case EManyNamesRegionId::Convergence:
+		default:
+			Profile.LandscapeMaterial = Assets.Basalt;
+			Profile.RegionPcgGraphId = TEXT("PCG.Convergence.SparseScatter");
+			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Convergence_SparseScatter.PCG_Convergence_SparseScatter"));
+			Profile.TerrainOrigin = FVector(0.0f, 0.0f, -340.0f);
+			Profile.TerrainExtent = FVector(76000.0f, 52000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(14, 10);
+			Profile.HeightAmplitude = 900.0f;
+			Profile.PrimaryHubLocation = FVector(0.0f, 2200.0f, 0.0f);
+			Profile.PrimarySpawnLocation = FVector(-8600.0f, -420.0f, 220.0f);
+			Profile.bEnableNaniteFoliage = false;
+			Profile.RouteSplines = {
+				{ TEXT("Convergence.SpawnToCore"), { FVector(-8600.0f, -420.0f, 0.0f), FVector(-5200.0f, -980.0f, 0.0f), FVector(-2200.0f, 120.0f, 0.0f), FVector(0.0f, 2200.0f, 0.0f) }, 760.0f, TEXT("Descent route from burial rim to bridge plateau.") },
+				{ TEXT("Convergence.CoreToBridge"), { FVector(0.0f, 2200.0f, 0.0f), FVector(1000.0f, 2600.0f, 0.0f), FVector(2400.0f, 3400.0f, 0.0f), FVector(4200.0f, 4200.0f, 0.0f) }, 680.0f, TEXT("Peripheral route along the broken bridge approach.") }
+			};
+			Profile.TerrainNotes = TEXT("Burial basin, ruin shell, descent shelf, and bridge plateau.");
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.CaveRock);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.HighDetailRock);
+			AddAssetPath(Profile.StructuralNaniteMeshPaths, Assets.ConvergenceDestroyedWood);
+			AddAssetPath(Profile.FoliageScatterMeshPaths, Assets.PyramidStone);
 			break;
 		}
 
@@ -511,6 +731,304 @@ namespace
 		if (AWorldSettings* WorldSettings = World->GetWorldSettings())
 		{
 			WorldSettings->bForceNoPrecomputedLighting = true;
+		}
+	}
+
+	FManyNamesSpawnValidationResult ProjectLocationToGround(UWorld* World, const FVector& CandidateLocation, const FManyNamesTerrainProfile& TerrainProfile)
+	{
+		FManyNamesSpawnValidationResult Result;
+		if (!World)
+		{
+			return Result;
+		}
+
+		const FVector TraceStart = CandidateLocation + FVector(0.0f, 0.0f, TerrainProfile.SpawnTraceHeight);
+		const FVector TraceEnd = CandidateLocation - FVector(0.0f, 0.0f, TerrainProfile.SpawnTraceDepth);
+		FHitResult HitResult;
+		FCollisionQueryParams Params(SCENE_QUERY_STAT(ManyNamesSpawnProjection), false);
+		Result.bHasGround = World->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, Params) && HitResult.bBlockingHit;
+		Result.GroundLocation = Result.bHasGround ? HitResult.ImpactPoint : CandidateLocation;
+		return Result;
+	}
+
+	void ValidateNaniteProfile(const FManyNamesTerrainProfile& TerrainProfile)
+	{
+		if (TerrainProfile.bEnableNaniteForStructuralMeshes)
+		{
+			EnableNaniteForPaths(TerrainProfile.StructuralNaniteMeshPaths);
+		}
+	}
+
+	FString MakeSafeAssetName(const FString& RawName)
+	{
+		FString SafeName = RawName;
+		SafeName.ReplaceInline(TEXT("."), TEXT("_"));
+		SafeName.ReplaceInline(TEXT(" "), TEXT("_"));
+		return SafeName;
+	}
+
+	UPCGGraph* EnsurePcgGraphAsset(const FString& PackagePath, const FString& AssetName)
+	{
+		const FString SafeAssetName = MakeSafeAssetName(AssetName);
+		const FString ObjectPath = PackagePath / SafeAssetName + TEXT(".") + SafeAssetName;
+		const FString LongPackageName = PackagePath / SafeAssetName;
+		if (FPackageName::DoesPackageExist(LongPackageName))
+		{
+			if (UPCGGraph* ExistingGraph = LoadObject<UPCGGraph>(nullptr, *ObjectPath))
+			{
+				return ExistingGraph;
+			}
+		}
+
+		UPackage* Package = CreatePackage(*LongPackageName);
+		if (!Package)
+		{
+			return nullptr;
+		}
+
+		UPCGGraph* Graph = NewObject<UPCGGraph>(Package, *SafeAssetName, RF_Public | RF_Standalone | RF_Transactional);
+		if (!Graph)
+		{
+			return nullptr;
+		}
+
+		Graph->MarkPackageDirty();
+		FAssetRegistryModule::AssetCreated(Graph);
+
+		const FString Filename = FPackageName::LongPackageNameToFilename(Package->GetName(), FPackageName::GetAssetPackageExtension());
+		FSavePackageArgs SaveArgs;
+		SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+		SaveArgs.SaveFlags = SAVE_NoError;
+		UPackage::SavePackage(Package, Graph, *Filename, SaveArgs);
+		return Graph;
+	}
+
+	UPCGGraph* EnsurePcgGraphAssetFromPath(const FSoftObjectPath& AssetPath, const FString& FallbackPackagePath, const FString& FallbackAssetName)
+	{
+		if (!AssetPath.IsNull())
+		{
+			const FString LongPackageName = AssetPath.GetLongPackageName();
+			const FString AssetName = AssetPath.GetAssetName();
+			if (!LongPackageName.IsEmpty() && !AssetName.IsEmpty())
+			{
+				return EnsurePcgGraphAsset(FPaths::GetPath(LongPackageName), AssetName);
+			}
+		}
+
+		return EnsurePcgGraphAsset(FallbackPackagePath, FallbackAssetName);
+	}
+
+	TArray<uint16> BuildLandscapeHeightData(const FManyNamesTerrainProfile& TerrainProfile)
+	{
+		const int32 ComponentSizeQuads = TerrainProfile.LandscapeQuadsPerSection * TerrainProfile.LandscapeSectionsPerComponent;
+		const int32 QuadsX = TerrainProfile.LandscapeComponentCount.X * ComponentSizeQuads;
+		const int32 QuadsY = TerrainProfile.LandscapeComponentCount.Y * ComponentSizeQuads;
+		const int32 VertsX = QuadsX + 1;
+		const int32 VertsY = QuadsY + 1;
+		TArray<uint16> HeightData;
+		HeightData.SetNumUninitialized(VertsX * VertsY);
+
+		const FVector2D HalfExtent(TerrainProfile.TerrainExtent.X * 0.5f, TerrainProfile.TerrainExtent.Y * 0.5f);
+		const float ZScale = FMath::Max(1.0f, TerrainProfile.LandscapeScale.Z);
+
+		auto AddGaussian = [](double X, double Y, const FVector2D& Center, double RadiusX, double RadiusY, double Strength)
+		{
+			const double DX = (X - Center.X) / FMath::Max(1.0, RadiusX);
+			const double DY = (Y - Center.Y) / FMath::Max(1.0, RadiusY);
+			return Strength * FMath::Exp(-(DX * DX + DY * DY));
+		};
+
+		for (int32 Y = 0; Y < VertsY; ++Y)
+		{
+			for (int32 X = 0; X < VertsX; ++X)
+			{
+				const double AlphaX = VertsX > 1 ? static_cast<double>(X) / static_cast<double>(VertsX - 1) : 0.0;
+				const double AlphaY = VertsY > 1 ? static_cast<double>(Y) / static_cast<double>(VertsY - 1) : 0.0;
+				const double WorldX = FMath::Lerp(-HalfExtent.X, HalfExtent.X, AlphaX);
+				const double WorldY = FMath::Lerp(-HalfExtent.Y, HalfExtent.Y, AlphaY);
+
+				double HeightWorld = TerrainProfile.HeightBias;
+
+				switch (TerrainProfile.RegionId)
+				{
+				case EManyNamesRegionId::Opening:
+					HeightWorld += AddGaussian(WorldX, WorldY, FVector2D(-2500.0, 600.0), 2800.0, 1800.0, 320.0);
+					HeightWorld -= AddGaussian(WorldX, WorldY, FVector2D(250.0, 0.0), 2200.0, 900.0, 410.0);
+					HeightWorld += 0.18 * WorldX + 0.05 * WorldY;
+					break;
+				case EManyNamesRegionId::Egypt:
+					HeightWorld += AddGaussian(WorldX, WorldY, FVector2D(-800.0, -900.0), 4200.0, 2800.0, 260.0);
+					HeightWorld += AddGaussian(WorldX, WorldY, FVector2D(1200.0, 3200.0), 2600.0, 1800.0, 280.0);
+					HeightWorld -= AddGaussian(WorldX, WorldY, FVector2D(-3400.0, 0.0), 2200.0, 3400.0, 120.0);
+					HeightWorld += 0.03 * WorldY;
+					break;
+				case EManyNamesRegionId::Greece:
+					HeightWorld += AddGaussian(WorldX, WorldY, FVector2D(2000.0, 1700.0), 2400.0, 2000.0, 520.0);
+					HeightWorld += AddGaussian(WorldX, WorldY, FVector2D(-600.0, -900.0), 2600.0, 1800.0, 220.0);
+					HeightWorld -= AddGaussian(WorldX, WorldY, FVector2D(-2600.0, 400.0), 2000.0, 3000.0, 180.0);
+					HeightWorld += 0.10 * WorldY;
+					break;
+				case EManyNamesRegionId::ItalicWest:
+					HeightWorld += AddGaussian(WorldX, WorldY, FVector2D(-1200.0, -600.0), 3000.0, 2200.0, 300.0);
+					HeightWorld += AddGaussian(WorldX, WorldY, FVector2D(2100.0, 1300.0), 2400.0, 1800.0, 180.0);
+					HeightWorld += 0.04 * WorldX + 0.02 * WorldY;
+					break;
+				case EManyNamesRegionId::Convergence:
+				default:
+					HeightWorld -= AddGaussian(WorldX, WorldY, FVector2D(0.0, 0.0), 3600.0, 2800.0, 340.0);
+					HeightWorld += AddGaussian(WorldX, WorldY, FVector2D(0.0, 2400.0), 2600.0, 1600.0, 220.0);
+					HeightWorld += AddGaussian(WorldX, WorldY, FVector2D(-2400.0, -1600.0), 1800.0, 1400.0, 260.0);
+					break;
+				}
+
+				const float LocalHeight = static_cast<float>(HeightWorld / ZScale);
+				HeightData[Y * VertsX + X] = LandscapeDataAccess::GetTexHeight(LocalHeight);
+			}
+		}
+
+		return HeightData;
+	}
+
+	ALandscape* SpawnLandscapeTerrain(UWorld* World, const FManyNamesTerrainProfile& TerrainProfile)
+	{
+		if (!World)
+		{
+			return nullptr;
+		}
+
+		const int32 ComponentSizeQuads = TerrainProfile.LandscapeQuadsPerSection * TerrainProfile.LandscapeSectionsPerComponent;
+		const int32 QuadsX = TerrainProfile.LandscapeComponentCount.X * ComponentSizeQuads;
+		const int32 QuadsY = TerrainProfile.LandscapeComponentCount.Y * ComponentSizeQuads;
+
+		FActorSpawnParameters SpawnParams;
+		const FVector LandscapeLocation = TerrainProfile.TerrainOrigin - FVector(TerrainProfile.TerrainExtent.X * 0.5f, TerrainProfile.TerrainExtent.Y * 0.5f, 0.0f);
+		ALandscape* Landscape = World->SpawnActor<ALandscape>(LandscapeLocation, FRotator::ZeroRotator, SpawnParams);
+		if (!Landscape)
+		{
+			return nullptr;
+		}
+
+		Landscape->SetActorLabel(TEXT("TerrainLandscape"));
+		Landscape->SetActorScale3D(TerrainProfile.LandscapeScale);
+		Landscape->LandscapeMaterial = TerrainProfile.LandscapeMaterial.Get();
+
+		TMap<FGuid, TArray<uint16>> HeightDataPerLayer;
+		HeightDataPerLayer.Add(FGuid(), BuildLandscapeHeightData(TerrainProfile));
+		TMap<FGuid, TArray<FLandscapeImportLayerInfo>> MaterialLayerDataPerLayer;
+		MaterialLayerDataPerLayer.Add(FGuid(), {});
+
+		Landscape->Import(
+			FGuid::NewGuid(),
+			0,
+			0,
+			QuadsX,
+			QuadsY,
+			TerrainProfile.LandscapeSectionsPerComponent,
+			TerrainProfile.LandscapeQuadsPerSection,
+			HeightDataPerLayer,
+			nullptr,
+			MaterialLayerDataPerLayer,
+			ELandscapeImportAlphamapType::Additive,
+			TArrayView<const FLandscapeLayer>());
+
+		Landscape->CreateLandscapeInfo();
+		Landscape->MarkComponentsRenderStateDirty();
+		Landscape->ReregisterAllComponents();
+		Landscape->PostEditChange();
+		return Landscape;
+	}
+
+	AActor* SpawnRouteSplineActor(UWorld* World, const FManyNamesRouteSplineDefinition& RouteDefinition)
+	{
+		if (!World || RouteDefinition.ControlPoints.Num() < 2)
+		{
+			return nullptr;
+		}
+
+		AActor* RouteActor = World->SpawnActor<AActor>(FVector::ZeroVector, FRotator::ZeroRotator);
+		if (!RouteActor)
+		{
+			return nullptr;
+		}
+
+		RouteActor->SetActorLabel(RouteDefinition.RouteId.IsNone() ? TEXT("RouteSpline") : RouteDefinition.RouteId.ToString());
+		USplineComponent* SplineComponent = NewObject<USplineComponent>(RouteActor, TEXT("RouteSpline"));
+		RouteActor->AddInstanceComponent(SplineComponent);
+		RouteActor->SetRootComponent(SplineComponent);
+		SplineComponent->RegisterComponent();
+		SplineComponent->SetClosedLoop(false);
+		SplineComponent->ClearSplinePoints();
+		for (const FVector& ControlPoint : RouteDefinition.ControlPoints)
+		{
+			SplineComponent->AddSplinePoint(ControlPoint, ESplineCoordinateSpace::World, false);
+		}
+		SplineComponent->UpdateSpline();
+		return RouteActor;
+	}
+
+	void SpawnPcgVolume(UWorld* World, const FString& Label, const FVector& Center, const FVector& Extent, UPCGGraph* Graph)
+	{
+		if (!World || !Graph)
+		{
+			return;
+		}
+
+		APCGVolume* Volume = World->SpawnActor<APCGVolume>(Center, FRotator::ZeroRotator);
+		if (!Volume)
+		{
+			return;
+		}
+
+		Volume->SetActorLabel(Label);
+		Volume->SetActorScale3D(FVector(FMath::Max(1.0f, Extent.X / 100.0f), FMath::Max(1.0f, Extent.Y / 100.0f), FMath::Max(1.0f, Extent.Z / 100.0f)));
+		if (UPCGComponent* PCGComponent = Volume->GetComponentByClass<UPCGComponent>())
+		{
+			PCGComponent->SetGraphLocal(Graph);
+			PCGComponent->Seed = 42;
+			PCGComponent->GenerationTrigger = EPCGComponentGenerationTrigger::GenerateOnDemand;
+		}
+	}
+
+	void BuildTerrainSystems(UWorld* World, const FManyNamesTerrainProfile& TerrainProfile)
+	{
+		SpawnLandscapeTerrain(World, TerrainProfile);
+
+		const FString SharedGraphPackage = TEXT("/Game/PCG/Shared");
+		const FString RegionGraphPackage = TEXT("/Game/PCG/Regions");
+		UPCGGraph* SharedGraph = EnsurePcgGraphAssetFromPath(TerrainProfile.SharedPcgGraphAsset, SharedGraphPackage, TerrainProfile.SharedPcgGraphId.ToString());
+		UPCGGraph* RegionGraph = EnsurePcgGraphAssetFromPath(TerrainProfile.RegionPcgGraphAsset, RegionGraphPackage, TerrainProfile.RegionPcgGraphId.ToString());
+		if (SharedGraph)
+		{
+			SpawnPcgVolume(World, TEXT("PCG_SharedScatter"), TerrainProfile.TerrainOrigin + FVector(0.0f, 0.0f, 300.0f), FVector(TerrainProfile.TerrainExtent.X * 0.5f, TerrainProfile.TerrainExtent.Y * 0.5f, 800.0f), SharedGraph);
+		}
+		if (RegionGraph)
+		{
+			SpawnPcgVolume(
+				World,
+				FString::Printf(TEXT("PCG_%s"), *UEnum::GetValueAsString(TerrainProfile.RegionId)),
+				TerrainProfile.PrimaryHubLocation + FVector(0.0f, 0.0f, 220.0f),
+				FVector(TerrainProfile.TerrainExtent.X * 0.22f, TerrainProfile.TerrainExtent.Y * 0.18f, 1200.0f),
+				RegionGraph);
+		}
+
+		for (const FManyNamesRouteSplineDefinition& RouteDefinition : TerrainProfile.RouteSplines)
+		{
+			SpawnRouteSplineActor(World, RouteDefinition);
+			if (SharedGraph && RouteDefinition.ControlPoints.Num() > 0)
+			{
+				FVector RouteCenter = FVector::ZeroVector;
+				for (const FVector& ControlPoint : RouteDefinition.ControlPoints)
+				{
+					RouteCenter += ControlPoint;
+				}
+				RouteCenter /= RouteDefinition.ControlPoints.Num();
+				SpawnPcgVolume(
+					World,
+					FString::Printf(TEXT("PCG_%s_Scatter"), *RouteDefinition.RouteId.ToString()),
+					RouteCenter + FVector(0.0f, 0.0f, 180.0f),
+					FVector(RouteDefinition.RouteWidth * 1.5f, RouteDefinition.RouteWidth * 1.5f, 900.0f),
+					SharedGraph);
+			}
 		}
 	}
 
@@ -558,6 +1076,27 @@ namespace
 		return Actor;
 	}
 
+	AManyNamesScenicActor* SpawnTerrainShelf(
+		UWorld* World,
+		const FString& Label,
+		UStaticMesh* Mesh,
+		const FVector& Location,
+		const FVector& Scale,
+		UMaterialInterface* Material,
+		const FRotator& Rotation = FRotator::ZeroRotator)
+	{
+		AManyNamesScenicActor* Actor = SpawnScenic(World, Label, Mesh, Location, Scale, Material, Rotation);
+		if (Actor)
+		{
+			if (UStaticMeshComponent* StaticMeshComponent = Actor->GetStaticMeshComponent())
+			{
+				StaticMeshComponent->SetCollisionProfileName(TEXT("BlockAll"));
+				StaticMeshComponent->SetMobility(EComponentMobility::Movable);
+			}
+		}
+		return Actor;
+	}
+
 	AManyNamesScenicActor* SpawnNpc(UWorld* World, const FString& Label, const FManyNamesNpcVisualProfile& Profile, const FVector& Location, float Yaw)
 	{
 		if (!World)
@@ -574,6 +1113,44 @@ namespace
 		Actor->SetActorLabel(Label);
 		Actor->SetNpcVisualProfile(Profile);
 		return Actor;
+	}
+
+	void SpawnAmbientCluster(
+		UWorld* World,
+		const FString& BaseLabel,
+		const FGameplayTag& RoleTag,
+		const FManyNamesBuildAssets& Assets,
+		FName ProfileId,
+		const FVector& Center,
+		const TArray<FVector>& Offsets,
+		float BaseYaw,
+		bool bEnableClothSimulation = false)
+	{
+		for (int32 Index = 0; Index < Offsets.Num(); ++Index)
+		{
+			const FVector SpawnLocation = Center + Offsets[Index];
+			const float Yaw = BaseYaw + (Index * 17.0f);
+			SpawnNpc(
+				World,
+				FString::Printf(TEXT("%s_%02d"), *BaseLabel, Index + 1),
+				MakeNpcProfile(
+					RoleTag,
+					ResolveAmbientCharacter(Assets, ProfileId, Index),
+					Assets.IdleAnimation,
+					nullptr,
+					FVector(1.0f),
+					FVector(0.0f, 0.0f, -88.0f),
+					false,
+					ProfileId,
+					NAME_None,
+					NAME_None,
+					ProfileId,
+					TEXT("ambient_hub"),
+					EManyNamesCrowdBehaviorTier::HubAmbient,
+					bEnableClothSimulation),
+				SpawnLocation,
+				Yaw);
+		}
 	}
 
 	AManyNamesInteractableActor* SpawnInteractableNpc(
@@ -729,18 +1306,29 @@ namespace
 		Controller->SetEnvironmentProfile(EnvironmentProfile);
 	}
 
-	void SpawnPlayerStart(UWorld* World, const FVector& Location, float Yaw)
+	bool SpawnPlayerStart(UWorld* World, const FVector& Location, float Yaw, const FManyNamesTerrainProfile& TerrainProfile)
 	{
 		if (!World)
 		{
-			return;
+			return false;
 		}
 
-		APlayerStart* PlayerStart = World->SpawnActor<APlayerStart>(Location, FRotator(0.0f, Yaw, 0.0f));
+		const FManyNamesSpawnValidationResult Projection = ProjectLocationToGround(World, Location, TerrainProfile);
+		if (!Projection.bHasGround)
+		{
+			UE_LOG(LogTemp, Error, TEXT("No valid ground found for PlayerStart at %s in region %d."), *Location.ToCompactString(), static_cast<int32>(TerrainProfile.RegionId));
+			return false;
+		}
+
+		const FVector SafeLocation = Projection.GroundLocation + FVector(0.0f, 0.0f, TerrainProfile.SpawnSafetyLift);
+		APlayerStart* PlayerStart = World->SpawnActor<APlayerStart>(SafeLocation, FRotator(0.0f, Yaw, 0.0f));
 		if (PlayerStart)
 		{
 			PlayerStart->SetActorLabel(TEXT("PlayerStart"));
+			return true;
 		}
+
+		return false;
 	}
 
 	void BuildOpeningMap(UWorld* World, const FManyNamesBuildAssets& Assets, const FManyNamesRoleTags& RoleTags)
@@ -748,14 +1336,15 @@ namespace
 		ClearWorld(World);
 		const FManyNamesRegionArtProfile ArtProfile = BuildRegionArtProfile(EManyNamesRegionId::Opening, Assets, RoleTags);
 		const FManyNamesEnvironmentProfile EnvironmentProfile = BuildEnvironmentProfile(EManyNamesRegionId::Opening);
+		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::Opening, Assets);
+		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
 		SpawnEnvironmentController(World, EnvironmentProfile);
+		BuildTerrainSystems(World, TerrainProfile);
 
-		SpawnScenic(World, TEXT("OpeningGround"), Assets.Plane, FVector(0.0f, 0.0f, -25.0f), FVector(72.0f, 52.0f, 1.0f), Assets.AshStone);
-		SpawnScenic(World, TEXT("OpeningNorthSpur"), Assets.Plane, FVector(-1600.0f, 2200.0f, -15.0f), FVector(34.0f, 16.0f, 1.0f), Assets.AshStone, FRotator(2.0f, 8.0f, 0.0f));
-		SpawnScenic(World, TEXT("OpeningSouthSpur"), Assets.Plane, FVector(1900.0f, -2300.0f, -18.0f), FVector(28.0f, 18.0f, 1.0f), Assets.AshStone, FRotator(-1.0f, -12.0f, 0.0f));
-		SpawnScenic(World, TEXT("WitnessPath"), Assets.Cube, FVector(-1200.0f, 780.0f, 24.0f), FVector(8.0f, 1.3f, 0.12f), Assets.Basalt, FRotator(0.0f, -8.0f, 0.0f));
-		SpawnScenic(World, TEXT("GateCauseway"), Assets.Cube, FVector(2360.0f, -220.0f, 30.0f), FVector(10.0f, 1.2f, 0.12f), Assets.Basalt, FRotator(0.0f, 3.0f, 0.0f));
+		SpawnTerrainShelf(World, TEXT("WitnessPath"), Assets.Cube, FVector(-1200.0f, 780.0f, 24.0f), FVector(8.0f, 1.3f, 0.18f), Assets.Basalt, FRotator(0.0f, -8.0f, 0.0f));
+		SpawnTerrainShelf(World, TEXT("GateCauseway"), Assets.Cube, FVector(2360.0f, -220.0f, 30.0f), FVector(10.0f, 1.2f, 0.18f), Assets.Basalt, FRotator(0.0f, 3.0f, 0.0f));
+		SpawnTerrainShelf(World, TEXT("CrashTrenchShelf"), Assets.Cube, FVector(250.0f, 0.0f, -150.0f), FVector(11.0f, 3.0f, 0.5f), Assets.AshStone, FRotator(0.0f, 20.0f, 0.0f));
 		SpawnScenic(World, TEXT("OpeningRidgeNorth"), PickMesh(Assets.ItalicChurchRock, Assets.CaveRock), FVector(-4400.0f, 2500.0f, 620.0f), FVector(5.5f, 5.5f, 5.5f), nullptr, FRotator(0.0f, -20.0f, 0.0f));
 		SpawnScenic(World, TEXT("OpeningRidgeSouth"), PickMesh(Assets.HighDetailRock, Assets.Cube), FVector(-1700.0f, -2600.0f, 460.0f), FVector(7.0f, 7.0f, 7.0f), nullptr, FRotator(0.0f, 45.0f, 0.0f));
 		SpawnScenic(World, TEXT("OpeningCliffEast"), PickMesh(Assets.CaveRock, Assets.Cube), FVector(4100.0f, 2100.0f, 540.0f), FVector(8.0f, 8.0f, 8.0f), nullptr, FRotator(0.0f, 105.0f, 0.0f));
@@ -778,7 +1367,10 @@ namespace
 
 		SpawnPointLight(World, TEXT("MiracleGlow"), FVector(250.0f, 0.0f, 160.0f), 9600.0f, 2600.0f);
 		SpawnPointLight(World, TEXT("CampFire"), FVector(-2020.0f, 870.0f, 70.0f), 4200.0f, 1800.0f);
-		SpawnPlayerStart(World, FVector(-5200.0f, -120.0f, 180.0f), 5.0f);
+		if (!SpawnPlayerStart(World, TerrainProfile.PrimarySpawnLocation, 5.0f, TerrainProfile))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Opening map build failed due to invalid PlayerStart projection."));
+		}
 
 		AManyNamesInteractableActor* MiracleAnchor = World->SpawnActor<AManyNamesInteractableActor>(FVector(250.0f, 0.0f, 120.0f), FRotator::ZeroRotator);
 		if (MiracleAnchor)
@@ -799,7 +1391,7 @@ namespace
 			World,
 			TEXT("WitnessAnchor"),
 			FText::FromString(TEXT("Speak to the witness")),
-			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("OpeningWitness"), 0), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("OpeningWitness"), TEXT("Camera.WitnessCamp")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("OpeningWitness"), 0), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("OpeningWitness"), TEXT("Camera.WitnessCamp"), TEXT("OpeningWitness"), TEXT("opening_survivor_named"), TEXT("named_witness"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
 			FVector(-1860.0f, 960.0f, 88.0f),
 			-35.0f,
 			EManyNamesInteractionActionType::QuestDialogue,
@@ -808,8 +1400,12 @@ namespace
 			true);
 
 		SpawnNpc(World, TEXT("WitnessAttendant"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Opening.Survivors"), 0), Assets.IdleAnimation), FVector(-2300.0f, 1200.0f, 88.0f), 35.0f);
+		SpawnNpc(World, TEXT("OpeningHealer"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("OpeningHealer"), 1), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("OpeningHealer"), TEXT("Camera.WitnessCamp"), TEXT("OpeningHealer"), TEXT("opening_survivor_named"), TEXT("named_healer"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-2320.0f, 760.0f, 88.0f), 18.0f);
+		SpawnNpc(World, TEXT("OpeningQuartermaster"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("OpeningQuartermaster"), 2), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("OpeningQuartermaster"), NAME_None, TEXT("OpeningQuartermaster"), TEXT("opening_guard_group"), TEXT("named_guard"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-1500.0f, 760.0f, 88.0f), -18.0f);
 		SpawnNpc(World, TEXT("WitnessGuard"), MakeNpcProfile(RoleTags.AmbientGuard, ResolveAmbientCharacter(Assets, TEXT("Opening.Guards"), 1), Assets.IdleAnimation), FVector(-1450.0f, 560.0f, 88.0f), -10.0f);
 		SpawnNpc(World, TEXT("CampSurvivor_02"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Opening.Survivors"), 2), Assets.IdleAnimation), FVector(-2460.0f, 1180.0f, 88.0f), 14.0f);
+		SpawnAmbientCluster(World, TEXT("OpeningCampCrowd"), RoleTags.AmbientCivilian, Assets, TEXT("Opening.Survivors"), FVector(-2920.0f, 980.0f, 88.0f), { FVector(0.0f, 0.0f, 0.0f), FVector(180.0f, 140.0f, 0.0f), FVector(340.0f, -120.0f, 0.0f), FVector(520.0f, 100.0f, 0.0f) }, 25.0f, true);
+		SpawnAmbientCluster(World, TEXT("OpeningGateGuards"), RoleTags.AmbientGuard, Assets, TEXT("Opening.Guards"), FVector(4200.0f, -180.0f, 88.0f), { FVector(0.0f, 0.0f, 0.0f), FVector(280.0f, 280.0f, 0.0f), FVector(320.0f, -320.0f, 0.0f) }, 180.0f);
 		SpawnNpc(World, TEXT("FallenCrew_Manny"), MakeNpcProfile(RoleTags.NamedScenic, Assets.Manny, Assets.DeathBack), FVector(-420.0f, -520.0f, 88.0f), 65.0f);
 		SpawnNpc(World, TEXT("FallenCrew_Quinn"), MakeNpcProfile(RoleTags.NamedScenic, Assets.Quinn, Assets.DeathLeft), FVector(-760.0f, 680.0f, 88.0f), -55.0f);
 		if (Assets.HumanFryPose)
@@ -854,13 +1450,15 @@ namespace
 		ClearWorld(World);
 		const FManyNamesRegionArtProfile ArtProfile = BuildRegionArtProfile(EManyNamesRegionId::Egypt, Assets, RoleTags);
 		const FManyNamesEnvironmentProfile EnvironmentProfile = BuildEnvironmentProfile(EManyNamesRegionId::Egypt);
+		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::Egypt, Assets);
+		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
 		SpawnEnvironmentController(World, EnvironmentProfile);
+		BuildTerrainSystems(World, TerrainProfile);
 
-		SpawnScenic(World, TEXT("EgyptGround"), Assets.Plane, FVector(0.0f, 0.0f, -20.0f), FVector(120.0f, 82.0f, 1.0f), Assets.SandStone);
-		SpawnScenic(World, TEXT("EgyptMarketGround"), Assets.Plane, FVector(-2920.0f, 0.0f, -16.0f), FVector(28.0f, 42.0f, 1.0f), Assets.SandStone);
-		SpawnScenic(World, TEXT("EgyptArchiveRoad"), Assets.Cube, FVector(1320.0f, 0.0f, 26.0f), FVector(14.0f, 1.0f, 0.08f), Assets.Basalt);
-		SpawnScenic(World, TEXT("EgyptTempleCourt"), Assets.Cube, FVector(0.0f, -1180.0f, 40.0f), FVector(14.0f, 4.5f, 0.16f), Assets.SandStone);
+		SpawnTerrainShelf(World, TEXT("EgyptArchiveRoad"), Assets.Cube, FVector(1320.0f, 0.0f, 26.0f), FVector(14.0f, 1.0f, 0.16f), Assets.Basalt);
+		SpawnTerrainShelf(World, TEXT("EgyptTempleCourt"), Assets.Cube, FVector(0.0f, -1180.0f, 40.0f), FVector(14.0f, 4.5f, 0.2f), Assets.SandStone);
+		SpawnTerrainShelf(World, TEXT("EgyptNecropolisShelf"), Assets.Cube, FVector(0.0f, 3520.0f, 10.0f), FVector(10.0f, 15.0f, 0.6f), Assets.SandStone);
 		SpawnScenic(World, TEXT("TempleDais"), PickMesh(Assets.EgyptFloor, Assets.Cube), FVector(0.0f, -220.0f, 110.0f), FVector(6.0f, 6.0f, 3.0f), nullptr);
 		SpawnScenic(World, TEXT("TempleStairs"), PickMesh(Assets.EgyptStairs, Assets.Cube), FVector(0.0f, -820.0f, 90.0f), FVector(2.8f, 2.8f, 2.8f), nullptr);
 		SpawnScenic(World, TEXT("ArchiveFacade"), PickMesh(Assets.MastabaEntrance, Assets.Cube), FVector(2800.0f, 0.0f, 320.0f), FVector(2.4f, 2.4f, 2.4f), nullptr, FRotator(0.0f, 90.0f, 0.0f));
@@ -912,13 +1510,16 @@ namespace
 			SpawnScenic(World, TEXT("BrazierCore"), Assets.Sphere, LightPosition + FVector(0.0f, 0.0f, 80.0f), FVector(0.15f, 0.15f, 0.15f), Assets.Miracle);
 		}
 
-		SpawnPlayerStart(World, FVector(-4600.0f, -100.0f, 160.0f), 0.0f);
+		if (!SpawnPlayerStart(World, TerrainProfile.PrimarySpawnLocation, 0.0f, TerrainProfile))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Egypt map build failed due to invalid PlayerStart projection."));
+		}
 
 		SpawnInteractableNpc(
 			World,
 			TEXT("ArchiveKeeper"),
 			FText::FromString(TEXT("Speak with the archive keeper")),
-			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("ArchiveKeeper"), 1), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("ArchiveKeeper"), TEXT("Camera.ArchiveKeeper")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("ArchiveKeeper"), 1), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("ArchiveKeeper"), TEXT("Camera.ArchiveKeeper"), TEXT("ArchiveKeeper"), TEXT("egypt_priest_scholar_named"), TEXT("named_scholar"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
 			FVector(1660.0f, 0.0f, 88.0f),
 			90.0f,
 			EManyNamesInteractionActionType::QuestDialogue,
@@ -930,7 +1531,7 @@ namespace
 			World,
 			TEXT("FloodplainPetitioner"),
 			FText::FromString(TEXT("Hear the floodplain petition")),
-			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("FloodplainPetitioner"), 2), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("FloodplainPetitioner"), TEXT("Camera.FloodplainPetitioner")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("FloodplainPetitioner"), 2), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("FloodplainPetitioner"), TEXT("Camera.FloodplainPetitioner"), TEXT("FloodplainPetitioner"), TEXT("egypt_floodplain_named"), TEXT("named_petitioner"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
 			FVector(-2620.0f, -950.0f, 88.0f),
 			20.0f,
 			EManyNamesInteractionActionType::QuestDialogue,
@@ -950,6 +1551,10 @@ namespace
 		SpawnNpc(World, TEXT("Citizen_01"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Egypt.Vendors"), 9), Assets.IdleAnimation), FVector(-1200.0f, 220.0f, 88.0f), 15.0f);
 		SpawnNpc(World, TEXT("Citizen_02"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Egypt.Vendors"), 10), Assets.IdleAnimation), FVector(-900.0f, -40.0f, 88.0f), 120.0f);
 		SpawnNpc(World, TEXT("Citizen_03"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Egypt.Vendors"), 11), Assets.IdleAnimation), FVector(-1820.0f, 980.0f, 88.0f), -60.0f);
+		SpawnAmbientCluster(World, TEXT("EgyptMarketCrowd"), RoleTags.AmbientCivilian, Assets, TEXT("Egypt.Vendors"), FVector(-3000.0f, -220.0f, 88.0f), { FVector(0.0f, 0.0f, 0.0f), FVector(260.0f, 520.0f, 0.0f), FVector(260.0f, -520.0f, 0.0f), FVector(480.0f, 860.0f, 0.0f), FVector(520.0f, -860.0f, 0.0f), FVector(760.0f, 180.0f, 0.0f) }, 90.0f, true);
+		SpawnAmbientCluster(World, TEXT("EgyptTempleCrowd"), RoleTags.AmbientRitual, Assets, TEXT("Egypt.Priests"), FVector(0.0f, -420.0f, 88.0f), { FVector(-620.0f, -120.0f, 0.0f), FVector(620.0f, -120.0f, 0.0f), FVector(-420.0f, 220.0f, 0.0f), FVector(420.0f, 220.0f, 0.0f) }, 180.0f, true);
+		SpawnNpc(World, TEXT("TempleCantor"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("TempleCantor"), 3), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("TempleCantor"), NAME_None, TEXT("TempleCantor"), TEXT("egypt_priest_group"), TEXT("named_ritual"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-260.0f, -760.0f, 88.0f), 10.0f);
+		SpawnNpc(World, TEXT("GranarySteward"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("GranarySteward"), 4), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("GranarySteward"), NAME_None, TEXT("GranarySteward"), TEXT("egypt_market_group"), TEXT("named_steward"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-2120.0f, -1240.0f, 88.0f), 85.0f);
 	}
 
 	void BuildGreeceMap(UWorld* World, const FManyNamesBuildAssets& Assets, const FManyNamesRoleTags& RoleTags)
@@ -957,13 +1562,13 @@ namespace
 		ClearWorld(World);
 		const FManyNamesRegionArtProfile ArtProfile = BuildRegionArtProfile(EManyNamesRegionId::Greece, Assets, RoleTags);
 		const FManyNamesEnvironmentProfile EnvironmentProfile = BuildEnvironmentProfile(EManyNamesRegionId::Greece);
+		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::Greece, Assets);
+		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
 		SpawnEnvironmentController(World, EnvironmentProfile);
+		BuildTerrainSystems(World, TerrainProfile);
 
-		SpawnScenic(World, TEXT("GreeceGround"), Assets.Plane, FVector(0.0f, 0.0f, -20.0f), FVector(112.0f, 76.0f, 1.0f), Assets.Plaster);
-		SpawnScenic(World, TEXT("GreeceApproachGround"), Assets.Plane, FVector(-2100.0f, 640.0f, -18.0f), FVector(26.0f, 20.0f, 1.0f), Assets.Plaster);
-		SpawnScenic(World, TEXT("GreeceMountainShelf"), Assets.Plane, FVector(2480.0f, 1940.0f, 150.0f), FVector(22.0f, 14.0f, 1.0f), Assets.Plaster, FRotator(10.0f, 42.0f, 0.0f));
-		SpawnScenic(World, TEXT("SanctuaryCourt"), Assets.Cube, FVector(0.0f, -180.0f, 70.0f), FVector(10.0f, 7.0f, 0.8f), Assets.Plaster);
+		SpawnTerrainShelf(World, TEXT("SanctuaryCourt"), Assets.Cube, FVector(0.0f, -180.0f, 70.0f), FVector(10.0f, 7.0f, 0.8f), Assets.Plaster);
 		SpawnScenic(World, TEXT("StormLandmark"), PickMesh(Assets.GreeceDolmen, Assets.Cone), FVector(0.0f, -1280.0f, 250.0f), FVector(3.0f, 3.0f, 3.0f), nullptr, FRotator(0.0f, 35.0f, 0.0f));
 		SpawnScenic(World, TEXT("MountainRoute"), Assets.Cube, FVector(1800.0f, 1500.0f, 180.0f), FVector(16.0f, 2.4f, 0.3f), Assets.Basalt, FRotator(10.0f, 45.0f, 0.0f));
 		SpawnScenic(World, TEXT("ShrineCourt"), Assets.Cube, FVector(2600.0f, 2200.0f, 260.0f), FVector(7.0f, 5.0f, 0.8f), Assets.Plaster);
@@ -990,13 +1595,16 @@ namespace
 			SpawnPointLight(World, TEXT("SanctuaryFire"), FVector(-580.0f + (Index * 600.0f), -760.0f, 140.0f), 2800.0f, 1600.0f);
 		}
 
-		SpawnPlayerStart(World, FVector(-4400.0f, 0.0f, 190.0f), 15.0f);
+		if (!SpawnPlayerStart(World, TerrainProfile.PrimarySpawnLocation, 15.0f, TerrainProfile))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Greece map build failed due to invalid PlayerStart projection."));
+		}
 
 		SpawnInteractableNpc(
 			World,
 			TEXT("StormHerald"),
 			FText::FromString(TEXT("Confront the herald of the storm ruler")),
-			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("StormHerald"), 0), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("StormHerald"), TEXT("Camera.StormHerald")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("StormHerald"), 0), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("StormHerald"), TEXT("Camera.StormHerald"), TEXT("StormHerald"), TEXT("greece_ritual_named"), TEXT("named_herald"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
 			FVector(180.0f, -420.0f, 88.0f),
 			180.0f,
 			EManyNamesInteractionActionType::QuestDialogue,
@@ -1008,7 +1616,7 @@ namespace
 			World,
 			TEXT("WarbandEnvoy"),
 			FText::FromString(TEXT("Answer the warband envoy")),
-			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("WarbandEnvoy"), 1), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("WarbandEnvoy"), TEXT("Camera.WarbandEnvoy")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("WarbandEnvoy"), 1), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("WarbandEnvoy"), TEXT("Camera.WarbandEnvoy"), TEXT("WarbandEnvoy"), TEXT("greece_warband_named"), TEXT("named_envoy"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
 			FVector(2700.0f, 2080.0f, 88.0f),
 			-140.0f,
 			EManyNamesInteractionActionType::QuestDialogue,
@@ -1023,6 +1631,10 @@ namespace
 		SpawnNpc(World, TEXT("Pilgrim_01"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Greece.Pilgrims"), 4), Assets.IdleAnimation), FVector(-1500.0f, -220.0f, 88.0f), 90.0f);
 		SpawnNpc(World, TEXT("Pilgrim_02"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Greece.Pilgrims"), 5), Assets.IdleAnimation), FVector(1100.0f, 220.0f, 88.0f), -90.0f);
 		SpawnNpc(World, TEXT("Pilgrim_03"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Greece.Pilgrims"), 6), Assets.IdleAnimation), FVector(620.0f, 640.0f, 88.0f), 160.0f);
+		SpawnAmbientCluster(World, TEXT("GreeceSanctuaryCrowd"), RoleTags.AmbientCivilian, Assets, TEXT("Greece.Pilgrims"), FVector(-240.0f, -120.0f, 88.0f), { FVector(-820.0f, 160.0f, 0.0f), FVector(-420.0f, 380.0f, 0.0f), FVector(240.0f, 420.0f, 0.0f), FVector(760.0f, 160.0f, 0.0f), FVector(320.0f, -260.0f, 0.0f) }, 90.0f, true);
+		SpawnAmbientCluster(World, TEXT("GreeceRitualChorus"), RoleTags.AmbientRitual, Assets, TEXT("Greece.Heralds"), FVector(0.0f, -760.0f, 88.0f), { FVector(-360.0f, 0.0f, 0.0f), FVector(360.0f, 0.0f, 0.0f), FVector(-180.0f, 220.0f, 0.0f), FVector(180.0f, 220.0f, 0.0f) }, 170.0f, true);
+		SpawnNpc(World, TEXT("SanctuaryKeeper"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("SanctuaryKeeper"), 3), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("SanctuaryKeeper"), NAME_None, TEXT("SanctuaryKeeper"), TEXT("greece_ritual_group"), TEXT("named_keeper"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-620.0f, -120.0f, 88.0f), 40.0f);
+		SpawnNpc(World, TEXT("WarSinger"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("WarSinger"), 4), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("WarSinger"), NAME_None, TEXT("WarSinger"), TEXT("greece_pilgrim_group"), TEXT("named_ritual"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(840.0f, -180.0f, 88.0f), -40.0f);
 	}
 
 	void BuildItalicMap(UWorld* World, const FManyNamesBuildAssets& Assets, const FManyNamesRoleTags& RoleTags)
@@ -1030,14 +1642,15 @@ namespace
 		ClearWorld(World);
 		const FManyNamesRegionArtProfile ArtProfile = BuildRegionArtProfile(EManyNamesRegionId::ItalicWest, Assets, RoleTags);
 		const FManyNamesEnvironmentProfile EnvironmentProfile = BuildEnvironmentProfile(EManyNamesRegionId::ItalicWest);
+		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::ItalicWest, Assets);
+		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
 		SpawnEnvironmentController(World, EnvironmentProfile);
+		BuildTerrainSystems(World, TerrainProfile);
 
-		SpawnScenic(World, TEXT("ItalicGround"), Assets.Plane, FVector(0.0f, 0.0f, -20.0f), FVector(112.0f, 76.0f, 1.0f), Assets.AshStone);
-		SpawnScenic(World, TEXT("ItalicBoundaryGround"), Assets.Plane, FVector(2300.0f, 1560.0f, -16.0f), FVector(20.0f, 14.0f, 1.0f), Assets.AshStone);
-		SpawnScenic(World, TEXT("HillSettlement"), Assets.Cube, FVector(-1200.0f, -600.0f, 120.0f), FVector(8.0f, 6.0f, 1.4f), Assets.Plaster);
-		SpawnScenic(World, TEXT("ForgeLawChamber"), Assets.Cube, FVector(1800.0f, -200.0f, 220.0f), FVector(6.5f, 5.0f, 2.0f), Assets.Basalt);
-		SpawnScenic(World, TEXT("RitualRoad"), Assets.Cube, FVector(250.0f, 1600.0f, 50.0f), FVector(17.0f, 2.0f, 0.2f), Assets.Basalt, FRotator(0.0f, 16.0f, 0.0f));
+		SpawnTerrainShelf(World, TEXT("HillSettlement"), Assets.Cube, FVector(-1200.0f, -600.0f, 120.0f), FVector(8.0f, 6.0f, 1.4f), Assets.Plaster);
+		SpawnTerrainShelf(World, TEXT("ForgeLawChamber"), Assets.Cube, FVector(1800.0f, -200.0f, 220.0f), FVector(6.5f, 5.0f, 2.0f), Assets.Basalt);
+		SpawnTerrainShelf(World, TEXT("RitualRoad"), Assets.Cube, FVector(250.0f, 1600.0f, 50.0f), FVector(17.0f, 2.0f, 0.25f), Assets.Basalt, FRotator(0.0f, 16.0f, 0.0f));
 		SpawnScenic(World, TEXT("BoundaryFieldMarker"), PickMesh(Assets.ItalicBollard, Assets.Cylinder), FVector(2400.0f, 1500.0f, 120.0f), FVector(2.0f, 2.0f, 2.0f), nullptr);
 		SpawnScenic(World, TEXT("PalisadeRidge"), PickMesh(Assets.ItalicChurchRock, Assets.Cube), FVector(-3800.0f, -2200.0f, 480.0f), FVector(5.4f, 5.4f, 5.4f), nullptr);
 		SpawnScenic(World, TEXT("ForgeDebris"), PickMesh(Assets.ConvergenceDestroyedWood, Assets.Cube), FVector(1350.0f, 180.0f, 90.0f), FVector(2.6f, 2.6f, 2.6f), nullptr, FRotator(0.0f, 30.0f, 0.0f));
@@ -1058,13 +1671,16 @@ namespace
 
 		SpawnPointLight(World, TEXT("ForgeFire"), FVector(1600.0f, -40.0f, 160.0f), 4600.0f, 1800.0f);
 		SpawnPointLight(World, TEXT("BoundaryFire"), FVector(2500.0f, 1580.0f, 160.0f), 3000.0f, 1400.0f);
-		SpawnPlayerStart(World, FVector(-4600.0f, -100.0f, 190.0f), 0.0f);
+		if (!SpawnPlayerStart(World, TerrainProfile.PrimarySpawnLocation, 0.0f, TerrainProfile))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Italic map build failed due to invalid PlayerStart projection."));
+		}
 
 		SpawnInteractableNpc(
 			World,
 			TEXT("MeasureKeeper"),
 			FText::FromString(TEXT("Confront the keeper of measures")),
-			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("MeasureKeeper"), 1), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("MeasureKeeper"), TEXT("Camera.MeasureKeeper")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("MeasureKeeper"), 1), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("MeasureKeeper"), TEXT("Camera.MeasureKeeper"), TEXT("MeasureKeeper"), TEXT("italic_civic_named"), TEXT("named_lawgiver"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
 			FVector(1680.0f, -80.0f, 88.0f),
 			90.0f,
 			EManyNamesInteractionActionType::QuestDialogue,
@@ -1076,7 +1692,7 @@ namespace
 			World,
 			TEXT("BoundaryElder"),
 			FText::FromString(TEXT("Hear the boundary dispute")),
-			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("BoundaryElder"), 2), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("BoundaryElder"), TEXT("Camera.BoundaryElder")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("BoundaryElder"), 2), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("BoundaryElder"), TEXT("Camera.BoundaryElder"), TEXT("BoundaryElder"), TEXT("italic_elder_named"), TEXT("named_elder"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
 			FVector(2420.0f, 1540.0f, 88.0f),
 			-120.0f,
 			EManyNamesInteractionActionType::QuestDialogue,
@@ -1090,6 +1706,10 @@ namespace
 		SpawnNpc(World, TEXT("RoadWorker_02"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Italic.Workers"), 3), Assets.IdleAnimation), FVector(220.0f, 1760.0f, 88.0f), -90.0f);
 		SpawnNpc(World, TEXT("RitualWitness"), MakeNpcProfile(RoleTags.AmbientRitual, ResolveAmbientCharacter(Assets, TEXT("Italic.Ritual"), 4), Assets.IdleAnimation), FVector(2080.0f, 1180.0f, 88.0f), 180.0f);
 		SpawnNpc(World, TEXT("HillCitizen"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Italic.Workers"), 5), Assets.IdleAnimation), FVector(-1420.0f, -460.0f, 88.0f), 0.0f);
+		SpawnAmbientCluster(World, TEXT("ItalicSettlementCrowd"), RoleTags.AmbientCivilian, Assets, TEXT("Italic.Workers"), FVector(-1220.0f, -620.0f, 88.0f), { FVector(-620.0f, 140.0f, 0.0f), FVector(-180.0f, 360.0f, 0.0f), FVector(240.0f, 320.0f, 0.0f), FVector(620.0f, 180.0f, 0.0f) }, 25.0f, true);
+		SpawnAmbientCluster(World, TEXT("ItalicBoundaryCrowd"), RoleTags.AmbientRitual, Assets, TEXT("Italic.Ritual"), FVector(2320.0f, 1480.0f, 88.0f), { FVector(-320.0f, 0.0f, 0.0f), FVector(320.0f, 0.0f, 0.0f), FVector(-140.0f, 220.0f, 0.0f), FVector(160.0f, 220.0f, 0.0f) }, 180.0f, true);
+		SpawnNpc(World, TEXT("ForgeMatron"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("ForgeMatron"), 3), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("ForgeMatron"), NAME_None, TEXT("ForgeMatron"), TEXT("italic_worker_group"), TEXT("named_worker"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(1420.0f, 120.0f, 88.0f), 70.0f);
+		SpawnNpc(World, TEXT("RoadSurveyor"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("RoadSurveyor"), 4), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("RoadSurveyor"), NAME_None, TEXT("RoadSurveyor"), TEXT("italic_guard_group"), TEXT("named_worker"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-180.0f, 1480.0f, 88.0f), 95.0f);
 	}
 
 	void BuildConvergenceMap(UWorld* World, const FManyNamesBuildAssets& Assets, const FManyNamesRoleTags& RoleTags)
@@ -1097,11 +1717,12 @@ namespace
 		ClearWorld(World);
 		const FManyNamesRegionArtProfile ArtProfile = BuildRegionArtProfile(EManyNamesRegionId::Convergence, Assets, RoleTags);
 		const FManyNamesEnvironmentProfile EnvironmentProfile = BuildEnvironmentProfile(EManyNamesRegionId::Convergence);
+		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::Convergence, Assets);
+		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
 		SpawnEnvironmentController(World, EnvironmentProfile);
+		BuildTerrainSystems(World, TerrainProfile);
 
-		SpawnScenic(World, TEXT("ConvergenceGround"), Assets.Plane, FVector(0.0f, 0.0f, -20.0f), FVector(90.0f, 64.0f, 1.0f), Assets.Basalt);
-		SpawnScenic(World, TEXT("ConvergenceApproach"), Assets.Plane, FVector(-1800.0f, -980.0f, -16.0f), FVector(24.0f, 18.0f, 1.0f), Assets.Basalt);
 		SpawnScenic(World, TEXT("RuinShell"), PickMesh(Assets.MastabaEntrance, Assets.Cube), FVector(0.0f, -1200.0f, 280.0f), FVector(1.8f, 1.8f, 1.8f), nullptr, FRotator(0.0f, 180.0f, 0.0f));
 		SpawnScenic(World, TEXT("DescentAccess"), Assets.Cube, FVector(0.0f, 0.0f, 70.0f), FVector(8.0f, 3.0f, 1.0f), Assets.WreckMetal);
 		SpawnScenic(World, TEXT("BridgeChamber"), Assets.Cube, FVector(0.0f, 2200.0f, 210.0f), FVector(10.0f, 5.0f, 2.0f), Assets.WreckMetal);
@@ -1117,7 +1738,10 @@ namespace
 			SpawnPointLight(World, TEXT("CoreLight"), FVector(-900.0f + (Index * 600.0f), 1600.0f, 180.0f), 3200.0f, 1500.0f);
 		}
 
-		SpawnPlayerStart(World, FVector(-4200.0f, -120.0f, 200.0f), 0.0f);
+		if (!SpawnPlayerStart(World, TerrainProfile.PrimarySpawnLocation, 0.0f, TerrainProfile))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Convergence map build failed due to invalid PlayerStart projection."));
+		}
 
 		AManyNamesInteractableActor* CoreInterface = World->SpawnActor<AManyNamesInteractableActor>(FVector(0.0f, 2400.0f, 200.0f), FRotator::ZeroRotator);
 		if (CoreInterface)
@@ -1138,11 +1762,41 @@ namespace
 
 		SpawnNpc(World, TEXT("BridgeWatcher"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("BridgeWatcher"), 0), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("BridgeWatcher"), TEXT("Camera.BridgeWatcher")), FVector(-460.0f, 2000.0f, 88.0f), 30.0f);
 		SpawnNpc(World, TEXT("SystemsRemnant"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("SystemsRemnant"), 1), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("SystemsRemnant"), TEXT("Camera.SystemsRemnant")), FVector(540.0f, 1950.0f, 88.0f), -30.0f);
+		SpawnNpc(World, TEXT("CompanionChorus"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("CompanionChorus"), 2), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("CompanionChorus"), NAME_None, TEXT("CompanionChorus"), TEXT("convergence_remnant_group"), TEXT("named_uncanny"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(0.0f, 1760.0f, 88.0f), 180.0f);
+		SpawnAmbientCluster(World, TEXT("ConvergenceRemnants"), RoleTags.AmbientCivilian, Assets, TEXT("Convergence.Remnants"), FVector(0.0f, 2080.0f, 88.0f), { FVector(-960.0f, -120.0f, 0.0f), FVector(920.0f, -80.0f, 0.0f), FVector(-620.0f, 260.0f, 0.0f) }, 180.0f);
 	}
 
 	bool SaveBuiltMap(UWorld* World, const FString& MapPath)
 	{
 		return World && UEditorLoadingAndSavingUtils::SaveMap(World, MapPath);
+	}
+
+	bool ValidatePlayerStartCount(UWorld* World, const FManyNamesTerrainProfile& TerrainProfile)
+	{
+		if (!World)
+		{
+			return false;
+		}
+
+		int32 PlayerStartCount = 0;
+		for (TActorIterator<APlayerStart> It(World); It; ++It)
+		{
+			++PlayerStartCount;
+			const FManyNamesSpawnValidationResult Projection = ProjectLocationToGround(World, It->GetActorLocation(), TerrainProfile);
+			if (!Projection.bHasGround)
+			{
+				UE_LOG(LogTemp, Error, TEXT("PlayerStart %s in region %d is not over blocking ground."), *It->GetActorLabel(), static_cast<int32>(TerrainProfile.RegionId));
+				return false;
+			}
+		}
+
+		if (PlayerStartCount != 1)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Expected exactly one PlayerStart in region %d, found %d."), static_cast<int32>(TerrainProfile.RegionId), PlayerStartCount);
+			return false;
+		}
+
+		return true;
 	}
 }
 
@@ -1172,6 +1826,10 @@ int32 UManyNamesWorldBuildCommandlet::Main(const FString& Params)
 		return 1;
 	}
 	BuildOpeningMap(OpeningWorld, Assets, RoleTags);
+	if (!ValidatePlayerStartCount(OpeningWorld, BuildTerrainProfile(EManyNamesRegionId::Opening, Assets)))
+	{
+		return 1;
+	}
 	if (!SaveBuiltMap(OpeningWorld, TEXT("/Game/Maps/L_OpeningCatastrophe")))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to save opening map."));
@@ -1185,6 +1843,10 @@ int32 UManyNamesWorldBuildCommandlet::Main(const FString& Params)
 		return 1;
 	}
 	BuildEgyptMap(EgyptWorld, Assets, RoleTags);
+	if (!ValidatePlayerStartCount(EgyptWorld, BuildTerrainProfile(EManyNamesRegionId::Egypt, Assets)))
+	{
+		return 1;
+	}
 	if (!SaveBuiltMap(EgyptWorld, TEXT("/Game/Maps/L_EgyptHub")))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to save Egypt map."));
@@ -1198,6 +1860,10 @@ int32 UManyNamesWorldBuildCommandlet::Main(const FString& Params)
 		return 1;
 	}
 	BuildGreeceMap(GreeceWorld, Assets, RoleTags);
+	if (!ValidatePlayerStartCount(GreeceWorld, BuildTerrainProfile(EManyNamesRegionId::Greece, Assets)))
+	{
+		return 1;
+	}
 	if (!SaveBuiltMap(GreeceWorld, TEXT("/Game/Maps/L_GreeceHub")))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to save Greece map."));
@@ -1211,6 +1877,10 @@ int32 UManyNamesWorldBuildCommandlet::Main(const FString& Params)
 		return 1;
 	}
 	BuildItalicMap(ItalicWorld, Assets, RoleTags);
+	if (!ValidatePlayerStartCount(ItalicWorld, BuildTerrainProfile(EManyNamesRegionId::ItalicWest, Assets)))
+	{
+		return 1;
+	}
 	if (!SaveBuiltMap(ItalicWorld, TEXT("/Game/Maps/L_ItalicHub")))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to save Italic map."));
@@ -1224,6 +1894,10 @@ int32 UManyNamesWorldBuildCommandlet::Main(const FString& Params)
 		return 1;
 	}
 	BuildConvergenceMap(ConvergenceWorld, Assets, RoleTags);
+	if (!ValidatePlayerStartCount(ConvergenceWorld, BuildTerrainProfile(EManyNamesRegionId::Convergence, Assets)))
+	{
+		return 1;
+	}
 	if (!SaveBuiltMap(ConvergenceWorld, TEXT("/Game/Maps/L_Convergence")))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to save Convergence map."));

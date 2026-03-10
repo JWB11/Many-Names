@@ -102,6 +102,34 @@
     "CanTriggerCombat": true
   },
   {
+    "ChoiceId": "choice_egypt_bind_archive",
+    "QuestId": "egypt_main_01",
+    "OutcomeId": "egypt_archive_bound",
+    "WorldStateOutputs": [
+      "Region.Egypt.Archive.Bound",
+      "Companion.OracleAI.Allied",
+      "Companion.OracleAI.Ascendant"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1,
+      "Domain.Deception": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 2,
+      "CombatReputation": 1
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": 2
+    },
+    "EligibleEndings": [
+      "ReplaceCompanion",
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
     "ChoiceId": "choice_egypt_expose_oracle",
     "QuestId": "egypt_main_01",
     "OutcomeId": "egypt_oracle_exposed",
@@ -204,6 +232,32 @@
     "CanTriggerCombat": true
   },
   {
+    "ChoiceId": "choice_egypt_famine_storehouse",
+    "QuestId": "egypt_side_01",
+    "OutcomeId": "egypt_famine_storehouse",
+    "WorldStateOutputs": [
+      "Region.Egypt.Famine.StorehouseReformed"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1,
+      "Domain.Craft": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 0,
+      "CombatReputation": 1
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": -1
+    },
+    "EligibleEndings": [
+      "DismantleDivinity",
+      "ReturnToFuture"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
     "ChoiceId": "choice_egypt_famine_refuse",
     "QuestId": "egypt_side_01",
     "OutcomeId": "egypt_famine_refuse",
@@ -282,6 +336,34 @@
     "CanTriggerCombat": false
   },
   {
+    "ChoiceId": "choice_greece_break_beacon",
+    "QuestId": "greece_main_01",
+    "OutcomeId": "greece_broken_beacon",
+    "WorldStateOutputs": [
+      "Region.Greece.Beacon.Broken",
+      "Companion.SkyRuler.Opposed",
+      "Companion.SkyRuler.Ascendant"
+    ],
+    "DomainDeltas": {
+      "Domain.Judgment": 1,
+      "Domain.Craft": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 0,
+      "CombatReputation": 2
+    },
+    "CompanionAffinityEffects": {
+      "SkyRuler": -2
+    },
+    "EligibleEndings": [
+      "DismantleDivinity",
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": false,
+    "CanTriggerCombat": true
+  },
+  {
     "ChoiceId": "choice_greece_defy_spectacle",
     "QuestId": "greece_main_01",
     "OutcomeId": "greece_defied_ruler",
@@ -353,6 +435,32 @@
     },
     "EligibleEndings": [
       "FragmentLegacy"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_greece_warband_bloodprice",
+    "QuestId": "greece_side_01",
+    "OutcomeId": "greece_warband_bloodprice",
+    "WorldStateOutputs": [
+      "Region.Greece.Warband.BloodPrice"
+    ],
+    "DomainDeltas": {
+      "Domain.Judgment": 1,
+      "Domain.Order": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 1,
+      "CombatReputation": 1
+    },
+    "CompanionAffinityEffects": {
+      "SkyRuler": 0
+    },
+    "EligibleEndings": [
+      "FragmentLegacy",
+      "ReturnToFuture"
     ],
     "CanAvoidCombat": true,
     "CanTriggerCombat": true
@@ -434,6 +542,33 @@
     ],
     "CanAvoidCombat": false,
     "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_italic_shared_measure",
+    "QuestId": "italic_main_01",
+    "OutcomeId": "italic_shared_measure",
+    "WorldStateOutputs": [
+      "Region.Italic.Order.SharedMeasure",
+      "Companion.BronzeLawgiver.Allied"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1,
+      "Domain.Craft": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 1,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {
+      "BronzeLawgiver": 2
+    },
+    "EligibleEndings": [
+      "ReturnToFuture",
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
   },
   {
     "ChoiceId": "choice_italic_replace",
@@ -535,6 +670,32 @@
     ],
     "CanAvoidCombat": true,
     "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_italic_boundary_hostage_oath",
+    "QuestId": "italic_side_01",
+    "OutcomeId": "italic_boundary_hostage_oath",
+    "WorldStateOutputs": [
+      "Region.Italic.Boundary.HostageOath"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1,
+      "Domain.Judgment": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 1,
+      "CombatReputation": 1
+    },
+    "CompanionAffinityEffects": {
+      "BronzeLawgiver": 1
+    },
+    "EligibleEndings": [
+      "ReturnToFuture",
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
   },
   {
     "ChoiceId": "choice_italic_boundary_purge",

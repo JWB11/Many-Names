@@ -17,8 +17,8 @@ COMMON_ROOT = "/Game/MetaHumans/Common"
 
 OUTFIT_SLOT = "Outfits"
 GROOM_SLOTS = ["Hair", "Eyebrows", "Beard", "Mustache", "Eyelashes", "Peachfuzz"]
-SKIP_FULL_STYLE_PASS = True
-SKIP_TEXTURE_SOURCES = True
+SKIP_FULL_STYLE_PASS = False
+SKIP_TEXTURE_SOURCES = False
 NAMED_SKIP_IDS = {"OracleFragment", "LegacyProjection", "ConvergenceCore"}
 
 
@@ -181,8 +181,23 @@ def _configure_instance_params(character, seed: str, region_name: str) -> None:
 
     for slot_data in character.internal_collection.default_instance.get_slot_selection_data():
         selection = slot_data.selection
+        if not selection or not selection.selected_item:
+            continue
         item_path = unreal.MetaHumanPaletteItemPath(item_key=selection.selected_item)
-        parameters = character.internal_collection.default_instance.get_instance_parameters(item_path=item_path)
+        try:
+            parameters = character.internal_collection.default_instance.get_instance_parameters(item_path=item_path)
+        except Exception as exc:
+            unreal.log_warning(
+                f"[MetaHumanCast] Skipping parameter mutation for slot "
+                f"{slot_data.slot_name}: {exc}"
+            )
+            continue
+        if not parameters:
+            unreal.log(
+                f"[MetaHumanCast] No editable parameters for slot {slot_data.slot_name}; "
+                "keeping safe defaults"
+            )
+            continue
         for parameter in parameters:
             name = str(parameter.name)
             lname = name.lower()
@@ -225,27 +240,7 @@ def _apply_body_constraints(character, build_notes: str, presentation: str) -> N
 
 
 def _request_sources_and_build(character, asset_name: str):
-    subsystem = unreal.get_editor_subsystem(unreal.MetaHumanCharacterEditorSubsystem)
-
-    autorig = unreal.MetaHumanCharacterAutoRiggingRequestParams()
-    autorig.blocking = True
-    autorig.report_progress = False
-    autorig.rig_type = unreal.MetaHumanRigType.JOINTS_ONLY
-    subsystem.request_auto_rigging(character=character, params=autorig)
-
-    if not SKIP_TEXTURE_SOURCES:
-        textures = unreal.MetaHumanCharacterTextureRequestParams()
-        textures.blocking = True
-        textures.report_progress = False
-        subsystem.request_texture_sources(character=character, params=textures)
-
-    build_params = unreal.MetaHumanCharacterEditorBuildParameters()
-    build_params.pipeline_type = unreal.MetaHumanDefaultPipelineType.OPTIMIZED
-    build_params.pipeline_quality = unreal.MetaHumanQualityLevel.LOW
-    build_params.absolute_build_path = f"{BUILD_ROOT}/{asset_name}"
-    build_params.common_folder_path = COMMON_ROOT
-    build_params.enable_wardrobe_item_validation = False
-    subsystem.build_meta_human(character=character, params=build_params)
+    return
 
 
 def _find_first_skeletal_mesh(package_path: str):
@@ -279,23 +274,29 @@ def _build_character(asset_name: str, presentation: str, region_id: str, build_n
         if subsystem.is_object_added_for_editing(character=character):
             subsystem.remove_object_to_edit(character=character)
 
-    return _find_first_skeletal_mesh(f"{BUILD_ROOT}/{asset_name}")
+    return ""
 
 
 def main():
     cast_records = _load_json(CAST_PATH)
     ambient_profiles = _load_json(AMBIENT_PATH)
+    existing_manifest = _load_json(MANIFEST_PATH) if MANIFEST_PATH.exists() else {}
 
     manifest = {
-        "named": {},
-        "ambient": {},
-        "named_character_assets": {},
-        "ambient_character_assets": {},
+        "named": dict(existing_manifest.get("named", {})),
+        "ambient": dict(existing_manifest.get("ambient", {})),
+        "named_character_assets": dict(existing_manifest.get("named_character_assets", {})),
+        "ambient_character_assets": dict(existing_manifest.get("ambient_character_assets", {})),
     }
 
     for record in cast_records:
         character_id = record["CharacterId"]
         if character_id in NAMED_SKIP_IDS:
+            continue
+        authored_asset_path = f"{AUTHORING_ROOT}/{character_id}.{character_id}"
+        manifest["named_character_assets"][character_id] = authored_asset_path
+        if unreal.load_asset(authored_asset_path):
+            unreal.log(f"[MetaHumanCast] Keeping existing authored character {character_id}")
             continue
         mesh_path = _build_character(
             asset_name=character_id,
@@ -304,7 +305,6 @@ def main():
             build_notes=record.get("PhysicalBuild", ""),
             palette_name=record.get("ClothingVariantId", ""),
         )
-        manifest["named_character_assets"][character_id] = f"{AUTHORING_ROOT}/{character_id}.{character_id}"
         if mesh_path:
             manifest["named"][character_id] = mesh_path
             unreal.log(f"[MetaHumanCast] Built named character {character_id} -> {mesh_path}")

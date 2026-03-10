@@ -78,6 +78,31 @@ enum class EManyNamesWeatherPrecipitation : uint8
 	Ash
 };
 
+UENUM(BlueprintType)
+enum class EManyNamesRenderPath : uint8
+{
+	Auto,
+	WindowsHighEnd,
+	MacFallback
+};
+
+UENUM(BlueprintType)
+enum class EManyNamesCrowdBehaviorTier : uint8
+{
+	StaticScenic,
+	HubAmbient,
+	StoryFacing
+};
+
+UENUM(BlueprintType)
+enum class EManyNamesCompanionThreatState : uint8
+{
+	Dormant,
+	Tempting,
+	Ascendant,
+	Dominant
+};
+
 USTRUCT(BlueprintType)
 struct FManyNamesNpcVisualProfile
 {
@@ -88,6 +113,9 @@ struct FManyNamesNpcVisualProfile
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag RoleTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CharacterId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bPreferMetaHuman = false;
@@ -117,7 +145,22 @@ struct FManyNamesNpcVisualProfile
 	FName CameraAnchorTag = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ClothingVariantId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName StanceId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bLockFacingToPlayer = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableClothSimulation = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FootPlacementWeight = 0.75f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesCrowdBehaviorTier CrowdBehaviorTier = EManyNamesCrowdBehaviorTier::StaticScenic;
 };
 
 USTRUCT(BlueprintType)
@@ -160,6 +203,111 @@ struct FManyNamesRegionArtProfile
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName HeroWeatherStateId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HubPopulationDensity = 1.0f;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesRouteSplineDefinition
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName RouteId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FVector> ControlPoints;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RouteWidth = 500.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString RouteNotes;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesTerrainProfile
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<class UMaterialInterface> LandscapeMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector TerrainOrigin = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector TerrainExtent = FVector(12000.0f, 9000.0f, 0.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector LandscapeScale = FVector(100.0f, 100.0f, 100.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 LandscapeQuadsPerSection = 63;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 LandscapeSectionsPerComponent = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint LandscapeComponentCount = FIntPoint(8, 8);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HeightAmplitude = 520.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HeightBias = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector PrimaryHubLocation = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector PrimarySpawnLocation = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FManyNamesRouteSplineDefinition> RouteSplines;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FSoftObjectPath> StructuralNaniteMeshPaths;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FSoftObjectPath> FoliageScatterMeshPaths;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSoftObjectPath SharedPcgGraphAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSoftObjectPath RegionPcgGraphAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName SharedPcgGraphId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName RegionPcgGraphId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SpawnTraceHeight = 1200.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SpawnTraceDepth = 2400.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SpawnSafetyLift = 110.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableNaniteForStructuralMeshes = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableNaniteFoliage = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bGenerateBackdropLandmarks = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString TerrainNotes;
 };
 
 USTRUCT(BlueprintType)
@@ -226,6 +374,27 @@ struct FManyNamesEnvironmentProfile
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FManyNamesWeatherState HeroState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRenderPath PreferredRenderPath = EManyNamesRenderPath::Auto;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bAllowMegaLights = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bAllowHeterogeneousVolumes = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bAllowNaniteAssemblies = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bAllowNaniteSkinnedMeshes = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bAllowNaniteVoxels = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bPreferMegaLightLocalLights = false;
 };
 
 USTRUCT(BlueprintType)
@@ -271,6 +440,15 @@ struct FManyNamesCompanionState
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName OutcomeTag = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesCompanionThreatState ThreatState = EManyNamesCompanionThreatState::Dormant;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 EscalationScore = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bDominantAntagonist = false;
 };
 
 USTRUCT(BlueprintType)
@@ -349,6 +527,12 @@ struct FManyNamesWorldState
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSet<EManyNamesEndingId> EligibleEndings;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesCompanionId DominantAntagonist = EManyNamesCompanionId::OracleAI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bHasDominantAntagonist = false;
 };
 
 USTRUCT(BlueprintType)
@@ -549,6 +733,9 @@ struct FManyNamesCharacterCastRecord
 	FName StanceId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEnableClothSimulation = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<USkeletalMesh> PreferredSkeletalMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -580,6 +767,9 @@ struct FManyNamesAmbientProfileRecord
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName StanceId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CrowdCountHint = 6;
 };
 
 USTRUCT(BlueprintType)

@@ -1,6 +1,132 @@
 #include "Systems/ManyNamesWorldStateSubsystem.h"
 
 #include "Systems/ManyNamesGameInstance.h"
+#include "GameplayTagsManager.h"
+
+namespace
+{
+int32 GetDomainScore(const FManyNamesWorldState& WorldState, const TCHAR* TagName)
+{
+	const FGameplayTag Tag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TagName), false);
+	if (!Tag.IsValid())
+	{
+		return 0;
+	}
+
+	if (const int32* Score = WorldState.MythicDomainProfile.DomainScores.Find(Tag))
+	{
+		return *Score;
+	}
+
+	return 0;
+}
+
+int32 ComputeCompanionThreatScore(const FManyNamesWorldState& WorldState, EManyNamesCompanionId CompanionId, const FManyNamesCompanionState& CompanionState)
+{
+	int32 Score = FMath::Max(0, CompanionState.EscalationScore);
+	switch (CompanionState.AllianceState)
+	{
+	case EManyNamesAllianceState::Allied:
+		Score += 2;
+		break;
+	case EManyNamesAllianceState::Opposed:
+		Score += 8;
+		break;
+	case EManyNamesAllianceState::Replaced:
+		Score += 5;
+		break;
+	default:
+		break;
+	}
+
+	if (CompanionState.Affinity >= 0)
+	{
+		Score += CompanionState.Affinity;
+	}
+	else
+	{
+		Score += FMath::Abs(CompanionState.Affinity) * 2;
+	}
+
+	if (CompanionState.bTruthRevealed)
+	{
+		Score += 2;
+	}
+
+	switch (CompanionId)
+	{
+	case EManyNamesCompanionId::OracleAI:
+		Score += GetDomainScore(WorldState, TEXT("Domain.Deception"));
+		Score += GetDomainScore(WorldState, TEXT("Domain.Judgment"));
+		Score += WorldState.RumorProfile.ConcealmentScore;
+		break;
+	case EManyNamesCompanionId::SkyRuler:
+		Score += GetDomainScore(WorldState, TEXT("Domain.Storm"));
+		Score += GetDomainScore(WorldState, TEXT("Domain.Light"));
+		Score += FMath::Max(0, WorldState.RumorProfile.PublicMiracleScore);
+		Score += FMath::Max(0, WorldState.RumorProfile.CombatReputation);
+		break;
+	case EManyNamesCompanionId::BronzeLawgiver:
+		Score += GetDomainScore(WorldState, TEXT("Domain.Order"));
+		Score += GetDomainScore(WorldState, TEXT("Domain.Craft"));
+		Score += GetDomainScore(WorldState, TEXT("Domain.Judgment"));
+		Score += FMath::Max(0, WorldState.RumorProfile.CombatReputation / 2);
+		break;
+	default:
+		break;
+	}
+
+	return Score;
+}
+
+EManyNamesCompanionThreatState ComputeThreatState(int32 Score)
+{
+	if (Score >= 18)
+	{
+		return EManyNamesCompanionThreatState::Dominant;
+	}
+	if (Score >= 12)
+	{
+		return EManyNamesCompanionThreatState::Ascendant;
+	}
+	if (Score >= 6)
+	{
+		return EManyNamesCompanionThreatState::Tempting;
+	}
+	return EManyNamesCompanionThreatState::Dormant;
+}
+
+FName DominantOutputForCompanion(EManyNamesCompanionId CompanionId)
+{
+	switch (CompanionId)
+	{
+	case EManyNamesCompanionId::OracleAI:
+		return TEXT("Story.Antagonist.OracleAI");
+	case EManyNamesCompanionId::SkyRuler:
+		return TEXT("Story.Antagonist.SkyRuler");
+	case EManyNamesCompanionId::BronzeLawgiver:
+		return TEXT("Story.Antagonist.BronzeLawgiver");
+	default:
+		return NAME_None;
+	}
+}
+
+FName ThreatOutputForCompanion(EManyNamesCompanionId CompanionId, bool bDominant)
+{
+	const TCHAR* StateSuffix = bDominant ? TEXT("Dominant") : TEXT("Ascendant");
+	switch (CompanionId)
+	{
+	case EManyNamesCompanionId::OracleAI:
+		return FName(FString::Printf(TEXT("Companion.OracleAI.%s"), StateSuffix));
+	case EManyNamesCompanionId::SkyRuler:
+		return FName(FString::Printf(TEXT("Companion.SkyRuler.%s"), StateSuffix));
+	case EManyNamesCompanionId::BronzeLawgiver:
+		return FName(FString::Printf(TEXT("Companion.BronzeLawgiver.%s"), StateSuffix));
+	default:
+		return NAME_None;
+	}
+}
+}
 
 FManyNamesWorldState UManyNamesWorldStateSubsystem::GetWorldState() const
 {
@@ -32,6 +158,19 @@ void UManyNamesWorldStateSubsystem::AddWorldStateOutput(FName OutputId)
 
 	FManyNamesWorldState WorldState = GameInstance->GetWorldState();
 	WorldState.WorldStateOutputs.Add(OutputId);
+	GameInstance->SetWorldState(WorldState);
+}
+
+void UManyNamesWorldStateSubsystem::RemoveWorldStateOutput(FName OutputId)
+{
+	UManyNamesGameInstance* GameInstance = GetManyNamesGameInstance();
+	if (!GameInstance || OutputId.IsNone())
+	{
+		return;
+	}
+
+	FManyNamesWorldState WorldState = GameInstance->GetWorldState();
+	WorldState.WorldStateOutputs.Remove(OutputId);
 	GameInstance->SetWorldState(WorldState);
 }
 
@@ -203,6 +342,87 @@ void UManyNamesWorldStateSubsystem::SetCompanionAllianceState(EManyNamesCompanio
 	FManyNamesCompanionState& CompanionState = WorldState.Companions.FindOrAdd(CompanionId);
 	CompanionState.CompanionId = CompanionId;
 	CompanionState.AllianceState = AllianceState;
+	GameInstance->SetWorldState(WorldState);
+}
+
+void UManyNamesWorldStateSubsystem::SetCompanionTruthRevealed(EManyNamesCompanionId CompanionId, bool bTruthRevealed)
+{
+	UManyNamesGameInstance* GameInstance = GetManyNamesGameInstance();
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	FManyNamesWorldState WorldState = GameInstance->GetWorldState();
+	FManyNamesCompanionState& CompanionState = WorldState.Companions.FindOrAdd(CompanionId);
+	CompanionState.CompanionId = CompanionId;
+	CompanionState.bTruthRevealed = bTruthRevealed;
+	GameInstance->SetWorldState(WorldState);
+}
+
+void UManyNamesWorldStateSubsystem::AddCompanionEscalation(EManyNamesCompanionId CompanionId, int32 Delta)
+{
+	UManyNamesGameInstance* GameInstance = GetManyNamesGameInstance();
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	FManyNamesWorldState WorldState = GameInstance->GetWorldState();
+	FManyNamesCompanionState& CompanionState = WorldState.Companions.FindOrAdd(CompanionId);
+	CompanionState.CompanionId = CompanionId;
+	CompanionState.EscalationScore = FMath::Max(0, CompanionState.EscalationScore + Delta);
+	GameInstance->SetWorldState(WorldState);
+}
+
+void UManyNamesWorldStateSubsystem::RefreshDominantAntagonist()
+{
+	UManyNamesGameInstance* GameInstance = GetManyNamesGameInstance();
+	if (!GameInstance)
+	{
+		return;
+	}
+
+	FManyNamesWorldState WorldState = GameInstance->GetWorldState();
+	for (const EManyNamesCompanionId CompanionId : {EManyNamesCompanionId::OracleAI, EManyNamesCompanionId::SkyRuler, EManyNamesCompanionId::BronzeLawgiver})
+	{
+		WorldState.WorldStateOutputs.Remove(ThreatOutputForCompanion(CompanionId, false));
+		WorldState.WorldStateOutputs.Remove(ThreatOutputForCompanion(CompanionId, true));
+		WorldState.WorldStateOutputs.Remove(DominantOutputForCompanion(CompanionId));
+	}
+
+	int32 BestScore = 0;
+	EManyNamesCompanionId BestCompanion = EManyNamesCompanionId::OracleAI;
+	for (TPair<EManyNamesCompanionId, FManyNamesCompanionState>& Pair : WorldState.Companions)
+	{
+		const int32 Score = ComputeCompanionThreatScore(WorldState, Pair.Key, Pair.Value);
+		Pair.Value.EscalationScore = FMath::Max(Pair.Value.EscalationScore, Score);
+		Pair.Value.ThreatState = ComputeThreatState(Score);
+		Pair.Value.bDominantAntagonist = false;
+		if (Pair.Value.ThreatState == EManyNamesCompanionThreatState::Ascendant || Pair.Value.ThreatState == EManyNamesCompanionThreatState::Dominant)
+		{
+			WorldState.WorldStateOutputs.Add(ThreatOutputForCompanion(Pair.Key, Pair.Value.ThreatState == EManyNamesCompanionThreatState::Dominant));
+		}
+		if (Score > BestScore)
+		{
+			BestScore = Score;
+			BestCompanion = Pair.Key;
+		}
+	}
+
+	WorldState.bHasDominantAntagonist = BestScore >= 12;
+	WorldState.DominantAntagonist = BestCompanion;
+	if (WorldState.bHasDominantAntagonist)
+	{
+		if (FManyNamesCompanionState* CompanionState = WorldState.Companions.Find(BestCompanion))
+		{
+			CompanionState->bDominantAntagonist = true;
+			CompanionState->ThreatState = EManyNamesCompanionThreatState::Dominant;
+		}
+		WorldState.WorldStateOutputs.Add(ThreatOutputForCompanion(BestCompanion, true));
+		WorldState.WorldStateOutputs.Add(DominantOutputForCompanion(BestCompanion));
+	}
+
 	GameInstance->SetWorldState(WorldState);
 }
 

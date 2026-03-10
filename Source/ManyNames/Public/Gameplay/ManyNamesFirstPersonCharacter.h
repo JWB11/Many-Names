@@ -33,6 +33,8 @@ private:
 	void UpdateInteractionPrompt();
 	AActor* TraceForInteractable() const;
 	bool CanUsePower(EManyNamesPowerId PowerId) const;
+	bool HasGroundSupport(float TraceDistance) const;
+	void TryRecoverInvalidSpawn();
 	void ShowMessage(const FString& Message, FColor Color = FColor::White) const;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ManyNames|Camera", meta=(AllowPrivateAccess="true"))
@@ -41,6 +43,24 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="ManyNames|Movement")
 	float BaseWalkSpeed = 520.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category="ManyNames|Movement")
+	float GroundProbeDistance = 140.0f;
+
 	UPROPERTY(EditDefaultsOnly, Category="ManyNames|Interaction")
 	float InteractionRange = 500.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="ManyNames|Spawn")
+	float SpawnRecoveryWindowSeconds = 4.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="ManyNames|Spawn")
+	float SpawnRecoveryTraceDistance = 900.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="ManyNames|Spawn")
+	float SpawnFailureZ = -600.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="ManyNames|Spawn")
+	float SpawnRecoveryLift = 120.0f;
+
+	float SpawnRecoveryElapsed = 0.0f;
+	bool bSpawnRecoveryActive = true;
 };

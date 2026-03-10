@@ -17,6 +17,8 @@ public class ManyNames : ModuleRules
 			"GameplayTags",
 			"Json",
 			"JsonUtilities",
+			"Landscape",
+			"PCG",
 			"UMG"
 		});
 
@@ -31,7 +33,11 @@ public class ManyNames : ModuleRules
 				PrivateDependencyModuleNames.AddRange(new[]
 				{
 					"UnrealEd",
-					"AssetRegistry"
+					"AssetRegistry",
+					"AssetTools",
+					"LandscapeEditor",
+					"PCGEditor",
+					"StaticMeshEditor"
 				});
 			}
 		}

@@ -21,6 +21,9 @@ public:
 	void AddWorldStateOutput(FName OutputId);
 
 	UFUNCTION(BlueprintCallable, Category="ManyNames|WorldState")
+	void RemoveWorldStateOutput(FName OutputId);
+
+	UFUNCTION(BlueprintCallable, Category="ManyNames|WorldState")
 	void RegisterRegionVisit(EManyNamesRegionId RegionId);
 
 	UFUNCTION(BlueprintCallable, Category="ManyNames|WorldState")
@@ -49,6 +52,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="ManyNames|WorldState")
 	void SetCompanionAllianceState(EManyNamesCompanionId CompanionId, EManyNamesAllianceState AllianceState);
+
+	UFUNCTION(BlueprintCallable, Category="ManyNames|WorldState")
+	void SetCompanionTruthRevealed(EManyNamesCompanionId CompanionId, bool bTruthRevealed);
+
+	UFUNCTION(BlueprintCallable, Category="ManyNames|WorldState")
+	void AddCompanionEscalation(EManyNamesCompanionId CompanionId, int32 Delta);
+
+	UFUNCTION(BlueprintCallable, Category="ManyNames|WorldState")
+	void RefreshDominantAntagonist();
 
 private:
 	class UManyNamesGameInstance* GetManyNamesGameInstance() const;

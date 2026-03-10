@@ -71,6 +71,25 @@
     ]
   },
   {
+    "Name": "EgyptBindArchive",
+    "ChoiceId": "choice_egypt_bind_archive",
+    "QuestId": "egypt_main_01",
+    "Prompt": "The archive reveals a machine where a god should be.",
+    "OptionText": "Bind the archive into ritual memory: the truth survives, but only through a disciplined priestly chorus under your terms.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Deception"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Deception"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Egypt.BoundArchive"
+    ]
+  },
+  {
     "Name": "EgyptExposeOracle",
     "ChoiceId": "choice_egypt_expose_oracle",
     "QuestId": "egypt_main_01",
@@ -146,6 +165,25 @@
     ]
   },
   {
+    "Name": "EgyptFamineStorehouse",
+    "ChoiceId": "choice_egypt_famine_storehouse",
+    "QuestId": "egypt_side_01",
+    "Prompt": "The floodplain fails and the temple granary is under guard.",
+    "OptionText": "Seize the storehouse ledgers, force open the granary, and rebuild food distribution under visible civic stewardship.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Egypt.StorehouseReform"
+    ]
+  },
+  {
     "Name": "EgyptFamineRefuse",
     "ChoiceId": "choice_egypt_famine_refuse",
     "QuestId": "egypt_side_01",
@@ -197,6 +235,25 @@
     "CombatDelta": 0,
     "ResultTags": [
       "Result.Greece.RedirectedProphecy"
+    ]
+  },
+  {
+    "Name": "GreeceBreakBeacon",
+    "ChoiceId": "choice_greece_break_beacon",
+    "QuestId": "greece_main_01",
+    "Prompt": "The storm-ruler offers shared divinity.",
+    "OptionText": "Break the bronze beacon and force the sanctuary to live without theatrical terror.",
+    "RequiredDomains": [
+      "Domain.Judgment",
+      "Domain.Craft"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment",
+      "Domain.Craft"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Result.Greece.BrokenBeacon"
     ]
   },
   {
@@ -255,6 +312,25 @@
     ]
   },
   {
+    "Name": "GreeceWarbandBloodPrice",
+    "ChoiceId": "choice_greece_warband_bloodprice",
+    "QuestId": "greece_side_01",
+    "Prompt": "A warband advances on the sanctuary road.",
+    "OptionText": "Demand hostages and blood price, then let the warband leave in humiliation rather than victory.",
+    "RequiredDomains": [
+      "Domain.Judgment",
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment",
+      "Domain.Order"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Greece.BloodPrice"
+    ]
+  },
+  {
     "Name": "GreeceWarbandStrike",
     "ChoiceId": "choice_greece_warband_strike",
     "QuestId": "greece_side_01",
@@ -307,6 +383,25 @@
     "CombatDelta": 2,
     "ResultTags": [
       "Result.Italic.Domination"
+    ]
+  },
+  {
+    "Name": "ItalicLawSharedMeasure",
+    "ChoiceId": "choice_italic_shared_measure",
+    "QuestId": "italic_main_01",
+    "Prompt": "The bronze lawgiver asks what order is for.",
+    "OptionText": "Define order as shared measure: law must be visible, negotiated, and survivable to those beneath it.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Italic.SharedMeasure"
     ]
   },
   {
@@ -381,6 +476,25 @@
     "CombatDelta": 0,
     "ResultTags": [
       "Result.Italic.EngineeredBoundary"
+    ]
+  },
+  {
+    "Name": "ItalicBoundaryHostageOath",
+    "ChoiceId": "choice_italic_boundary_hostage_oath",
+    "QuestId": "italic_side_01",
+    "Prompt": "Two clans demand the same stretch of sacred boundary.",
+    "OptionText": "Bind both lineages through exchanged hostages and a public oath that neither can easily break.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Judgment"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Italic.HostageOath"
     ]
   },
   {

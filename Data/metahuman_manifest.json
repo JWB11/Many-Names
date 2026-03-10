@@ -34,7 +34,18 @@
     "MeasureKeeper": "/Game/Characters/MetaHumans/MeasureKeeper.MeasureKeeper",
     "BoundaryElder": "/Game/Characters/MetaHumans/BoundaryElder.BoundaryElder",
     "BridgeWatcher": "/Game/Characters/MetaHumans/BridgeWatcher.BridgeWatcher",
-    "SystemsRemnant": "/Game/Characters/MetaHumans/SystemsRemnant.SystemsRemnant"
+    "SystemsRemnant": "/Game/Characters/MetaHumans/SystemsRemnant.SystemsRemnant",
+    "OpeningHealer": "/Game/Characters/MetaHumans/OpeningHealer.OpeningHealer",
+    "OpeningQuartermaster": "/Game/Characters/MetaHumans/OpeningQuartermaster.OpeningQuartermaster",
+    "TempleCantor": "/Game/Characters/MetaHumans/TempleCantor.TempleCantor",
+    "GranarySteward": "/Game/Characters/MetaHumans/GranarySteward.GranarySteward",
+    "SanctuaryKeeper": "/Game/Characters/MetaHumans/SanctuaryKeeper.SanctuaryKeeper",
+    "WarSinger": "/Game/Characters/MetaHumans/WarSinger.WarSinger",
+    "ForgeMatron": "/Game/Characters/MetaHumans/ForgeMatron.ForgeMatron",
+    "RoadSurveyor": "/Game/Characters/MetaHumans/RoadSurveyor.RoadSurveyor",
+    "CompanionChorus": "/Game/Characters/MetaHumans/CompanionChorus.CompanionChorus"
   },
-  "ambient_character_assets": {}
+  "ambient_character_assets": {
+    "Opening.Guards": "/Game/Characters/MetaHumans/OpeningQuartermaster.OpeningQuartermaster"
+  }
 }

@@ -39,6 +39,10 @@ void AManyNamesPrototypeGameMode::InitializePrototypeRun()
 	}
 
 	ReconcileQuestStates();
+	if (UManyNamesWorldStateSubsystem* WorldStateSubsystem = GetWorldStateSubsystem())
+	{
+		WorldStateSubsystem->RefreshDominantAntagonist();
+	}
 	BootstrapCurrentMap();
 }
 
@@ -144,6 +148,7 @@ void AManyNamesPrototypeGameMode::HandleRegionResolved(EManyNamesRegionId Region
 		break;
 	}
 
+	WorldStateSubsystem->RefreshDominantAntagonist();
 	TryEnterConvergence();
 }
 
@@ -348,6 +353,22 @@ FString AManyNamesPrototypeGameMode::GetJournalSummary() const
 		WorldState.RumorProfile.PublicMiracleScore,
 		WorldState.RumorProfile.ConcealmentScore,
 		WorldState.RumorProfile.CombatReputation);
+	if (WorldState.bHasDominantAntagonist)
+	{
+		const TCHAR* AntagonistName = TEXT("OracleAI");
+		switch (WorldState.DominantAntagonist)
+		{
+		case EManyNamesCompanionId::SkyRuler:
+			AntagonistName = TEXT("SkyRuler");
+			break;
+		case EManyNamesCompanionId::BronzeLawgiver:
+			AntagonistName = TEXT("BronzeLawgiver");
+			break;
+		default:
+			break;
+		}
+		Builder.Appendf(TEXT("Dominant antagonist path: %s\n"), AntagonistName);
+	}
 
 	const auto AppendQuestSummary = [&Builder, QuestSubsystem](const TCHAR* Label, FName QuestId)
 	{

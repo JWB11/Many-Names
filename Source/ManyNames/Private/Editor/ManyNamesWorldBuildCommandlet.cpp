@@ -121,6 +121,25 @@ namespace
 	}
 
 	template <typename AssetType>
+	AssetType* TryLoadAsset(const TCHAR* AssetPath)
+	{
+		const FString FullPath(AssetPath);
+		FString PackageName = FullPath;
+		int32 DotIndex = INDEX_NONE;
+		if (FullPath.FindChar(TEXT('.'), DotIndex))
+		{
+			PackageName = FullPath.Left(DotIndex);
+		}
+
+		if (PackageName.IsEmpty() || !FPackageName::DoesPackageExist(PackageName))
+		{
+			return nullptr;
+		}
+
+		return LoadAsset<AssetType>(AssetPath);
+	}
+
+	template <typename AssetType>
 	AssetType* FirstValid(std::initializer_list<AssetType*> Candidates)
 	{
 		for (AssetType* Candidate : Candidates)
@@ -297,9 +316,6 @@ namespace
 		Assets.ItalicChurchRock = LoadAsset<UStaticMesh>(TEXT("/Game/Marketplace/Fab/EnvironmentItalic/ChurchRock/church_rock1.church_rock1"));
 		Assets.ItalicBollard = LoadAsset<UStaticMesh>(TEXT("/Game/Marketplace/Fab/EnvironmentItalic/RoundedCornerBollard/round-corner1.round-corner1"));
 		Assets.ConvergenceDestroyedWood = LoadAsset<UStaticMesh>(TEXT("/Game/Marketplace/Fab/EnvironmentConvergence/CuttedDestroyedWood/shareModel.shareModel"));
-
-		Assets.Manny = LoadAsset<USkeletalMesh>(TEXT("/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple"));
-		Assets.Quinn = LoadAsset<USkeletalMesh>(TEXT("/Game/Characters/Mannequins/Meshes/SKM_Quinn_Simple.SKM_Quinn_Simple"));
 		Assets.HumanFryPose = LoadAsset<USkeletalMesh>(TEXT("/Game/Marketplace/Fab/ArtifactsHero/HumanFryPose/AS.AS"));
 
 		TArray<USkeletalMesh*> MetaHumans;
@@ -310,11 +326,15 @@ namespace
 			Assets.MetaHumanB = MetaHumans.Num() > 1 ? MetaHumans[1] : MetaHumans[0];
 			Assets.MetaHumanC = MetaHumans.Num() > 2 ? MetaHumans[2] : MetaHumans.Last();
 		}
+		Assets.Manny = TryLoadAsset<USkeletalMesh>(TEXT("/Game/Characters/Mannequins/Meshes/SKM_Manny_Simple.SKM_Manny_Simple"));
+		Assets.Quinn = TryLoadAsset<USkeletalMesh>(TEXT("/Game/Characters/Mannequins/Meshes/SKM_Quinn_Simple.SKM_Quinn_Simple"));
+		Assets.Manny = FirstValid<USkeletalMesh>({Assets.Manny, Assets.MetaHumanA, Assets.HumanFryPose});
+		Assets.Quinn = FirstValid<USkeletalMesh>({Assets.Quinn, Assets.MetaHumanB, Assets.MetaHumanA, Assets.HumanFryPose});
 
-		Assets.IdleAnimation = LoadAsset<UAnimationAsset>(TEXT("/Game/Characters/Mannequins/Anims/Unarmed/MM_Idle.MM_Idle"));
-		Assets.DeathBack = LoadAsset<UAnimationAsset>(TEXT("/Game/Characters/Mannequins/Anims/Death/MM_Death_Back_01.MM_Death_Back_01"));
-		Assets.DeathLeft = LoadAsset<UAnimationAsset>(TEXT("/Game/Characters/Mannequins/Anims/Death/MM_Death_Left_01.MM_Death_Left_01"));
-		Assets.DeathRight = LoadAsset<UAnimationAsset>(TEXT("/Game/Characters/Mannequins/Anims/Death/MM_Death_Right_01.MM_Death_Right_01"));
+		Assets.IdleAnimation = TryLoadAsset<UAnimationAsset>(TEXT("/Game/Characters/Mannequins/Anims/Unarmed/MM_Idle.MM_Idle"));
+		Assets.DeathBack = TryLoadAsset<UAnimationAsset>(TEXT("/Game/Characters/Mannequins/Anims/Death/MM_Death_Back_01.MM_Death_Back_01"));
+		Assets.DeathLeft = TryLoadAsset<UAnimationAsset>(TEXT("/Game/Characters/Mannequins/Anims/Death/MM_Death_Left_01.MM_Death_Left_01"));
+		Assets.DeathRight = TryLoadAsset<UAnimationAsset>(TEXT("/Game/Characters/Mannequins/Anims/Death/MM_Death_Right_01.MM_Death_Right_01"));
 
 		Assets.AshStone = LoadAsset<UMaterialInterface>(TEXT("/Game/Materials/M_MN_AshStone.M_MN_AshStone"));
 		Assets.WreckMetal = LoadAsset<UMaterialInterface>(TEXT("/Game/Materials/M_MN_WreckMetal.M_MN_WreckMetal"));
@@ -333,7 +353,8 @@ namespace
 	bool ValidateAssets(const FManyNamesBuildAssets& Assets)
 	{
 		return Assets.Plane && Assets.Cube && Assets.Cylinder && Assets.Cone && Assets.Sphere &&
-			Assets.Manny && Assets.Quinn && Assets.IdleAnimation && Assets.AshStone && Assets.WreckMetal &&
+			(Assets.Manny || Assets.Quinn || Assets.MetaHumanA || Assets.HumanFryPose || Assets.CharacterMeshesById.Num() > 0) &&
+			Assets.AshStone && Assets.WreckMetal &&
 			Assets.SandStone && Assets.Plaster && Assets.Basalt && Assets.Bronze && Assets.Linen &&
 			Assets.Water && Assets.Miracle && Assets.Oracle;
 	}
@@ -353,11 +374,11 @@ namespace
 		switch (FallbackSlot)
 		{
 		case 0:
-			return Assets.MetaHumanA ? Assets.MetaHumanA : Assets.Quinn;
+			return FirstValid<USkeletalMesh>({Assets.MetaHumanA, Assets.Quinn, Assets.Manny, Assets.HumanFryPose});
 		case 1:
-			return Assets.MetaHumanB ? Assets.MetaHumanB : Assets.Manny;
+			return FirstValid<USkeletalMesh>({Assets.MetaHumanB, Assets.Manny, Assets.Quinn, Assets.MetaHumanA, Assets.HumanFryPose});
 		default:
-			return Assets.MetaHumanC ? Assets.MetaHumanC : (Assets.MetaHumanA ? Assets.MetaHumanA : Assets.Quinn);
+			return FirstValid<USkeletalMesh>({Assets.MetaHumanC, Assets.MetaHumanA, Assets.Quinn, Assets.Manny, Assets.HumanFryPose});
 		}
 	}
 
@@ -368,7 +389,9 @@ namespace
 			return const_cast<USkeletalMesh*>(*Found);
 		}
 
-		return (FallbackSlot % 2 == 0) ? Assets.Quinn : Assets.Manny;
+		return (FallbackSlot % 2 == 0)
+			? FirstValid<USkeletalMesh>({Assets.Quinn, Assets.MetaHumanB, Assets.MetaHumanA, Assets.HumanFryPose, Assets.Manny})
+			: FirstValid<USkeletalMesh>({Assets.Manny, Assets.MetaHumanA, Assets.MetaHumanB, Assets.HumanFryPose, Assets.Quinn});
 	}
 
 	FManyNamesNpcVisualProfile MakeNpcProfile(

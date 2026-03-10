@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "Data"
 CONTENT = ROOT / "Content" / "Characters" / "MetaHumans"
 MANIFEST_PATH = DATA / "metahuman_manifest.json"
+FORBIDDEN_RUNTIME_MARKERS = ("Manny", "Quinn", "SKM_Manny", "SKM_Quinn", "MetaHumanA", "MetaHumanB", "MetaHumanC")
 
 
 def load_json(name: str):
@@ -97,6 +98,8 @@ def main():
             raise SystemExit(f"manifest missing authored named character asset: {character_id}")
         if character_id not in manifest_named or not manifest_named[character_id]:
             raise SystemExit(f"manifest missing runtime named character mesh: {character_id}")
+        if any(marker in manifest_named[character_id] for marker in FORBIDDEN_RUNTIME_MARKERS):
+            raise SystemExit(f"manifest uses fallback runtime mesh for named character: {character_id}")
 
     for row in ambient:
         profile_id = row["ProfileId"]

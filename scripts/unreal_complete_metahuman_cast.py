@@ -11,10 +11,18 @@ DATA_DIR = PROJECT_DIR / "Data"
 CAST_PATH = DATA_DIR / "character_cast.json"
 AMBIENT_PATH = DATA_DIR / "ambient_profiles.json"
 MANIFEST_PATH = DATA_DIR / "metahuman_manifest.json"
+STATUS_PATH = DATA_DIR / "metahuman_pipeline_status.json"
 
 AUTHORING_ROOT = "/Game/Characters/MetaHumans"
 BUILD_ROOT = "/Game/MetaHumans"
 COMMON_ROOT = "/Game/MetaHumans/Common"
+PIPELINE_ROOT = "/Game/MetaHuman/Pipelines"
+DEFAULT_PIPELINE_SOURCE = "/MetaHumanCharacter/BuildPipeline/BP_DefaultLegacyPipeline_Medium"
+DEFAULT_PIPELINE_ASSET = f"{PIPELINE_ROOT}/BP_ManyNamesLegacyPipeline_Medium_NoBake"
+DEFAULT_PIPELINE_CLASS = (
+    "/Game/MetaHuman/Pipelines/BP_ManyNamesLegacyPipeline_Medium_NoBake."
+    "BP_ManyNamesLegacyPipeline_Medium_NoBake_C"
+)
 SKIP_IDS = {"ConvergenceCore", "LegacyProjection", "OracleFragment"}
 BALANCED_BATCH = {
     "OpeningHealer",
@@ -36,6 +44,95 @@ def _load_json(path: Path):
 
 def _save_json(path: Path, payload) -> None:
     path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+
+
+def _engine_version() -> str:
+    try:
+        return unreal.SystemLibrary.get_engine_version()
+    except Exception:
+        return ""
+
+
+def _save_status(payload: dict) -> None:
+    _save_json(STATUS_PATH, payload)
+
+
+def _ensure_directory(package_path: str) -> None:
+    if not unreal.EditorAssetLibrary.does_directory_exist(package_path):
+        unreal.EditorAssetLibrary.make_directory(package_path)
+
+
+def _get_editor_pipeline(pipeline_asset) -> object:
+    generated_class = pipeline_asset.generated_class() if hasattr(pipeline_asset, "generated_class") else None
+    if not generated_class:
+        return None
+    cdo = unreal.get_default_object(generated_class)
+    for candidate in ("editor_pipeline", "EditorPipeline"):
+        try:
+            editor_pipeline = cdo.get_editor_property(candidate)
+            if editor_pipeline:
+                return editor_pipeline
+        except Exception:
+            continue
+    return None
+
+
+def _ensure_no_bake_pipeline_override() -> tuple[str, dict]:
+    status = {
+        "engine_version": _engine_version(),
+        "override_asset_path": DEFAULT_PIPELINE_ASSET,
+        "override_class_path": DEFAULT_PIPELINE_CLASS,
+        "source_asset_path": DEFAULT_PIPELINE_SOURCE,
+        "created_override_asset": False,
+        "saved_override_asset": False,
+        "bake_materials_disabled": False,
+        "verified_bake_materials_disabled": False,
+        "error": "",
+    }
+
+    try:
+        _ensure_directory(PIPELINE_ROOT)
+        pipeline_asset = unreal.load_asset(DEFAULT_PIPELINE_ASSET)
+        if not pipeline_asset:
+            source_asset = unreal.load_asset(DEFAULT_PIPELINE_SOURCE)
+            if not source_asset:
+                status["error"] = "failed to load source legacy pipeline asset"
+                return "", status
+            pipeline_asset = unreal.AssetToolsHelpers.get_asset_tools().duplicate_asset(
+                "BP_ManyNamesLegacyPipeline_Medium_NoBake",
+                PIPELINE_ROOT,
+                source_asset,
+            )
+            status["created_override_asset"] = bool(pipeline_asset)
+        if not pipeline_asset:
+            status["error"] = "failed to duplicate no-bake pipeline override asset"
+            return "", status
+
+        editor_pipeline = _get_editor_pipeline(pipeline_asset)
+        if not editor_pipeline:
+            status["error"] = "failed to resolve nested EditorPipeline object on override asset"
+            return "", status
+
+        editor_pipeline.set_editor_property("bBakeMaterials", False)
+        status["bake_materials_disabled"] = True
+        status["saved_override_asset"] = unreal.EditorAssetLibrary.save_loaded_asset(pipeline_asset, only_if_is_dirty=False)
+
+        reloaded = unreal.load_asset(DEFAULT_PIPELINE_ASSET)
+        if reloaded:
+            reloaded_editor_pipeline = _get_editor_pipeline(reloaded)
+            if reloaded_editor_pipeline:
+                status["verified_bake_materials_disabled"] = (
+                    reloaded_editor_pipeline.get_editor_property("bBakeMaterials") is False
+                )
+    except Exception as exc:
+        status["error"] = str(exc)
+        return "", status
+
+    if not status["verified_bake_materials_disabled"]:
+        status["error"] = status["error"] or "override asset saved, but no-bake verification failed"
+        return "", status
+
+    return DEFAULT_PIPELINE_CLASS, status
 
 
 def _find_first_skeletal_mesh(package_path: str) -> str:
@@ -80,16 +177,7 @@ def _build_character(character, subsystem) -> None:
     params.absolute_build_path = f"{BUILD_ROOT}/{character.get_name()}"
     params.common_folder_path = COMMON_ROOT
     params.enable_wardrobe_item_validation = False
-    pipeline_override_path = os.environ.get(PIPELINE_OVERRIDE_ENV, "").strip()
-    if pipeline_override_path:
-        pipeline_override = unreal.load_class(None, pipeline_override_path)
-        if not pipeline_override:
-            unreal.log_warning(
-                f"[MetaHumanCastComplete] Failed to load pipeline override class "
-                f"{pipeline_override_path}; using default pipeline"
-            )
-        else:
-            params.pipeline_override = pipeline_override
+    params.bake_makeup = True
     subsystem.build_meta_human(character=character, params=params)
 
 
@@ -170,6 +258,17 @@ def main():
     ambient_profiles = _load_json(AMBIENT_PATH)
     subsystem = unreal.get_editor_subsystem(unreal.MetaHumanCharacterEditorSubsystem)
     existing_manifest = _load_json(MANIFEST_PATH) if MANIFEST_PATH.exists() else {}
+    override_class, pipeline_status = _ensure_no_bake_pipeline_override()
+    _save_status(pipeline_status)
+    if override_class:
+        unreal.log(
+            "[MetaHumanCastComplete] No-bake pipeline asset verified. "
+            "Build will rely on project MetaHumanCharacter config to select it."
+        )
+    else:
+        unreal.log_warning(
+            f"[MetaHumanCastComplete] No-bake pipeline override unavailable: {pipeline_status.get('error', 'unknown error')}"
+        )
 
     manifest = {
         "named": dict(existing_manifest.get("named", {})),

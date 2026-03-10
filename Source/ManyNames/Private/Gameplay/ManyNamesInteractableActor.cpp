@@ -10,7 +10,7 @@
 
 namespace
 {
-void SnapActorToGround(AActor* Actor, float MaxTraceDistance)
+void SnapInteractableActorToGround(AActor* Actor, float MaxTraceDistance)
 {
 	if (!Actor || !Actor->GetWorld())
 	{
@@ -207,7 +207,7 @@ void AManyNamesInteractableActor::ApplyNpcVisualProfile()
 				}
 			}
 
-			SnapActorToGround(this, 2400.0f);
+			SnapInteractableActorToGround(this, 2400.0f);
 			return;
 		}
 	}
@@ -216,5 +216,5 @@ void AManyNamesInteractableActor::ApplyNpcVisualProfile()
 	SkeletalMeshComponent->SetHiddenInGame(true);
 	MeshComponent->SetVisibility(true);
 	MeshComponent->SetHiddenInGame(false);
-	SnapActorToGround(this, 2400.0f);
+	SnapInteractableActorToGround(this, 2400.0f);
 }

@@ -8,11 +8,20 @@
     "MeasureKeeper": "/Game/MetaHumans/MeasureKeeper/MeasureKeeper/Body/SKM_MeasureKeeper_BodyMesh.SKM_MeasureKeeper_BodyMesh",
     "BoundaryElder": "/Game/MetaHumans/BoundaryElder/BoundaryElder/Body/SKM_BoundaryElder_BodyMesh.SKM_BoundaryElder_BodyMesh",
     "BridgeWatcher": "/Game/MetaHumans/BridgeWatcher/BridgeWatcher/Body/SKM_BridgeWatcher_BodyMesh.SKM_BridgeWatcher_BodyMesh",
-    "SystemsRemnant": "/Game/MetaHumans/SystemsRemnant/SystemsRemnant/Body/SKM_SystemsRemnant_BodyMesh.SKM_SystemsRemnant_BodyMesh"
+    "SystemsRemnant": "/Game/MetaHumans/SystemsRemnant/SystemsRemnant/Body/SKM_SystemsRemnant_BodyMesh.SKM_SystemsRemnant_BodyMesh",
+    "OpeningHealer": "/Game/MetaHumans/OpeningHealer/OpeningHealer/Body/SKM_OpeningHealer_BodyMesh.SKM_OpeningHealer_BodyMesh",
+    "OpeningQuartermaster": "/Game/MetaHumans/OpeningQuartermaster/OpeningQuartermaster/Body/SKM_OpeningQuartermaster_BodyMesh.SKM_OpeningQuartermaster_BodyMesh",
+    "TempleCantor": "/Game/MetaHumans/TempleCantor/TempleCantor/Body/SKM_TempleCantor_BodyMesh.SKM_TempleCantor_BodyMesh",
+    "GranarySteward": "/Game/MetaHumans/GranarySteward/GranarySteward/Body/SKM_GranarySteward_BodyMesh.SKM_GranarySteward_BodyMesh",
+    "SanctuaryKeeper": "/Game/MetaHumans/SanctuaryKeeper/SanctuaryKeeper/Body/SKM_SanctuaryKeeper_BodyMesh.SKM_SanctuaryKeeper_BodyMesh",
+    "WarSinger": "/Game/MetaHumans/WarSinger/WarSinger/Body/SKM_WarSinger_BodyMesh.SKM_WarSinger_BodyMesh",
+    "ForgeMatron": "/Game/MetaHumans/ForgeMatron/ForgeMatron/Body/SKM_ForgeMatron_BodyMesh.SKM_ForgeMatron_BodyMesh",
+    "RoadSurveyor": "/Game/MetaHumans/RoadSurveyor/RoadSurveyor/Body/SKM_RoadSurveyor_BodyMesh.SKM_RoadSurveyor_BodyMesh",
+    "CompanionChorus": "/Game/MetaHumans/CompanionChorus/CompanionChorus/Body/SKM_CompanionChorus_BodyMesh.SKM_CompanionChorus_BodyMesh"
   },
   "ambient": {
     "Opening.Survivors": "/Game/MetaHumans/OpeningWitness/OpeningWitness/Body/SKM_OpeningWitness_BodyMesh.SKM_OpeningWitness_BodyMesh",
-    "Opening.Guards": "/Game/MetaHumans/OpeningWitness/OpeningWitness/Body/SKM_OpeningWitness_BodyMesh.SKM_OpeningWitness_BodyMesh",
+    "Opening.Guards": "/Game/MetaHumans/OpeningQuartermaster/OpeningQuartermaster/Body/SKM_OpeningQuartermaster_BodyMesh.SKM_OpeningQuartermaster_BodyMesh",
     "Egypt.Priests": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
     "Egypt.Scribes": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
     "Egypt.Vendors": "/Game/MetaHumans/FloodplainPetitioner/FloodplainPetitioner/Body/SKM_FloodplainPetitioner_BodyMesh.SKM_FloodplainPetitioner_BodyMesh",
@@ -45,7 +54,5 @@
     "RoadSurveyor": "/Game/Characters/MetaHumans/RoadSurveyor.RoadSurveyor",
     "CompanionChorus": "/Game/Characters/MetaHumans/CompanionChorus.CompanionChorus"
   },
-  "ambient_character_assets": {
-    "Opening.Guards": "/Game/Characters/MetaHumans/OpeningQuartermaster.OpeningQuartermaster"
-  }
+  "ambient_character_assets": {}
 }

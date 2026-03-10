@@ -1,0 +1,671 @@
+[
+  {
+    "StepId": "opening_main_01_step_01",
+    "QuestId": "opening_main_01",
+    "StepIndex": 1,
+    "Title": "Wake Under Ash",
+    "Objective": "Recover control in the eruption fallout and reach stable ground while debris falls around the player.",
+    "LocationId": "opening_shoreline",
+    "RequiredWorldStateOutputs": [],
+    "CompletionOutputs": [
+      "Story.Prologue.WakeComplete"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "TraverseCollapse",
+    "CombatEscalationId": "None",
+    "DomainFocus": [
+      "Domain.Healing"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "opening_main_01_step_02",
+    "QuestId": "opening_main_01",
+    "StepIndex": 2,
+    "Title": "The First Miracle",
+    "Objective": "Survive a lethal collapse and trigger involuntary trauma recovery in view of a local witness.",
+    "LocationId": "opening_temple_slope",
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.WakeComplete"
+    ],
+    "CompletionOutputs": [
+      "Story.Prologue.MiracleWitnessed",
+      "Power.TraumaRecovery.Revealed"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "AutoPowerSurvival",
+    "CombatEscalationId": "None",
+    "DomainFocus": [
+      "Domain.Light",
+      "Domain.Healing"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "opening_main_01_step_03",
+    "QuestId": "opening_main_01",
+    "StepIndex": 3,
+    "Title": "Choose the First Road",
+    "Objective": "Reach the crashed relay fragment, identify three surviving signal directions, and unlock all first-region routes.",
+    "LocationId": "opening_signal_ridge",
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.MiracleWitnessed"
+    ],
+    "CompletionOutputs": [
+      "Story.Prologue.Complete",
+      "Story.Prologue.RouteChoiceUnlocked",
+      "State.Region.Opening.Complete"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "SignalInterpretation",
+    "CombatEscalationId": "None",
+    "DomainFocus": [
+      "Domain.Light",
+      "Domain.Craft"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "opening_side_01_step_01",
+    "QuestId": "opening_side_01",
+    "StepIndex": 1,
+    "Title": "Find the Witness",
+    "Objective": "Track down the witness before priests or raiders reach them first.",
+    "LocationId": "opening_village_shelter",
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.MiracleWitnessed"
+    ],
+    "CompletionOutputs": [
+      "Story.Witness.Found"
+    ],
+    "UnlockChoiceIds": [
+      "choice_witness_conceal",
+      "choice_witness_proclaim"
+    ],
+    "NonCombatResolutionId": "Conversation",
+    "CombatEscalationId": "WitnessTaken",
+    "DomainFocus": [
+      "Domain.Deception",
+      "Domain.Light"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "opening_side_01_step_02",
+    "QuestId": "opening_side_01",
+    "StepIndex": 2,
+    "Title": "Set the First Story",
+    "Objective": "Define whether the miracle enters rumor as a lie, a secret, or a public sign.",
+    "LocationId": "opening_village_shelter",
+    "RequiredWorldStateOutputs": [
+      "Story.Witness.Found"
+    ],
+    "CompletionOutputs": [
+      "Story.Witness.Defined"
+    ],
+    "UnlockChoiceIds": [
+      "choice_witness_conceal",
+      "choice_witness_proclaim"
+    ],
+    "NonCombatResolutionId": "PersuadeWitness",
+    "CombatEscalationId": "None",
+    "DomainFocus": [
+      "Domain.Deception",
+      "Domain.Judgment"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "egypt_main_01_step_01",
+    "QuestId": "egypt_main_01",
+    "StepIndex": 1,
+    "Title": "Enter the Archive Court",
+    "Objective": "Earn access to the temple archive through ritual obedience, forged credentials, or direct spectacle.",
+    "LocationId": "egypt_temple_court",
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.Complete"
+    ],
+    "CompletionOutputs": [
+      "Region.Egypt.ArchiveAccess"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "RitualAccess",
+    "CombatEscalationId": "TempleGuardsAlerted",
+    "DomainFocus": [
+      "Domain.Light",
+      "Domain.Deception",
+      "Domain.Order"
+    ],
+    "CompanionFocus": [
+      "OracleAI"
+    ]
+  },
+  {
+    "StepId": "egypt_main_01_step_02",
+    "QuestId": "egypt_main_01",
+    "StepIndex": 2,
+    "Title": "Descend to the Solar Machine",
+    "Objective": "Map the burial shafts, bypass sacred locks, and speak to the Radiant Voice directly.",
+    "LocationId": "egypt_archive_depths",
+    "RequiredWorldStateOutputs": [
+      "Region.Egypt.ArchiveAccess"
+    ],
+    "CompletionOutputs": [
+      "Region.Egypt.OracleRevealed",
+      "Companion.OracleAI.TruthRevealed"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "RelicAlignment",
+    "CombatEscalationId": "NecropolisAwakened",
+    "DomainFocus": [
+      "Domain.Light",
+      "Domain.Death",
+      "Domain.Craft"
+    ],
+    "CompanionFocus": [
+      "OracleAI"
+    ]
+  },
+  {
+    "StepId": "egypt_main_01_step_03",
+    "QuestId": "egypt_main_01",
+    "StepIndex": 3,
+    "Title": "Issue the Archive Verdict",
+    "Objective": "Decide whether the Radiant Voice remains hidden, becomes shared doctrine, or is fully exposed.",
+    "LocationId": "egypt_solar_chamber",
+    "RequiredWorldStateOutputs": [
+      "Region.Egypt.OracleRevealed"
+    ],
+    "CompletionOutputs": [
+      "Region.Egypt.MainResolved",
+      "State.Region.Egypt.Complete"
+    ],
+    "UnlockChoiceIds": [
+      "choice_egypt_hide_oracle",
+      "choice_egypt_share_oracle",
+      "choice_egypt_expose_oracle"
+    ],
+    "NonCombatResolutionId": "VerdictDialogue",
+    "CombatEscalationId": "PriestlySchism",
+    "DomainFocus": [
+      "Domain.Judgment",
+      "Domain.Light",
+      "Domain.Deception"
+    ],
+    "CompanionFocus": [
+      "OracleAI"
+    ]
+  },
+  {
+    "StepId": "egypt_side_01_step_01",
+    "QuestId": "egypt_side_01",
+    "StepIndex": 1,
+    "Title": "Read the Failed Flood",
+    "Objective": "Inspect fields, granaries, and village testimony to learn whether the famine is environmental or political.",
+    "LocationId": "egypt_floodplain",
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.Complete"
+    ],
+    "CompletionOutputs": [
+      "Region.Egypt.FamineDiagnosed"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "SurveyFields",
+    "CombatEscalationId": "GranaryMob",
+    "DomainFocus": [
+      "Domain.Healing",
+      "Domain.Craft",
+      "Domain.Judgment"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "egypt_side_01_step_02",
+    "QuestId": "egypt_side_01",
+    "StepIndex": 2,
+    "Title": "Choose Relief",
+    "Objective": "Resolve the famine by stealth repair, public miracle, priestly alliance, or refusal.",
+    "LocationId": "egypt_granary_gate",
+    "RequiredWorldStateOutputs": [
+      "Region.Egypt.FamineDiagnosed"
+    ],
+    "CompletionOutputs": [
+      "Region.Egypt.FamineResponseChosen"
+    ],
+    "UnlockChoiceIds": [
+      "choice_egypt_famine_agronomy",
+      "choice_egypt_famine_public_miracle",
+      "choice_egypt_famine_priestly_alliance",
+      "choice_egypt_famine_refuse"
+    ],
+    "NonCombatResolutionId": "FoodPolicyChoice",
+    "CombatEscalationId": "GranaryAssault",
+    "DomainFocus": [
+      "Domain.Healing",
+      "Domain.Order",
+      "Domain.Deception"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "egypt_side_01_step_03",
+    "QuestId": "egypt_side_01",
+    "StepIndex": 3,
+    "Title": "Absorb the Consequence",
+    "Objective": "Contain or survive the political fallout from the chosen relief method.",
+    "LocationId": "egypt_market_lane",
+    "RequiredWorldStateOutputs": [
+      "Region.Egypt.FamineResponseChosen"
+    ],
+    "CompletionOutputs": [
+      "Region.Egypt.SideResolved"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "SetRumorTone",
+    "CombatEscalationId": "StreetRiot",
+    "DomainFocus": [
+      "Domain.Judgment",
+      "Domain.Order"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "greece_main_01_step_01",
+    "QuestId": "greece_main_01",
+    "StepIndex": 1,
+    "Title": "Climb to the Sanctuary",
+    "Objective": "Reach the mountain sanctuary while observing how the High One stages thunder, prophecy, and rank.",
+    "LocationId": "greece_mountain_path",
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.Complete"
+    ],
+    "CompletionOutputs": [
+      "Region.Greece.SanctuaryReached"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "MountainTraverse",
+    "CombatEscalationId": "ShrineRaiders",
+    "DomainFocus": [
+      "Domain.Storm",
+      "Domain.Deception"
+    ],
+    "CompanionFocus": [
+      "SkyRuler"
+    ]
+  },
+  {
+    "StepId": "greece_main_01_step_02",
+    "QuestId": "greece_main_01",
+    "StepIndex": 2,
+    "Title": "Win a Hearing",
+    "Objective": "Survive the ruler's public test, whether through omen, rhetoric, or force of will.",
+    "LocationId": "greece_sanctuary_court",
+    "RequiredWorldStateOutputs": [
+      "Region.Greece.SanctuaryReached"
+    ],
+    "CompletionOutputs": [
+      "Region.Greece.SkyRulerAudience",
+      "Companion.SkyRuler.TruthSuspected"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "PublicTrial",
+    "CombatEscalationId": "HonorDuel",
+    "DomainFocus": [
+      "Domain.Storm",
+      "Domain.Judgment",
+      "Domain.Deception"
+    ],
+    "CompanionFocus": [
+      "SkyRuler"
+    ]
+  },
+  {
+    "StepId": "greece_main_01_step_03",
+    "QuestId": "greece_main_01",
+    "StepIndex": 3,
+    "Title": "Answer the Offer",
+    "Objective": "Join the spectacle, redirect it into law, or break it apart in public.",
+    "LocationId": "greece_storm_platform",
+    "RequiredWorldStateOutputs": [
+      "Region.Greece.SkyRulerAudience"
+    ],
+    "CompletionOutputs": [
+      "Region.Greece.MainResolved",
+      "State.Region.Greece.Complete",
+      "Companion.SkyRuler.TruthRevealed"
+    ],
+    "UnlockChoiceIds": [
+      "choice_greece_join_spectacle",
+      "choice_greece_redirect_prophecy",
+      "choice_greece_defy_spectacle"
+    ],
+    "NonCombatResolutionId": "StormDebate",
+    "CombatEscalationId": "SanctuaryCivilWar",
+    "DomainFocus": [
+      "Domain.Storm",
+      "Domain.Order",
+      "Domain.Judgment"
+    ],
+    "CompanionFocus": [
+      "SkyRuler"
+    ]
+  },
+  {
+    "StepId": "greece_side_01_step_01",
+    "QuestId": "greece_side_01",
+    "StepIndex": 1,
+    "Title": "Read the Warband",
+    "Objective": "Scout the raiders and determine whether they want plunder, recognition, or revenge.",
+    "LocationId": "greece_pass_watchpoint",
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.Complete"
+    ],
+    "CompletionOutputs": [
+      "Region.Greece.WarbandScouted"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "Reconnaissance",
+    "CombatEscalationId": "AmbushTriggered",
+    "DomainFocus": [
+      "Domain.Storm",
+      "Domain.Judgment"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "greece_side_01_step_02",
+    "QuestId": "greece_side_01",
+    "StepIndex": 2,
+    "Title": "Stop the Advance",
+    "Objective": "Negotiate, stage an omen, or strike first before the warband reaches the sanctuary.",
+    "LocationId": "greece_pass_bridge",
+    "RequiredWorldStateOutputs": [
+      "Region.Greece.WarbandScouted"
+    ],
+    "CompletionOutputs": [
+      "Region.Greece.WarbandOutcomeChosen"
+    ],
+    "UnlockChoiceIds": [
+      "choice_greece_warband_negotiate",
+      "choice_greece_warband_omen",
+      "choice_greece_warband_strike"
+    ],
+    "NonCombatResolutionId": "RaidIntervention",
+    "CombatEscalationId": "PassBattle",
+    "DomainFocus": [
+      "Domain.Storm",
+      "Domain.Deception",
+      "Domain.Judgment"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "greece_side_01_step_03",
+    "QuestId": "greece_side_01",
+    "StepIndex": 3,
+    "Title": "Shape the Story of Violence",
+    "Objective": "Handle the sanctuary reaction and decide whether force becomes awe, terror, or proof of fraud.",
+    "LocationId": "greece_lower_shrine",
+    "RequiredWorldStateOutputs": [
+      "Region.Greece.WarbandOutcomeChosen"
+    ],
+    "CompletionOutputs": [
+      "Region.Greece.SideResolved"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "AftermathSpeech",
+    "CombatEscalationId": "RetaliationSkirmish",
+    "DomainFocus": [
+      "Domain.Judgment",
+      "Domain.Deception"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "italic_main_01_step_01",
+    "QuestId": "italic_main_01",
+    "StepIndex": 1,
+    "Title": "Walk the Measured Road",
+    "Objective": "Inspect the engineered road, law markers, and civic rituals surrounding the Keeper of Measures.",
+    "LocationId": "italic_ritual_road",
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.Complete"
+    ],
+    "CompletionOutputs": [
+      "Region.Italic.KeeperApproach"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "RoadSurvey",
+    "CombatEscalationId": "BoundaryMilitia",
+    "DomainFocus": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "CompanionFocus": [
+      "BronzeLawgiver"
+    ]
+  },
+  {
+    "StepId": "italic_main_01_step_02",
+    "QuestId": "italic_main_01",
+    "StepIndex": 2,
+    "Title": "Open the Bronze Chamber",
+    "Objective": "Descend into the keeper's hidden forge-law chamber and learn that the lawgiver is engineered.",
+    "LocationId": "italic_bronze_chamber",
+    "RequiredWorldStateOutputs": [
+      "Region.Italic.KeeperApproach"
+    ],
+    "CompletionOutputs": [
+      "Region.Italic.KeeperRevealed",
+      "Companion.BronzeLawgiver.TruthRevealed"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "SealBreaking",
+    "CombatEscalationId": "ChamberSentinels",
+    "DomainFocus": [
+      "Domain.Order",
+      "Domain.Craft",
+      "Domain.Death"
+    ],
+    "CompanionFocus": [
+      "BronzeLawgiver"
+    ]
+  },
+  {
+    "StepId": "italic_main_01_step_03",
+    "QuestId": "italic_main_01",
+    "StepIndex": 3,
+    "Title": "Define Order",
+    "Objective": "Decide whether the law serves, dominates, or passes to you.",
+    "LocationId": "italic_forge_dais",
+    "RequiredWorldStateOutputs": [
+      "Region.Italic.KeeperRevealed"
+    ],
+    "CompletionOutputs": [
+      "Region.Italic.MainResolved",
+      "State.Region.ItalicWest.Complete"
+    ],
+    "UnlockChoiceIds": [
+      "choice_italic_service",
+      "choice_italic_domination",
+      "choice_italic_replace"
+    ],
+    "NonCombatResolutionId": "LawArgument",
+    "CombatEscalationId": "KeeperDuel",
+    "DomainFocus": [
+      "Domain.Order",
+      "Domain.Judgment",
+      "Domain.Craft"
+    ],
+    "CompanionFocus": [
+      "BronzeLawgiver"
+    ]
+  },
+  {
+    "StepId": "italic_side_01_step_01",
+    "QuestId": "italic_side_01",
+    "StepIndex": 1,
+    "Title": "Hear Both Claims",
+    "Objective": "Collect testimony, markers, and sabotage clues from two clans disputing a sacred boundary.",
+    "LocationId": "italic_boundary_fields",
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.Complete"
+    ],
+    "CompletionOutputs": [
+      "Region.Italic.BoundaryDisputeUnderstood"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "FactFinding",
+    "CombatEscalationId": "ClanBrawl",
+    "DomainFocus": [
+      "Domain.Order",
+      "Domain.Judgment"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "italic_side_01_step_02",
+    "QuestId": "italic_side_01",
+    "StepIndex": 2,
+    "Title": "Impose a Boundary",
+    "Objective": "Resolve the dispute by arbitration, ritual fear, engineering, or force.",
+    "LocationId": "italic_boundary_stones",
+    "RequiredWorldStateOutputs": [
+      "Region.Italic.BoundaryDisputeUnderstood"
+    ],
+    "CompletionOutputs": [
+      "Region.Italic.BoundaryOutcomeChosen"
+    ],
+    "UnlockChoiceIds": [
+      "choice_italic_boundary_arbitrate",
+      "choice_italic_boundary_ritual",
+      "choice_italic_boundary_engineer",
+      "choice_italic_boundary_purge"
+    ],
+    "NonCombatResolutionId": "BoundaryVerdict",
+    "CombatEscalationId": "BoundaryPurge",
+    "DomainFocus": [
+      "Domain.Order",
+      "Domain.Deception",
+      "Domain.Craft",
+      "Domain.Judgment"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "italic_side_01_step_03",
+    "QuestId": "italic_side_01",
+    "StepIndex": 3,
+    "Title": "Set the Civic Precedent",
+    "Objective": "Record the result so the settlement treats it as law, omen, or terror.",
+    "LocationId": "italic_council_ring",
+    "RequiredWorldStateOutputs": [
+      "Region.Italic.BoundaryOutcomeChosen"
+    ],
+    "CompletionOutputs": [
+      "Region.Italic.SideResolved"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "PublicDeclaration",
+    "CombatEscalationId": "RetaliationRaid",
+    "DomainFocus": [
+      "Domain.Order",
+      "Domain.Judgment"
+    ],
+    "CompanionFocus": []
+  },
+  {
+    "StepId": "convergence_main_01_step_01",
+    "QuestId": "convergence_main_01",
+    "StepIndex": 1,
+    "Title": "Gather the Three Proofs",
+    "Objective": "Bring the archive key, the storm signal, and the bronze law core to the buried descent site.",
+    "LocationId": "convergence_surface_ruin",
+    "RequiredWorldStateOutputs": [
+      "Region.Egypt.MainResolved",
+      "Region.Greece.MainResolved",
+      "Region.Italic.MainResolved"
+    ],
+    "CompletionOutputs": [
+      "Story.Convergence.KeysAssembled"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "RelicAssembly",
+    "CombatEscalationId": "CompanionInterference",
+    "DomainFocus": [
+      "Domain.Light",
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "CompanionFocus": [
+      "OracleAI",
+      "SkyRuler",
+      "BronzeLawgiver"
+    ]
+  },
+  {
+    "StepId": "convergence_main_01_step_02",
+    "QuestId": "convergence_main_01",
+    "StepIndex": 2,
+    "Title": "Wake the Apparatus",
+    "Objective": "Enter the ship core, view the mission logs, and define whether your companions were survivors, tyrants, or necessary adaptations.",
+    "LocationId": "convergence_ship_core",
+    "RequiredWorldStateOutputs": [
+      "Story.Convergence.KeysAssembled"
+    ],
+    "CompletionOutputs": [
+      "Story.Convergence.TruthRevealed",
+      "Companion.OracleAI.TruthRevealed",
+      "Companion.SkyRuler.TruthRevealed",
+      "Companion.BronzeLawgiver.TruthRevealed"
+    ],
+    "UnlockChoiceIds": [],
+    "NonCombatResolutionId": "LogReview",
+    "CombatEscalationId": "CoreDefense",
+    "DomainFocus": [
+      "Domain.Death",
+      "Domain.Judgment",
+      "Domain.Craft"
+    ],
+    "CompanionFocus": [
+      "OracleAI",
+      "SkyRuler",
+      "BronzeLawgiver"
+    ]
+  },
+  {
+    "StepId": "convergence_main_01_step_03",
+    "QuestId": "convergence_main_01",
+    "StepIndex": 3,
+    "Title": "Choose Your Name",
+    "Objective": "Select the fate of the apparatus, your companions, and the myth that history inherits.",
+    "LocationId": "convergence_bridge",
+    "RequiredWorldStateOutputs": [
+      "Story.Convergence.TruthRevealed"
+    ],
+    "CompletionOutputs": [
+      "Story.Ending.Selected"
+    ],
+    "UnlockChoiceIds": [
+      "choice_ending_return",
+      "choice_ending_remain",
+      "choice_ending_dismantle",
+      "choice_ending_replace_companion",
+      "choice_ending_fragment"
+    ],
+    "NonCombatResolutionId": "FinalDecision",
+    "CombatEscalationId": "FinalConfrontation",
+    "DomainFocus": [
+      "Domain.Light",
+      "Domain.Storm",
+      "Domain.Order",
+      "Domain.Judgment",
+      "Domain.Deception"
+    ],
+    "CompanionFocus": [
+      "OracleAI",
+      "SkyRuler",
+      "BronzeLawgiver"
+    ]
+  }
+]

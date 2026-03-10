@@ -1,0 +1,685 @@
+[
+  {
+    "ChoiceId": "choice_witness_conceal",
+    "QuestId": "opening_side_01",
+    "OutcomeId": "opening_witness_hidden",
+    "WorldStateOutputs": [
+      "Story.Witness.Hidden",
+      "Rumor.Profile.Concealed"
+    ],
+    "DomainDeltas": {
+      "Domain.Deception": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 2,
+      "CombatReputation": -1
+    },
+    "CompanionAffinityEffects": {},
+    "EligibleEndings": [
+      "FragmentLegacy",
+      "ReturnToFuture"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_witness_proclaim",
+    "QuestId": "opening_side_01",
+    "OutcomeId": "opening_witness_public",
+    "WorldStateOutputs": [
+      "Story.Witness.Public",
+      "Rumor.Profile.PublicMiracle"
+    ],
+    "DomainDeltas": {
+      "Domain.Light": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 2,
+      "Concealment": 0,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {},
+    "EligibleEndings": [
+      "RemainAsMyth",
+      "ReplaceCompanion"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_egypt_hide_oracle",
+    "QuestId": "egypt_main_01",
+    "OutcomeId": "egypt_oracle_hidden",
+    "WorldStateOutputs": [
+      "Region.Egypt.Oracle.Hidden",
+      "Companion.OracleAI.Allied"
+    ],
+    "DomainDeltas": {
+      "Domain.Deception": 1,
+      "Domain.Judgment": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 2,
+      "CombatReputation": -1
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": 2
+    },
+    "EligibleEndings": [
+      "DismantleDivinity",
+      "ReturnToFuture"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_egypt_share_oracle",
+    "QuestId": "egypt_main_01",
+    "OutcomeId": "egypt_oracle_shared",
+    "WorldStateOutputs": [
+      "Region.Egypt.Oracle.Shared",
+      "Companion.OracleAI.Allied"
+    ],
+    "DomainDeltas": {
+      "Domain.Light": 1,
+      "Domain.Order": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 1,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": 1
+    },
+    "EligibleEndings": [
+      "ReturnToFuture",
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_egypt_expose_oracle",
+    "QuestId": "egypt_main_01",
+    "OutcomeId": "egypt_oracle_exposed",
+    "WorldStateOutputs": [
+      "Region.Egypt.Oracle.Exposed",
+      "Companion.OracleAI.Opposed"
+    ],
+    "DomainDeltas": {
+      "Domain.Light": 1,
+      "Domain.Judgment": 2
+    },
+    "RumorEffects": {
+      "PublicMiracle": 2,
+      "Concealment": 0,
+      "CombatReputation": 1
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": -2
+    },
+    "EligibleEndings": [
+      "DismantleDivinity",
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": false,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_egypt_famine_agronomy",
+    "QuestId": "egypt_side_01",
+    "OutcomeId": "egypt_famine_agronomy",
+    "WorldStateOutputs": [
+      "Region.Egypt.Famine.ResolvedQuietly"
+    ],
+    "DomainDeltas": {
+      "Domain.Healing": 1,
+      "Domain.Craft": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 1,
+      "CombatReputation": -1
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": 1
+    },
+    "EligibleEndings": [
+      "ReturnToFuture"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_egypt_famine_public_miracle",
+    "QuestId": "egypt_side_01",
+    "OutcomeId": "egypt_famine_public_miracle",
+    "WorldStateOutputs": [
+      "Region.Egypt.Famine.PublicMiracle"
+    ],
+    "DomainDeltas": {
+      "Domain.Light": 1,
+      "Domain.Healing": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 2,
+      "Concealment": 0,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": 0
+    },
+    "EligibleEndings": [
+      "RemainAsMyth"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_egypt_famine_priestly_alliance",
+    "QuestId": "egypt_side_01",
+    "OutcomeId": "egypt_famine_priestly_alliance",
+    "WorldStateOutputs": [
+      "Region.Egypt.Famine.PriestlyAlliance"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1,
+      "Domain.Deception": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 1,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": 1
+    },
+    "EligibleEndings": [
+      "ReplaceCompanion"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_egypt_famine_refuse",
+    "QuestId": "egypt_side_01",
+    "OutcomeId": "egypt_famine_refuse",
+    "WorldStateOutputs": [
+      "Region.Egypt.Famine.Refused"
+    ],
+    "DomainDeltas": {
+      "Domain.Judgment": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 0,
+      "CombatReputation": 2
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": -1
+    },
+    "EligibleEndings": [
+      "DismantleDivinity"
+    ],
+    "CanAvoidCombat": false,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_greece_join_spectacle",
+    "QuestId": "greece_main_01",
+    "OutcomeId": "greece_joined_ruler",
+    "WorldStateOutputs": [
+      "Region.Greece.Ruler.Joined",
+      "Companion.SkyRuler.Allied"
+    ],
+    "DomainDeltas": {
+      "Domain.Storm": 1,
+      "Domain.Deception": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 2,
+      "Concealment": 0,
+      "CombatReputation": 1
+    },
+    "CompanionAffinityEffects": {
+      "SkyRuler": 2
+    },
+    "EligibleEndings": [
+      "RemainAsMyth",
+      "ReplaceCompanion"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_greece_redirect_prophecy",
+    "QuestId": "greece_main_01",
+    "OutcomeId": "greece_redirected_prophecy",
+    "WorldStateOutputs": [
+      "Region.Greece.Ruler.Redirected",
+      "Companion.SkyRuler.Allied"
+    ],
+    "DomainDeltas": {
+      "Domain.Storm": 1,
+      "Domain.Order": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 1,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {
+      "SkyRuler": 1
+    },
+    "EligibleEndings": [
+      "ReturnToFuture",
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_greece_defy_spectacle",
+    "QuestId": "greece_main_01",
+    "OutcomeId": "greece_defied_ruler",
+    "WorldStateOutputs": [
+      "Region.Greece.Ruler.Defied",
+      "Companion.SkyRuler.Opposed"
+    ],
+    "DomainDeltas": {
+      "Domain.Judgment": 2,
+      "Domain.Storm": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 2,
+      "Concealment": 0,
+      "CombatReputation": 2
+    },
+    "CompanionAffinityEffects": {
+      "SkyRuler": -2
+    },
+    "EligibleEndings": [
+      "DismantleDivinity",
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": false,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_greece_warband_negotiate",
+    "QuestId": "greece_side_01",
+    "OutcomeId": "greece_warband_negotiated",
+    "WorldStateOutputs": [
+      "Region.Greece.Warband.Negotiated"
+    ],
+    "DomainDeltas": {
+      "Domain.Judgment": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 1,
+      "CombatReputation": -1
+    },
+    "CompanionAffinityEffects": {
+      "SkyRuler": -1
+    },
+    "EligibleEndings": [
+      "ReturnToFuture"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_greece_warband_omen",
+    "QuestId": "greece_side_01",
+    "OutcomeId": "greece_warband_omen",
+    "WorldStateOutputs": [
+      "Region.Greece.Warband.OmenDriven"
+    ],
+    "DomainDeltas": {
+      "Domain.Storm": 1,
+      "Domain.Deception": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 1,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {
+      "SkyRuler": 1
+    },
+    "EligibleEndings": [
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_greece_warband_strike",
+    "QuestId": "greece_side_01",
+    "OutcomeId": "greece_warband_struck",
+    "WorldStateOutputs": [
+      "Region.Greece.Warband.BrokenByForce"
+    ],
+    "DomainDeltas": {
+      "Domain.Storm": 1,
+      "Domain.Judgment": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 0,
+      "CombatReputation": 2
+    },
+    "CompanionAffinityEffects": {
+      "SkyRuler": 1
+    },
+    "EligibleEndings": [
+      "ReplaceCompanion"
+    ],
+    "CanAvoidCombat": false,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_italic_service",
+    "QuestId": "italic_main_01",
+    "OutcomeId": "italic_service_order",
+    "WorldStateOutputs": [
+      "Region.Italic.Order.Service",
+      "Companion.BronzeLawgiver.Allied"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1,
+      "Domain.Healing": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 1,
+      "CombatReputation": -1
+    },
+    "CompanionAffinityEffects": {
+      "BronzeLawgiver": 1
+    },
+    "EligibleEndings": [
+      "ReturnToFuture",
+      "RemainAsMyth"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_italic_domination",
+    "QuestId": "italic_main_01",
+    "OutcomeId": "italic_dominant_order",
+    "WorldStateOutputs": [
+      "Region.Italic.Order.Domination",
+      "Companion.BronzeLawgiver.Allied"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1,
+      "Domain.Judgment": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 0,
+      "CombatReputation": 2
+    },
+    "CompanionAffinityEffects": {
+      "BronzeLawgiver": 0
+    },
+    "EligibleEndings": [
+      "ReplaceCompanion"
+    ],
+    "CanAvoidCombat": false,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_italic_replace",
+    "QuestId": "italic_main_01",
+    "OutcomeId": "italic_replaced_keeper",
+    "WorldStateOutputs": [
+      "Region.Italic.Order.ReplacedKeeper",
+      "Companion.BronzeLawgiver.Replaced"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1,
+      "Domain.Craft": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 0,
+      "CombatReputation": 1
+    },
+    "CompanionAffinityEffects": {
+      "BronzeLawgiver": -2
+    },
+    "EligibleEndings": [
+      "ReplaceCompanion"
+    ],
+    "CanAvoidCombat": false,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_italic_boundary_arbitrate",
+    "QuestId": "italic_side_01",
+    "OutcomeId": "italic_boundary_arbitrated",
+    "WorldStateOutputs": [
+      "Region.Italic.Boundary.Arbitrated"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 1,
+      "CombatReputation": -1
+    },
+    "CompanionAffinityEffects": {
+      "BronzeLawgiver": 1
+    },
+    "EligibleEndings": [
+      "ReturnToFuture"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_italic_boundary_ritual",
+    "QuestId": "italic_side_01",
+    "OutcomeId": "italic_boundary_ritualized",
+    "WorldStateOutputs": [
+      "Region.Italic.Boundary.Ritualized"
+    ],
+    "DomainDeltas": {
+      "Domain.Deception": 1,
+      "Domain.Order": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 1,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {
+      "BronzeLawgiver": 0
+    },
+    "EligibleEndings": [
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_italic_boundary_engineer",
+    "QuestId": "italic_side_01",
+    "OutcomeId": "italic_boundary_engineered",
+    "WorldStateOutputs": [
+      "Region.Italic.Boundary.Engineered"
+    ],
+    "DomainDeltas": {
+      "Domain.Craft": 1,
+      "Domain.Order": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 1,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {
+      "BronzeLawgiver": 1
+    },
+    "EligibleEndings": [
+      "DismantleDivinity",
+      "ReturnToFuture"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_italic_boundary_purge",
+    "QuestId": "italic_side_01",
+    "OutcomeId": "italic_boundary_purged",
+    "WorldStateOutputs": [
+      "Region.Italic.Boundary.Purged"
+    ],
+    "DomainDeltas": {
+      "Domain.Judgment": 1,
+      "Domain.Order": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 0,
+      "CombatReputation": 2
+    },
+    "CompanionAffinityEffects": {
+      "BronzeLawgiver": -1
+    },
+    "EligibleEndings": [
+      "ReplaceCompanion"
+    ],
+    "CanAvoidCombat": false,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_ending_return",
+    "QuestId": "convergence_main_01",
+    "OutcomeId": "ending_return_to_future",
+    "WorldStateOutputs": [
+      "Ending.ReturnToFuture.Selected"
+    ],
+    "DomainDeltas": {
+      "Domain.Judgment": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 0,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {},
+    "EligibleEndings": [
+      "ReturnToFuture"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  },
+  {
+    "ChoiceId": "choice_ending_remain",
+    "QuestId": "convergence_main_01",
+    "OutcomeId": "ending_remain_as_myth",
+    "WorldStateOutputs": [
+      "Ending.RemainAsMyth.Selected"
+    ],
+    "DomainDeltas": {
+      "Domain.Light": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 2,
+      "Concealment": 0,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {},
+    "EligibleEndings": [
+      "RemainAsMyth"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_ending_dismantle",
+    "QuestId": "convergence_main_01",
+    "OutcomeId": "ending_dismantle_divinity",
+    "WorldStateOutputs": [
+      "Ending.DismantleDivinity.Selected"
+    ],
+    "DomainDeltas": {
+      "Domain.Craft": 1,
+      "Domain.Judgment": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 0,
+      "Concealment": 1,
+      "CombatReputation": 0
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": -1,
+      "SkyRuler": -1,
+      "BronzeLawgiver": -1
+    },
+    "EligibleEndings": [
+      "DismantleDivinity"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_ending_replace_companion",
+    "QuestId": "convergence_main_01",
+    "OutcomeId": "ending_replace_companion",
+    "WorldStateOutputs": [
+      "Ending.ReplaceCompanion.Selected"
+    ],
+    "DomainDeltas": {
+      "Domain.Order": 1,
+      "Domain.Storm": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 2,
+      "Concealment": 0,
+      "CombatReputation": 2
+    },
+    "CompanionAffinityEffects": {
+      "OracleAI": -1,
+      "SkyRuler": -1,
+      "BronzeLawgiver": -1
+    },
+    "EligibleEndings": [
+      "ReplaceCompanion"
+    ],
+    "CanAvoidCombat": false,
+    "CanTriggerCombat": true
+  },
+  {
+    "ChoiceId": "choice_ending_fragment",
+    "QuestId": "convergence_main_01",
+    "OutcomeId": "ending_fragment_legacy",
+    "WorldStateOutputs": [
+      "Ending.FragmentLegacy.Selected"
+    ],
+    "DomainDeltas": {
+      "Domain.Deception": 1,
+      "Domain.Light": 1
+    },
+    "RumorEffects": {
+      "PublicMiracle": 1,
+      "Concealment": 2,
+      "CombatReputation": -1
+    },
+    "CompanionAffinityEffects": {},
+    "EligibleEndings": [
+      "FragmentLegacy"
+    ],
+    "CanAvoidCombat": true,
+    "CanTriggerCombat": false
+  }
+]

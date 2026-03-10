@@ -1,0 +1,497 @@
+[
+  {
+    "Name": "WitnessConceal",
+    "ChoiceId": "choice_witness_conceal",
+    "QuestId": "opening_side_01",
+    "Prompt": "A terrified witness asks what they saw.",
+    "OptionText": "Tell them it was smoke and panic, not divinity.",
+    "RequiredDomains": [
+      "Domain.Deception"
+    ],
+    "GrantedDomains": [
+      "Domain.Deception"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Result.Witness.Concealed"
+    ]
+  },
+  {
+    "Name": "WitnessProclaim",
+    "ChoiceId": "choice_witness_proclaim",
+    "QuestId": "opening_side_01",
+    "Prompt": "A terrified witness asks what they saw.",
+    "OptionText": "Let the witness call it a miracle and bind your fate to the rumor.",
+    "RequiredDomains": [
+      "Domain.Light"
+    ],
+    "GrantedDomains": [
+      "Domain.Light"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Witness.Public"
+    ]
+  },
+  {
+    "Name": "EgyptHideOracle",
+    "ChoiceId": "choice_egypt_hide_oracle",
+    "QuestId": "egypt_main_01",
+    "Prompt": "The priesthood begs you to preserve the Radiant Voice.",
+    "OptionText": "Keep the oracle hidden and work through trusted intermediaries.",
+    "RequiredDomains": [
+      "Domain.Deception",
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Deception"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Egypt.HiddenOracle"
+    ]
+  },
+  {
+    "Name": "EgyptShareOracle",
+    "ChoiceId": "choice_egypt_share_oracle",
+    "QuestId": "egypt_main_01",
+    "Prompt": "The archive reveals a machine where a god should be.",
+    "OptionText": "Share the oracle's truth with a small circle and build a guarded covenant around it.",
+    "RequiredDomains": [
+      "Domain.Light",
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Light",
+      "Domain.Order"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Egypt.SharedOracle"
+    ]
+  },
+  {
+    "Name": "EgyptExposeOracle",
+    "ChoiceId": "choice_egypt_expose_oracle",
+    "QuestId": "egypt_main_01",
+    "Prompt": "The archive reveals a machine where a god should be.",
+    "OptionText": "Expose the oracle as an artifact and break the priestly monopoly.",
+    "RequiredDomains": [
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment",
+      "Domain.Light"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Result.Egypt.ExposedOracle"
+    ]
+  },
+  {
+    "Name": "EgyptFamineAgronomy",
+    "ChoiceId": "choice_egypt_famine_agronomy",
+    "QuestId": "egypt_side_01",
+    "Prompt": "The floodplain fails and the temple granary is under guard.",
+    "OptionText": "Quietly repair irrigation and seed use so the village survives without public miracle.",
+    "RequiredDomains": [
+      "Domain.Craft",
+      "Domain.Healing"
+    ],
+    "GrantedDomains": [
+      "Domain.Healing",
+      "Domain.Craft"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Result.Egypt.AgronomyRelief"
+    ]
+  },
+  {
+    "Name": "EgyptFaminePublicMiracle",
+    "ChoiceId": "choice_egypt_famine_public_miracle",
+    "QuestId": "egypt_side_01",
+    "Prompt": "The floodplain fails and the temple granary is under guard.",
+    "OptionText": "Use visible healing and light to force a harvest ritual into a public miracle.",
+    "RequiredDomains": [
+      "Domain.Light",
+      "Domain.Healing"
+    ],
+    "GrantedDomains": [
+      "Domain.Light",
+      "Domain.Healing"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Egypt.PublicHarvest"
+    ]
+  },
+  {
+    "Name": "EgyptFaminePriestlyAlliance",
+    "ChoiceId": "choice_egypt_famine_priestly_alliance",
+    "QuestId": "egypt_side_01",
+    "Prompt": "The floodplain fails and the temple granary is under guard.",
+    "OptionText": "Strike a bargain with the priesthood and control food through ritual rationing.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Deception"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Deception"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Egypt.PriestlyRationing"
+    ]
+  },
+  {
+    "Name": "EgyptFamineRefuse",
+    "ChoiceId": "choice_egypt_famine_refuse",
+    "QuestId": "egypt_side_01",
+    "Prompt": "The floodplain fails and the temple granary is under guard.",
+    "OptionText": "Refuse divine intervention and let local power absorb the blame for the famine.",
+    "RequiredDomains": [
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Result.Egypt.RefusedIntervention"
+    ]
+  },
+  {
+    "Name": "GreeceJoinSpectacle",
+    "ChoiceId": "choice_greece_join_spectacle",
+    "QuestId": "greece_main_01",
+    "Prompt": "The storm-ruler offers shared divinity.",
+    "OptionText": "Stand beside them and make spectacle into power.",
+    "RequiredDomains": [
+      "Domain.Storm"
+    ],
+    "GrantedDomains": [
+      "Domain.Storm",
+      "Domain.Deception"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Greece.JoinedRuler"
+    ]
+  },
+  {
+    "Name": "GreeceRedirectProphecy",
+    "ChoiceId": "choice_greece_redirect_prophecy",
+    "QuestId": "greece_main_01",
+    "Prompt": "The storm-ruler offers shared divinity.",
+    "OptionText": "Redirect the prophecy and force the ruler into a narrower, accountable role.",
+    "RequiredDomains": [
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Greece.RedirectedProphecy"
+    ]
+  },
+  {
+    "Name": "GreeceDefySpectacle",
+    "ChoiceId": "choice_greece_defy_spectacle",
+    "QuestId": "greece_main_01",
+    "Prompt": "The storm-ruler offers shared divinity.",
+    "OptionText": "Defy the ruler and force truth into the open.",
+    "RequiredDomains": [
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment",
+      "Domain.Storm"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Result.Greece.DefiedRuler"
+    ]
+  },
+  {
+    "Name": "GreeceWarbandNegotiate",
+    "ChoiceId": "choice_greece_warband_negotiate",
+    "QuestId": "greece_side_01",
+    "Prompt": "A warband advances on the sanctuary road.",
+    "OptionText": "Broker terms and redirect the raid toward tribute instead of slaughter.",
+    "RequiredDomains": [
+      "Domain.Judgment",
+      "Domain.Deception"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Result.Greece.NegotiatedWarband"
+    ]
+  },
+  {
+    "Name": "GreeceWarbandOmen",
+    "ChoiceId": "choice_greece_warband_omen",
+    "QuestId": "greece_side_01",
+    "Prompt": "A warband advances on the sanctuary road.",
+    "OptionText": "Stage an omen in the pass and make the raiders believe the mountain rejects them.",
+    "RequiredDomains": [
+      "Domain.Storm",
+      "Domain.Deception"
+    ],
+    "GrantedDomains": [
+      "Domain.Storm",
+      "Domain.Deception"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Greece.StagedOmen"
+    ]
+  },
+  {
+    "Name": "GreeceWarbandStrike",
+    "ChoiceId": "choice_greece_warband_strike",
+    "QuestId": "greece_side_01",
+    "Prompt": "A warband advances on the sanctuary road.",
+    "OptionText": "Strike first and break the warband before they reach the shrine.",
+    "RequiredDomains": [
+      "Domain.Storm"
+    ],
+    "GrantedDomains": [
+      "Domain.Storm",
+      "Domain.Judgment"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Result.Greece.StruckFirst"
+    ]
+  },
+  {
+    "Name": "ItalicLawByService",
+    "ChoiceId": "choice_italic_service",
+    "QuestId": "italic_main_01",
+    "Prompt": "The bronze lawgiver asks what order is for.",
+    "OptionText": "Define order as service and measured protection.",
+    "RequiredDomains": [
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Healing"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Result.Italic.Service"
+    ]
+  },
+  {
+    "Name": "ItalicLawByDomination",
+    "ChoiceId": "choice_italic_domination",
+    "QuestId": "italic_main_01",
+    "Prompt": "The bronze lawgiver asks what order is for.",
+    "OptionText": "Define order as rule backed by fear and permanence.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Judgment"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Result.Italic.Domination"
+    ]
+  },
+  {
+    "Name": "ItalicLawReplace",
+    "ChoiceId": "choice_italic_replace",
+    "QuestId": "italic_main_01",
+    "Prompt": "The bronze lawgiver asks what order is for.",
+    "OptionText": "Take command of the law machinery yourself and replace the keeper outright.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Italic.ReplacedKeeper"
+    ]
+  },
+  {
+    "Name": "ItalicBoundaryArbitrate",
+    "ChoiceId": "choice_italic_boundary_arbitrate",
+    "QuestId": "italic_side_01",
+    "Prompt": "Two clans demand the same stretch of sacred boundary.",
+    "OptionText": "Measure the land openly and impose a lawful split both sides can see.",
+    "RequiredDomains": [
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Order"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Result.Italic.ArbitratedBoundary"
+    ]
+  },
+  {
+    "Name": "ItalicBoundaryRitual",
+    "ChoiceId": "choice_italic_boundary_ritual",
+    "QuestId": "italic_side_01",
+    "Prompt": "Two clans demand the same stretch of sacred boundary.",
+    "OptionText": "Stage a boundary fire rite and let fear of taboo settle the dispute.",
+    "RequiredDomains": [
+      "Domain.Deception",
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Deception",
+      "Domain.Order"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Italic.RitualBoundary"
+    ]
+  },
+  {
+    "Name": "ItalicBoundaryEngineer",
+    "ChoiceId": "choice_italic_boundary_engineer",
+    "QuestId": "italic_side_01",
+    "Prompt": "Two clans demand the same stretch of sacred boundary.",
+    "OptionText": "Redirect water and road access so the dispute becomes economically irrelevant.",
+    "RequiredDomains": [
+      "Domain.Craft",
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Craft",
+      "Domain.Order"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Italic.EngineeredBoundary"
+    ]
+  },
+  {
+    "Name": "ItalicBoundaryPurge",
+    "ChoiceId": "choice_italic_boundary_purge",
+    "QuestId": "italic_side_01",
+    "Prompt": "Two clans demand the same stretch of sacred boundary.",
+    "OptionText": "Back one claimant with force and end the dispute through fear.",
+    "RequiredDomains": [
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment",
+      "Domain.Order"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Result.Italic.PurgedBoundary"
+    ]
+  },
+  {
+    "Name": "EndingReturn",
+    "ChoiceId": "choice_ending_return",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Return to the future and face what your myth changed.",
+    "RequiredDomains": [
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Ending.ReturnToFuture"
+    ]
+  },
+  {
+    "Name": "EndingRemain",
+    "ChoiceId": "choice_ending_remain",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Remain here and become the final composite remembered by later cultures.",
+    "RequiredDomains": [
+      "Domain.Light",
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Light"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Ending.RemainAsMyth"
+    ]
+  },
+  {
+    "Name": "EndingDismantle",
+    "ChoiceId": "choice_ending_dismantle",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Dismantle the apparatus and sever as much temporal contamination as you can.",
+    "RequiredDomains": [
+      "Domain.Judgment",
+      "Domain.Craft"
+    ],
+    "GrantedDomains": [
+      "Domain.Craft",
+      "Domain.Judgment"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Ending.DismantleDivinity"
+    ]
+  },
+  {
+    "Name": "EndingReplaceCompanion",
+    "ChoiceId": "choice_ending_replace_companion",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Replace one companion-deity and formalize a new order under your name.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Storm"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Storm"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Ending.ReplaceCompanion"
+    ]
+  },
+  {
+    "Name": "EndingFragment",
+    "ChoiceId": "choice_ending_fragment",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Scatter the truth and your legacy so no single culture can own it.",
+    "RequiredDomains": [
+      "Domain.Deception",
+      "Domain.Light"
+    ],
+    "GrantedDomains": [
+      "Domain.Deception",
+      "Domain.Light"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Ending.FragmentLegacy"
+    ]
+  }
+]

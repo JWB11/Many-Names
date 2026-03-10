@@ -1,0 +1,106 @@
+[
+  {
+    "EndingId": "ReturnToFuture",
+    "Summary": "Leave antiquity and witness the altered future created by your mythic interventions.",
+    "RequiredWorldStateOutputs": [
+      "Story.Convergence.TruthRevealed"
+    ],
+    "RequiredAnyWorldStateOutputs": [
+      "Region.Egypt.Oracle.Hidden",
+      "Region.Egypt.Oracle.Shared",
+      "Region.Italic.Boundary.Engineered",
+      "Region.Greece.Warband.Negotiated"
+    ],
+    "RequiredDomains": [
+      "Domain.Judgment"
+    ],
+    "BlockedByOutputs": [],
+    "PreferredChoiceIds": [
+      "choice_ending_return"
+    ]
+  },
+  {
+    "EndingId": "RemainAsMyth",
+    "Summary": "Stay in the late 8th century BCE and accept becoming the final mythic composite remembered by later cultures.",
+    "RequiredWorldStateOutputs": [
+      "Story.Convergence.TruthRevealed"
+    ],
+    "RequiredAnyWorldStateOutputs": [
+      "Story.Witness.Public",
+      "Region.Greece.Ruler.Joined",
+      "Region.Egypt.Famine.PublicMiracle"
+    ],
+    "RequiredDomains": [
+      "Domain.Light",
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "BlockedByOutputs": [],
+    "PreferredChoiceIds": [
+      "choice_ending_remain"
+    ]
+  },
+  {
+    "EndingId": "DismantleDivinity",
+    "Summary": "Break the apparatus, reject godhood as a system, and reduce further temporal contamination.",
+    "RequiredWorldStateOutputs": [
+      "Story.Convergence.TruthRevealed"
+    ],
+    "RequiredAnyWorldStateOutputs": [
+      "Region.Egypt.Oracle.Exposed",
+      "Region.Greece.Ruler.Defied",
+      "Region.Italic.Boundary.Engineered"
+    ],
+    "RequiredDomains": [
+      "Domain.Judgment",
+      "Domain.Craft"
+    ],
+    "BlockedByOutputs": [
+      "Region.Greece.Ruler.Joined"
+    ],
+    "PreferredChoiceIds": [
+      "choice_ending_dismantle"
+    ]
+  },
+  {
+    "EndingId": "ReplaceCompanion",
+    "Summary": "Take over one companion's role and establish a new order under your own authority.",
+    "RequiredWorldStateOutputs": [
+      "Story.Convergence.TruthRevealed"
+    ],
+    "RequiredAnyWorldStateOutputs": [
+      "Region.Greece.Ruler.Joined",
+      "Region.Italic.Order.ReplacedKeeper",
+      "Region.Italic.Order.Domination"
+    ],
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Storm"
+    ],
+    "BlockedByOutputs": [],
+    "PreferredChoiceIds": [
+      "choice_ending_replace_companion"
+    ]
+  },
+  {
+    "EndingId": "FragmentLegacy",
+    "Summary": "Deliberately scatter truth, myth, and machine memory so no single culture can weaponize it.",
+    "RequiredWorldStateOutputs": [
+      "Story.Convergence.TruthRevealed"
+    ],
+    "RequiredAnyWorldStateOutputs": [
+      "Story.Witness.Hidden",
+      "Region.Greece.Warband.OmenDriven",
+      "Region.Egypt.Oracle.Shared",
+      "Region.Italic.Boundary.Ritualized"
+    ],
+    "RequiredDomains": [
+      "Domain.Deception",
+      "Domain.Light"
+    ],
+    "BlockedByOutputs": [],
+    "PreferredChoiceIds": [
+      "choice_ending_fragment"
+    ]
+  }
+]

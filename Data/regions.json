@@ -1,0 +1,81 @@
+[
+  {
+    "Name": "Opening",
+    "RegionKey": "opening",
+    "RegionId": "Opening",
+    "DisplayName": "Opening Catastrophe",
+    "ShortDescription": "The player survives the descent event and witnesses their first miracle.",
+    "ActiveDeityId": "the_falling_star",
+    "HubMap": "/Game/Maps/L_OpeningCatastrophe",
+    "QuestIds": [
+      "opening_main_01",
+      "opening_side_01"
+    ],
+    "EntryConditions": []
+  },
+  {
+    "Name": "Egypt",
+    "RegionKey": "egypt",
+    "RegionId": "Egypt",
+    "DisplayName": "Waset and the Necropolis",
+    "ShortDescription": "A solar temple archive hides the machine oracle called the Radiant Voice.",
+    "ActiveDeityId": "radiant_voice",
+    "HubMap": "/Game/Maps/L_EgyptHub",
+    "QuestIds": [
+      "egypt_main_01",
+      "egypt_side_01"
+    ],
+    "EntryConditions": [
+      "State.Region.Opening.Complete"
+    ]
+  },
+  {
+    "Name": "Greece",
+    "RegionKey": "greece",
+    "RegionId": "Greece",
+    "DisplayName": "Aegean Sanctuary",
+    "ShortDescription": "A storm-linked ruler stages divinity through prophecy, spectacle, and noble pressure.",
+    "ActiveDeityId": "high_one_of_storm",
+    "HubMap": "/Game/Maps/L_GreeceHub",
+    "QuestIds": [
+      "greece_main_01",
+      "greece_side_01"
+    ],
+    "EntryConditions": [
+      "State.Region.Opening.Complete"
+    ]
+  },
+  {
+    "Name": "ItalicWest",
+    "RegionKey": "italic_west",
+    "RegionId": "ItalicWest",
+    "DisplayName": "Hill of Measures",
+    "ShortDescription": "A bronze lawgiver shapes settlement, ritual roads, and the first civic order.",
+    "ActiveDeityId": "keeper_of_measures",
+    "HubMap": "/Game/Maps/L_ItalicHub",
+    "QuestIds": [
+      "italic_main_01",
+      "italic_side_01"
+    ],
+    "EntryConditions": [
+      "State.Region.Opening.Complete"
+    ]
+  },
+  {
+    "Name": "Convergence",
+    "RegionKey": "convergence",
+    "RegionId": "Convergence",
+    "DisplayName": "The Wreck Below History",
+    "ShortDescription": "All regional truths converge around the buried descent apparatus and the player's final identity.",
+    "ActiveDeityId": "many_names",
+    "HubMap": "/Game/Maps/L_Convergence",
+    "QuestIds": [
+      "convergence_main_01"
+    ],
+    "EntryConditions": [
+      "State.Region.Egypt.Complete",
+      "State.Region.Greece.Complete",
+      "State.Region.ItalicWest.Complete"
+    ]
+  }
+]

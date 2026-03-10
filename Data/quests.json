@@ -1,0 +1,174 @@
+[
+  {
+    "Name": "OpeningMain",
+    "QuestId": "opening_main_01",
+    "RegionId": "Opening",
+    "Title": "Ashes of Arrival",
+    "Summary": "Escape the catastrophe, survive the first miracle, and choose where to seek answers next.",
+    "PrerequisiteQuestIds": [],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Healing",
+      "Domain.Light"
+    ],
+    "bCanEscalateToCombat": false,
+    "FailureStateId": "OpeningFailure",
+    "WorldStateOutputId": "Story.Prologue.Complete"
+  },
+  {
+    "Name": "OpeningSide",
+    "QuestId": "opening_side_01",
+    "RegionId": "Opening",
+    "Title": "Witness of Fire",
+    "Summary": "Decide whether to conceal the miracle from the first mortal witness or let the story spread.",
+    "PrerequisiteQuestIds": [
+      "opening_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Deception",
+      "Domain.Judgment"
+    ],
+    "bCanEscalateToCombat": false,
+    "FailureStateId": "WitnessLost",
+    "WorldStateOutputId": "Story.Witness.Defined"
+  },
+  {
+    "Name": "EgyptMain",
+    "QuestId": "egypt_main_01",
+    "RegionId": "Egypt",
+    "Title": "The Radiant Voice",
+    "Summary": "Investigate the temple archive and decide whether the oracle should remain hidden, shared, or exposed.",
+    "PrerequisiteQuestIds": [
+      "opening_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Light",
+      "Domain.Death",
+      "Domain.Judgment"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "EgyptEscalated",
+    "WorldStateOutputId": "Region.Egypt.MainResolved"
+  },
+  {
+    "Name": "EgyptSide",
+    "QuestId": "egypt_side_01",
+    "RegionId": "Egypt",
+    "Title": "Bread for the Floodplain",
+    "Summary": "Resolve a famine through agronomy, public miracle, priestly alliance, or refusal.",
+    "PrerequisiteQuestIds": [
+      "opening_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Healing",
+      "Domain.Order",
+      "Domain.Deception"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "EgyptFamineFailed",
+    "WorldStateOutputId": "Region.Egypt.SideResolved"
+  },
+  {
+    "Name": "GreeceMain",
+    "QuestId": "greece_main_01",
+    "RegionId": "Greece",
+    "Title": "The High One of Storm",
+    "Summary": "Unmask or join the sanctuary ruler who turned spectacle and prophecy into kingship.",
+    "PrerequisiteQuestIds": [
+      "opening_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Storm",
+      "Domain.Judgment",
+      "Domain.Deception"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "GreeceEscalated",
+    "WorldStateOutputId": "Region.Greece.MainResolved"
+  },
+  {
+    "Name": "GreeceSide",
+    "QuestId": "greece_side_01",
+    "RegionId": "Greece",
+    "Title": "Spear and Omen",
+    "Summary": "Stop a warband by negotiation, sabotage, staged omen, or force.",
+    "PrerequisiteQuestIds": [
+      "opening_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Storm",
+      "Domain.Craft",
+      "Domain.Judgment"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "GreeceWarbandFailed",
+    "WorldStateOutputId": "Region.Greece.SideResolved"
+  },
+  {
+    "Name": "ItalicMain",
+    "QuestId": "italic_main_01",
+    "RegionId": "ItalicWest",
+    "Title": "The Keeper of Measures",
+    "Summary": "Confront the bronze lawgiver and shape whether order becomes service, rule, or domination.",
+    "PrerequisiteQuestIds": [
+      "opening_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Order",
+      "Domain.Craft",
+      "Domain.Judgment"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "ItalicEscalated",
+    "WorldStateOutputId": "Region.Italic.MainResolved"
+  },
+  {
+    "Name": "ItalicSide",
+    "QuestId": "italic_side_01",
+    "RegionId": "ItalicWest",
+    "Title": "Boundary Fire",
+    "Summary": "Resolve a land dispute through law, ritual, intimidation, engineering, or selective violence.",
+    "PrerequisiteQuestIds": [
+      "opening_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Order",
+      "Domain.Craft",
+      "Domain.Deception"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "ItalicBoundaryFailed",
+    "WorldStateOutputId": "Region.Italic.SideResolved"
+  },
+  {
+    "Name": "ConvergenceMain",
+    "QuestId": "convergence_main_01",
+    "RegionId": "Convergence",
+    "Title": "Many Names",
+    "Summary": "Decide the fate of the descent apparatus, your companions, and the identity history will remember.",
+    "PrerequisiteQuestIds": [
+      "egypt_main_01",
+      "greece_main_01",
+      "italic_main_01"
+    ],
+    "RequiredDomains": [
+      "Domain.Light",
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "RewardDomains": [
+      "Domain.Death",
+      "Domain.Judgment"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "ConvergenceBroken",
+    "WorldStateOutputId": "Story.Ending.Selected"
+  }
+]

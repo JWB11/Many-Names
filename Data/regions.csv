@@ -1,0 +1,6 @@
+Name,RegionKey,RegionId,DisplayName,ShortDescription,ActiveDeityId,HubMap,QuestIds,EntryConditions
+Opening,opening,Opening,"Opening Catastrophe","The player survives the descent event and witnesses their first miracle.",the_falling_star,/Game/Maps/L_OpeningCatastrophe,"opening_main_01|opening_side_01","State.Story.Prologue"
+Egypt,egypt,Egypt,"Waset and the Necropolis","A solar temple archive hides the machine oracle called the Radiant Voice.",radiant_voice,/Game/Maps/L_EgyptHub,"egypt_main_01|egypt_side_01","State.Region.Opening.Complete"
+Greece,greece,Greece,"Aegean Sanctuary","A storm-linked ruler stages divinity through prophecy, spectacle, and noble pressure.",high_one_of_storm,/Game/Maps/L_GreeceHub,"greece_main_01|greece_side_01","State.Region.Opening.Complete"
+ItalicWest,italic_west,ItalicWest,"Hill of Measures","A bronze lawgiver shapes settlement, ritual roads, and the first civic order.",keeper_of_measures,/Game/Maps/L_ItalicHub,"italic_main_01|italic_side_01","State.Region.Opening.Complete"
+Convergence,convergence,Convergence,"The Wreck Below History","All regional truths converge around the buried descent apparatus and the player's final identity.",many_names,/Game/Maps/L_Convergence,"convergence_main_01","State.Region.Egypt.Complete|State.Region.Greece.Complete|State.Region.ItalicWest.Complete"

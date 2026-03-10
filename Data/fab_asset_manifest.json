@@ -1,0 +1,236 @@
+[
+  {
+    "id": "ancient_egypt_temple_collection",
+    "title": "Ancient Egypt Temple Collection 3D model",
+    "bucket": "EnvironmentEgypt",
+    "destination": "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/BROKEN EGYPTIAN COLUMN.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPCIAN FLOOR.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPTIAN COLUMN 2.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPTIAN COLUMN 3.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPTIAN COLUMN 4.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPTIAN COLUMNS.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPTIAN FLOOR ENTRANCE.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPTIAN ROOF.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPTIAN STAIRS ENTRANCE.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPTIAN WALL 1.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/EGYPTIAN WALL 2.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/PYRAMID TUMUL 1.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/PYRAMID TUMUL 2.fbx",
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Egypt_Temple_Collection_3D_model-378dbcb6/fbx/source_extracted/PYRAMID TUMUL 3.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/BROKEN_EGYPTIAN_COLUMN.BROKEN_EGYPTIAN_COLUMN",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPCIAN_FLOOR1.EGYPCIAN_FLOOR1",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPTIAN_COLUMNS.EGYPTIAN_COLUMNS",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPTIAN_COLUMN_2.EGYPTIAN_COLUMN_2",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPTIAN_COLUMN_3.EGYPTIAN_COLUMN_3",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPTIAN_COLUMN_4.EGYPTIAN_COLUMN_4",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPTIAN_FLOOR_ENTRANCE.EGYPTIAN_FLOOR_ENTRANCE",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPTIAN_ROOF.EGYPTIAN_ROOF",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPTIAN_STAIRS_ENTRANCE.EGYPTIAN_STAIRS_ENTRANCE",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPTIAN_WALL_1.EGYPTIAN_WALL_1",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/EGYPTIAN_WALL_2.EGYPTIAN_WALL_2",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/PYRAMID_TUMUL_1.PYRAMID_TUMUL_1",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/PYRAMID_TUMUL_2.PYRAMID_TUMUL_2",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/PYRAMID_TUMUL_3.PYRAMID_TUMUL_3",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/base_tum.base_tum",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/bloque1variante.bloque1variante",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/columna.columna",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/columna2.columna2",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/columnaeg.columnaeg",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/columnaegrota.columnaegrota",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/egypcian_floor.egypcian_floor",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/entrada_piso.entrada_piso",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/escalera_mini.escalera_mini",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/pared2variante.pared2variante",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/pared2variante3.pared2variante3",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/techo_templo.techo_templo",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/AncientEgyptTempleCollection/tumulo1.tumulo1"
+    ]
+  },
+  {
+    "id": "ancient_carved_stone",
+    "title": "Ancient Carved Stone",
+    "bucket": "PropsShared",
+    "destination": "/Game/Marketplace/Fab/PropsShared/AncientCarvedStone",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ancient_Carved_Stone-8adfac00/fbx/carvedstone01.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/PropsShared/AncientCarvedStone/CarvedStone01.CarvedStone01",
+      "/Game/Marketplace/Fab/PropsShared/AncientCarvedStone/carvedstone011.carvedstone011"
+    ]
+  },
+  {
+    "id": "bent_pyramid_temple",
+    "title": "Bent pyramid Temple | EGYPT",
+    "bucket": "EnvironmentEgypt",
+    "destination": "/Game/Marketplace/Fab/EnvironmentEgypt/BentPyramidTemple",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Bent_pyramid_Temple___EGYPT-ae5b97b7/obj/source_extracted/DAHSHUR.obj"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/EnvironmentEgypt/BentPyramidTemple/DAHSHUR2.DAHSHUR2",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/BentPyramidTemple/DAHSHUR_1001.DAHSHUR_1001",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/BentPyramidTemple/DAHSHUR_1002.DAHSHUR_1002",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/BentPyramidTemple/Solid.Solid"
+    ]
+  },
+  {
+    "id": "ptahshepses_mastaba_entrance",
+    "title": "Ptahshepses Mastaba Entrance | EGYPT",
+    "bucket": "EnvironmentEgypt",
+    "destination": "/Game/Marketplace/Fab/EnvironmentEgypt/PtahshepsesMastabaEntrance",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Ptahshepses_Mastaba_Entrance___EGYPT-4326da7c/obj/source_extracted/ABUSIR.obj"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/EnvironmentEgypt/PtahshepsesMastabaEntrance/ABUSIR2.ABUSIR2",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/PtahshepsesMastabaEntrance/ABUSIR_1001.ABUSIR_1001",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/PtahshepsesMastabaEntrance/ABUSIR_1002.ABUSIR_1002",
+      "/Game/Marketplace/Fab/EnvironmentEgypt/PtahshepsesMastabaEntrance/Solid.Solid"
+    ]
+  },
+  {
+    "id": "pyramid_shape_stone",
+    "title": "Pyramid Shape Stone",
+    "bucket": "PropsShared",
+    "destination": "/Game/Marketplace/Fab/PropsShared/PyramidShapeStone",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Pyramid_Shape_Stone-b6ae8c5e/fbx/sm_pyramid_stone.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/PropsShared/PyramidShapeStone/lambert3SG.lambert3SG",
+      "/Game/Marketplace/Fab/PropsShared/PyramidShapeStone/sm_pyramid_stone.sm_pyramid_stone"
+    ]
+  },
+  {
+    "id": "cave_rock",
+    "title": "Cave Rock",
+    "bucket": "PropsShared",
+    "destination": "/Game/Marketplace/Fab/PropsShared/CaveRock",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Cave_Rock-345e1bb3/fbx/sm_stone_ga312251958.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/PropsShared/CaveRock/M_Stone_GA312251958.M_Stone_GA312251958",
+      "/Game/Marketplace/Fab/PropsShared/CaveRock/sm_stone_ga312251958.sm_stone_ga312251958"
+    ]
+  },
+  {
+    "id": "highdetail_rock",
+    "title": "HighDetail Rock",
+    "bucket": "PropsShared",
+    "destination": "/Game/Marketplace/Fab/PropsShared/HighDetailRock",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/HighDetail_Rock-103df512/fbx/sm_stone_ga3120037.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/PropsShared/HighDetailRock/M_Stone-GA3120037.M_Stone-GA3120037",
+      "/Game/Marketplace/Fab/PropsShared/HighDetailRock/sm_stone_ga3120037.sm_stone_ga3120037"
+    ]
+  },
+  {
+    "id": "realistic_rock",
+    "title": "Realistic Rock",
+    "bucket": "PropsShared",
+    "destination": "/Game/Marketplace/Fab/PropsShared/RealisticRock",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Realistic_Rock-949dfcde/fbx/make_a_photorealistic_04_extracted/Make_a_photorealistic_0426214013_texture_fbx/Make_a_photorealistic_0426214013_texture.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/PropsShared/RealisticRock/Make_a_photorealistic_0426214013_texture.Make_a_photorealistic_0426214013_texture",
+      "/Game/Marketplace/Fab/PropsShared/RealisticRock/Material_001.Material_001",
+      "/Game/Marketplace/Fab/PropsShared/RealisticRock/texture_0.texture_0"
+    ]
+  },
+  {
+    "id": "rock_001",
+    "title": "Rock_001",
+    "bucket": "PropsShared",
+    "destination": "/Game/Marketplace/Fab/PropsShared/Rock001",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Rock_001-32de8e98/fbx/source_extracted/Rock_001.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/PropsShared/Rock001/Rock_001.Rock_001",
+      "/Game/Marketplace/Fab/PropsShared/Rock001/Rock_001_MAT.Rock_001_MAT",
+      "/Game/Marketplace/Fab/PropsShared/Rock001/Rock_001_u0_v0_diffuse.Rock_001_u0_v0_diffuse"
+    ]
+  },
+  {
+    "id": "stone_age_dolmen",
+    "title": "Stone Age Dolmen grave Klausebolle, Denmark",
+    "bucket": "EnvironmentGreece",
+    "destination": "/Game/Marketplace/Fab/EnvironmentGreece/StoneAgeDolmen",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/Stone_Age_Dolmen_grave_Klauseb_lle__Denmark-ea0f7bdf/fbx/capeshj_lowpoly.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/EnvironmentGreece/StoneAgeDolmen/capeshj_lowpoly.capeshj_lowpoly",
+      "/Game/Marketplace/Fab/EnvironmentGreece/StoneAgeDolmen/small_dolmen_sawmill7_u0_v0.small_dolmen_sawmill7_u0_v0",
+      "/Game/Marketplace/Fab/EnvironmentGreece/StoneAgeDolmen/small_dolmen_sawmill7_u0_v0_diffuse.small_dolmen_sawmill7_u0_v0_diffuse",
+      "/Game/Marketplace/Fab/EnvironmentGreece/StoneAgeDolmen/small_dolmen_sawmill7_u0_v0_normal.small_dolmen_sawmill7_u0_v0_normal"
+    ]
+  },
+  {
+    "id": "church_rock",
+    "title": "Church rock",
+    "bucket": "EnvironmentItalic",
+    "destination": "/Game/Marketplace/Fab/EnvironmentItalic/ChurchRock",
+    "source_files": [
+      "/Users/jacksonwells/Downloads/Many Names/Saved/FabImportStaging/church_rock/church rock.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/EnvironmentItalic/ChurchRock/church_rock.church_rock",
+      "/Game/Marketplace/Fab/EnvironmentItalic/ChurchRock/church_rock1.church_rock1",
+      "/Game/Marketplace/Fab/EnvironmentItalic/ChurchRock/material0.material0"
+    ]
+  },
+  {
+    "id": "rounded_corner_bollard",
+    "title": "Rounded corner bollard",
+    "bucket": "EnvironmentItalic",
+    "destination": "/Game/Marketplace/Fab/EnvironmentItalic/RoundedCornerBollard",
+    "source_files": [
+      "/Users/jacksonwells/Downloads/Many Names/Saved/FabImportStaging/rounded_corner_bollard/round-corner.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/EnvironmentItalic/RoundedCornerBollard/material0.material0",
+      "/Game/Marketplace/Fab/EnvironmentItalic/RoundedCornerBollard/round-corner.round-corner",
+      "/Game/Marketplace/Fab/EnvironmentItalic/RoundedCornerBollard/round-corner1.round-corner1",
+      "/Game/Marketplace/Fab/EnvironmentItalic/RoundedCornerBollard/round-corner_normal.round-corner_normal"
+    ]
+  },
+  {
+    "id": "cutted_destroyed_wood",
+    "title": "Cutted And Destroyed Wood",
+    "bucket": "EnvironmentConvergence",
+    "destination": "/Game/Marketplace/Fab/EnvironmentConvergence/CuttedDestroyedWood",
+    "source_files": [
+      "/Users/jacksonwells/Downloads/Many Names/Saved/FabImportStaging/cutted_destroyed_wood/shareModel.obj"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/EnvironmentConvergence/CuttedDestroyedWood/TEX_tex_u1_v1_diffuse.TEX_tex_u1_v1_diffuse",
+      "/Game/Marketplace/Fab/EnvironmentConvergence/CuttedDestroyedWood/shareModel.shareModel",
+      "/Game/Marketplace/Fab/EnvironmentConvergence/CuttedDestroyedWood/tex_u1_v1.tex_u1_v1"
+    ]
+  },
+  {
+    "id": "human_fry_pose",
+    "title": "External Wing -human fry pose-",
+    "bucket": "ArtifactsHero",
+    "destination": "/Game/Marketplace/Fab/ArtifactsHero/HumanFryPose",
+    "source_files": [
+      "/Users/Shared/UnrealEngine/Launcher/VaultCache/FabLibrary/External_Wing_-human_fry_pose--2c381dc6/fbx/ew_frypose_extracted/EW_frypose/AS.fbx"
+    ],
+    "imported_object_paths": [
+      "/Game/Marketplace/Fab/ArtifactsHero/HumanFryPose/AS.AS",
+      "/Game/Marketplace/Fab/ArtifactsHero/HumanFryPose/AS_Skeleton.AS_Skeleton",
+      "/Game/Marketplace/Fab/ArtifactsHero/HumanFryPose/MI_Manny_01.MI_Manny_01",
+      "/Game/Marketplace/Fab/ArtifactsHero/HumanFryPose/MI_Manny_02.MI_Manny_02"
+    ]
+  }
+]

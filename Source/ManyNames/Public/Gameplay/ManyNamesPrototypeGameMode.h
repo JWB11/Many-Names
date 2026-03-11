@@ -6,6 +6,7 @@
 #include "ManyNamesPrototypeGameMode.generated.h"
 
 class AManyNamesDialogueController;
+class ACameraActor;
 class ALevelSequenceActor;
 class UAudioComponent;
 class ULevelSequencePlayer;
@@ -115,15 +116,23 @@ private:
 	bool IsRegionMainQuest(const FManyNamesQuestRow& QuestRow) const;
 	bool IsRegionSideQuest(const FManyNamesQuestRow& QuestRow) const;
 	FName GetRegionCompletionOutputId(EManyNamesRegionId RegionId) const;
-	void BroadcastJournalUpdated() const;
+	void BroadcastJournalUpdated();
 	void OpenDialogueInternal(FName QuestId);
-	bool TryPlaySceneVoice(FName SceneId);
+	bool TryPlaySceneVoice(FName SceneId, TArray<TObjectPtr<UAudioComponent>>& TargetComponents);
+	void PlayAudioProfiles(const TArray<FName>& AudioProfileIds, TArray<TObjectPtr<UAudioComponent>>& TargetComponents);
+	void StopDialogueSceneAudio();
+	void TryPlayDialogueScenePresentation(FName QuestId);
+	bool TryPlayProceduralCinematic(const FManyNamesCinematicSceneRecord& SceneRecord, FName DialogueQuestId);
+	AActor* FindSceneFocusActor(const FManyNamesCinematicSceneRecord& SceneRecord) const;
+	FTransform BuildProceduralCameraTransform(const AActor* FocusActor, const FName& BlockingPresetId) const;
 	bool TryPlayQuestCinematic(FName QuestId, const FString& SceneToken = FString());
 	bool TryPlaySceneById(FName SceneId, FName DialogueQuestId = NAME_None);
+	UFUNCTION()
+	void HandleActiveCinematicFinished();
 	void FinishActiveCinematic(bool bWasSkipped);
 	bool HasWorldStateOutput(FName OutputId) const;
 	void AddQuestRewards(const FManyNamesQuestRow& QuestRow);
-	void ShowStatusMessage(const FString& Message, FColor Color = FColor::Cyan) const;
+	void ShowStatusMessage(const FString& Message, FColor Color = FColor::Cyan);
 	EManyNamesRegionId GetCurrentRegionId() const;
 	bool IsConvergenceUnlocked() const;
 
@@ -144,8 +153,19 @@ private:
 	TArray<TObjectPtr<UAudioComponent>> ActiveSceneAudioComponents;
 
 	UPROPERTY(Transient)
+	TArray<TObjectPtr<UAudioComponent>> ActiveDialogueAudioComponents;
+
+	UPROPERTY(Transient)
+	TObjectPtr<ACameraActor> ActiveFallbackCineCamera;
+
+	UPROPERTY(Transient)
+	TObjectPtr<AActor> SavedViewTarget;
+
+	UPROPERTY(Transient)
 	FName ActiveCinematicSceneId = NAME_None;
 
 	UPROPERTY(Transient)
 	FName PendingDialogueQuestId = NAME_None;
+
+	FTimerHandle ActiveCinematicTimerHandle;
 };

@@ -29,7 +29,37 @@ public:
 	UFUNCTION(BlueprintPure, Category="ManyNames|Journal")
 	FText GetJournalSummary() const { return JournalSummary; }
 
+	UFUNCTION(BlueprintPure, Category="ManyNames|Journal")
+	FText GetRegionSummary() const { return RegionSummary; }
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Journal")
+	FText GetQuestSummary() const { return QuestSummary; }
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Journal")
+	FText GetDomainSummary() const { return DomainSummary; }
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Journal")
+	FText GetRumorSummary() const { return RumorSummary; }
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Journal")
+	FText GetEndingSummary() const { return EndingSummary; }
+
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="ManyNames|Journal")
 	FText JournalSummary;
+
+	UPROPERTY(BlueprintReadOnly, Category="ManyNames|Journal")
+	FText RegionSummary;
+
+	UPROPERTY(BlueprintReadOnly, Category="ManyNames|Journal")
+	FText QuestSummary;
+
+	UPROPERTY(BlueprintReadOnly, Category="ManyNames|Journal")
+	FText DomainSummary;
+
+	UPROPERTY(BlueprintReadOnly, Category="ManyNames|Journal")
+	FText RumorSummary;
+
+	UPROPERTY(BlueprintReadOnly, Category="ManyNames|Journal")
+	FText EndingSummary;
 };

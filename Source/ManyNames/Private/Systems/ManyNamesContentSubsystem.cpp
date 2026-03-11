@@ -154,6 +154,11 @@ bool UManyNamesContentSubsystem::ReloadSupplementalContent()
 	CharacterCastById.Reset();
 	AmbientProfiles.Reset();
 	AmbientProfilesById.Reset();
+	RegionBriefs.Reset();
+	RegionBriefsById.Reset();
+	CourtFactions.Reset();
+	CourtFactionsById.Reset();
+	CourtFactionsByRegionId.Reset();
 	CinematicScenes.Reset();
 	CinematicScenesById.Reset();
 	CinematicScenesByQuestId.Reset();
@@ -168,11 +173,14 @@ bool UManyNamesContentSubsystem::ReloadSupplementalContent()
 	const bool bDialogueScenesLoaded = LoadDialogueScenes();
 	const bool bCharacterCastLoaded = LoadCharacterCast();
 	const bool bAmbientProfilesLoaded = LoadAmbientProfiles();
+	const bool bRegionBriefsLoaded = LoadRegionBriefs();
+	const bool bCourtFactionsLoaded = LoadCourtFactions();
 	const bool bCinematicScenesLoaded = LoadCinematicScenes();
 	const bool bAudioProfilesLoaded = LoadAudioProfiles();
 	const bool bExternalLicensesLoaded = LoadExternalAssetLicenses();
 	return bQuestStepsLoaded && bConsequencesLoaded && bEndingGatesLoaded && bDialogueScenesLoaded &&
-		bCharacterCastLoaded && bAmbientProfilesLoaded && bCinematicScenesLoaded &&
+		bCharacterCastLoaded && bAmbientProfilesLoaded && bRegionBriefsLoaded &&
+		bCourtFactionsLoaded && bCinematicScenesLoaded &&
 		bAudioProfilesLoaded && bExternalLicensesLoaded;
 }
 
@@ -274,6 +282,48 @@ bool UManyNamesContentSubsystem::GetAmbientProfile(FName ProfileId, FManyNamesAm
 TArray<FManyNamesAmbientProfileRecord> UManyNamesContentSubsystem::GetAllAmbientProfiles() const
 {
 	return AmbientProfiles;
+}
+
+bool UManyNamesContentSubsystem::GetRegionBrief(EManyNamesRegionId RegionId, FManyNamesRegionBriefRecord& OutRecord) const
+{
+	if (const FManyNamesRegionBriefRecord* Record = RegionBriefsById.Find(RegionId))
+	{
+		OutRecord = *Record;
+		return true;
+	}
+
+	return false;
+}
+
+TArray<FManyNamesRegionBriefRecord> UManyNamesContentSubsystem::GetAllRegionBriefs() const
+{
+	return RegionBriefs;
+}
+
+bool UManyNamesContentSubsystem::GetCourtFaction(FName FactionId, FManyNamesCourtFactionRecord& OutRecord) const
+{
+	if (const FManyNamesCourtFactionRecord* Record = CourtFactionsById.Find(FactionId))
+	{
+		OutRecord = *Record;
+		return true;
+	}
+
+	return false;
+}
+
+TArray<FManyNamesCourtFactionRecord> UManyNamesContentSubsystem::GetCourtFactionsForRegion(EManyNamesRegionId RegionId) const
+{
+	if (const TArray<FManyNamesCourtFactionRecord>* Records = CourtFactionsByRegionId.Find(RegionId))
+	{
+		return *Records;
+	}
+
+	return {};
+}
+
+TArray<FManyNamesCourtFactionRecord> UManyNamesContentSubsystem::GetAllCourtFactions() const
+{
+	return CourtFactions;
 }
 
 bool UManyNamesContentSubsystem::GetCinematicScene(FName SceneId, FManyNamesCinematicSceneRecord& OutRecord) const
@@ -613,6 +663,20 @@ bool UManyNamesContentSubsystem::LoadDialogueScenes()
 		return false;
 	}
 
+	DialogueScenes.Sort([](const FManyNamesDialogueSceneRecord& Left, const FManyNamesDialogueSceneRecord& Right)
+	{
+		if (Left.QuestId == Right.QuestId)
+		{
+			if (Left.SceneOrder == Right.SceneOrder)
+			{
+				return Left.SceneId.LexicalLess(Right.SceneId);
+			}
+			return Left.SceneOrder < Right.SceneOrder;
+		}
+
+		return Left.QuestId.LexicalLess(Right.QuestId);
+	});
+
 	for (const FManyNamesDialogueSceneRecord& Record : DialogueScenes)
 	{
 		if (!Record.QuestId.IsNone())
@@ -651,6 +715,39 @@ bool UManyNamesContentSubsystem::LoadAmbientProfiles()
 	for (const FManyNamesAmbientProfileRecord& Record : AmbientProfiles)
 	{
 		AmbientProfilesById.Add(Record.ProfileId, Record);
+	}
+
+	return true;
+}
+
+bool UManyNamesContentSubsystem::LoadRegionBriefs()
+{
+	const UManyNamesDeveloperSettings* Settings = GetDefault<UManyNamesDeveloperSettings>();
+	if (!LoadJsonArrayFile(ResolveDataPath(Settings->RegionBriefsJsonPath), RegionBriefs))
+	{
+		return false;
+	}
+
+	for (const FManyNamesRegionBriefRecord& Record : RegionBriefs)
+	{
+		RegionBriefsById.Add(Record.RegionId, Record);
+	}
+
+	return true;
+}
+
+bool UManyNamesContentSubsystem::LoadCourtFactions()
+{
+	const UManyNamesDeveloperSettings* Settings = GetDefault<UManyNamesDeveloperSettings>();
+	if (!LoadJsonArrayFile(ResolveDataPath(Settings->CourtFactionsJsonPath), CourtFactions))
+	{
+		return false;
+	}
+
+	for (const FManyNamesCourtFactionRecord& Record : CourtFactions)
+	{
+		CourtFactionsById.Add(Record.FactionId, Record);
+		CourtFactionsByRegionId.FindOrAdd(Record.RegionId).Add(Record);
 	}
 
 	return true;

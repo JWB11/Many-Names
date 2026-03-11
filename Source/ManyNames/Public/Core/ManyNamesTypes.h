@@ -670,10 +670,19 @@ struct FManyNamesDialogueSceneRecord
 	FName SceneId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 SceneOrder = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName QuestId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName CharacterId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CourtId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> FactionIds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText SpeakerName;
@@ -695,6 +704,18 @@ struct FManyNamesDialogueSceneRecord
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FName> ChoiceIds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> AudioProfileIds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText PublicBeliefText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText HiddenTruthText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText JournalSummaryText;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bLockMovement = true;
@@ -749,6 +770,12 @@ struct FManyNamesCharacterCastRecord
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText DemeanorNotes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CourtId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> FactionIds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName OccupationTag = NAME_None;
@@ -808,7 +835,76 @@ struct FManyNamesAmbientProfileRecord
 	FName StanceId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName BehaviorTierId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CrowdCountHint = 6;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesRegionBriefRecord
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName DominantCourtId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText CourtDisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText HubSummary;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText SurfaceBeliefText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText HiddenTruthText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText TravelAdvisoryText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText ConvergencePressureText;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> FactionIds;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesCourtFactionRecord
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName FactionId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CourtId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText FactionName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText PublicRole;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText PublicDoctrine;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText HiddenAgenda;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText PlayerTension;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText JournalLabel;
 };
 
 USTRUCT(BlueprintType)
@@ -845,6 +941,12 @@ struct FManyNamesCinematicSceneRecord
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName WeatherStateId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName BlockingPresetId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName FallbackFocusTag = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSoftObjectPath SequenceAsset;
@@ -884,6 +986,9 @@ struct FManyNamesAudioProfileRecord
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName RoleId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FSoftObjectPath SoundAsset;

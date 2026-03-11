@@ -1,6 +1,7 @@
 [
   {
     "SceneId": "scene_ending_return",
+    "SceneOrder": 0,
     "QuestId": "",
     "CharacterId": "LegacyProjection",
     "SpeakerName": "Legacy Projection",
@@ -10,11 +11,19 @@
     "CameraAnchorTag": "Camera.EndingReturn",
     "WeatherStateId": "",
     "ChoiceIds": [],
+    "AudioProfileIds": [
+      "music_convergence_core",
+      "stinger_quest_resolve"
+    ],
+    "PublicBeliefText": "The regions will remember this as abandonment, judgment, or an impossible departure.",
+    "HiddenTruthText": "Return rejects every court without pretending they never mattered.",
+    "JournalSummaryText": "You left myth behind and forced the regions to explain your absence for themselves.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_ending_myth",
+    "SceneOrder": 0,
     "QuestId": "",
     "CharacterId": "LegacyProjection",
     "SpeakerName": "Legacy Projection",
@@ -24,11 +33,19 @@
     "CameraAnchorTag": "Camera.EndingMyth",
     "WeatherStateId": "",
     "ChoiceIds": [],
+    "AudioProfileIds": [
+      "music_sky_path",
+      "stinger_quest_resolve"
+    ],
+    "PublicBeliefText": "A living myth resolves the argument by becoming the argument's center.",
+    "HiddenTruthText": "Staying keeps the machine logic alive inside culture, even when you refuse its older names.",
+    "JournalSummaryText": "You remained and became the thing the regions could no longer separate from worship.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_ending_dismantle",
+    "SceneOrder": 0,
     "QuestId": "",
     "CharacterId": "LegacyProjection",
     "SpeakerName": "Legacy Projection",
@@ -38,11 +55,19 @@
     "CameraAnchorTag": "Camera.EndingDismantle",
     "WeatherStateId": "",
     "ChoiceIds": [],
+    "AudioProfileIds": [
+      "music_bronze_path",
+      "stinger_quest_resolve"
+    ],
+    "PublicBeliefText": "The gods are broken open and must now survive as human institutions or disappear.",
+    "HiddenTruthText": "Dismantling the system does not erase the structures it already built into memory and law.",
+    "JournalSummaryText": "You broke divine machinery and forced each region to rebuild legitimacy without hidden engines.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_ending_replace",
+    "SceneOrder": 0,
     "QuestId": "",
     "CharacterId": "LegacyProjection",
     "SpeakerName": "Legacy Projection",
@@ -52,11 +77,19 @@
     "CameraAnchorTag": "Camera.EndingReplace",
     "WeatherStateId": "",
     "ChoiceIds": [],
+    "AudioProfileIds": [
+      "music_oracle_path",
+      "stinger_quest_resolve"
+    ],
+    "PublicBeliefText": "A new god takes the throne beneath the old world.",
+    "HiddenTruthText": "Replacement solves the problem of rival courts by internalizing them under one will.",
+    "JournalSummaryText": "You became the replacement intelligence and inherited every temptation the courts once embodied.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_ending_fragment",
+    "SceneOrder": 0,
     "QuestId": "",
     "CharacterId": "LegacyProjection",
     "SpeakerName": "Legacy Projection",
@@ -66,13 +99,27 @@
     "CameraAnchorTag": "Camera.EndingFragment",
     "WeatherStateId": "",
     "ChoiceIds": [],
+    "AudioProfileIds": [
+      "music_convergence_core",
+      "stinger_quest_resolve"
+    ],
+    "PublicBeliefText": "No single order wins. Every region inherits part of the legacy and must live with uncertainty.",
+    "HiddenTruthText": "Fragmentation refuses total victory for any court, but guarantees centuries of partial myth.",
+    "JournalSummaryText": "You scattered the legacy and denied any one court the right to own the future.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_convergence_main",
+    "SceneOrder": 10,
     "QuestId": "convergence_main_01",
     "CharacterId": "ConvergenceCore",
+    "CourtId": "Court.Convergence",
+    "FactionIds": [
+      "Faction.Convergence.BurialCustodians",
+      "Faction.Convergence.SignalArchivists",
+      "Faction.Convergence.LoyalistRemnants"
+    ],
     "SpeakerName": "Companion Chorus",
     "SpeakerRole": "Buried Ship Core",
     "BodyText": "The buried bridge lights in layers as every preserved god-voice speaks at once. Bridge Watcher, Systems Remnant, and the last members of the companion chorus have each built a different theology around this room, and now all three former companions are trying to decide whether they want you beside them, beneath them, or gone. Their demand is simple and impossible: restore the old mission, live inside the myth you created, dismantle the machine hierarchy, replace the companion intelligence, or accept a broken inheritance that no one fully owns.",
@@ -86,13 +133,26 @@
       "choice_ending_replace_companion",
       "choice_ending_fragment"
     ],
+    "AudioProfileIds": [
+      "music_convergence_core",
+      "stinger_antagonist_shift"
+    ],
+    "PublicBeliefText": "Every court calls this place the source of rightful rule, but each means something different by rule.",
+    "HiddenTruthText": "Convergence is where curated memory, spectacular obedience, and measured law reveal themselves as competing mission logics.",
+    "JournalSummaryText": "The buried court has become the collision point of every ideology you awakened or resisted.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_convergence_side_chorus",
+    "SceneOrder": 20,
     "QuestId": "convergence_side_02",
     "CharacterId": "BurialCustodian",
+    "CourtId": "Court.Convergence",
+    "FactionIds": [
+      "Faction.Convergence.BurialCustodians",
+      "Faction.Convergence.SignalArchivists"
+    ],
     "SpeakerName": "Nera",
     "SpeakerRole": "Burial Custodian",
     "BodyText": "Beneath the bridge, Nera reveals a chamber of partitioned voices: companion fragments preserved because none of them could be trusted whole. Kheiron wants the chorus merged into one usable intelligence. Damon would rather bury it forever than let another will speak through history. But the trapped signal still remembers you. What you do here decides whether legacy becomes witness, instrument, or silence.",
@@ -104,13 +164,26 @@
       "choice_convergence_chorus_merge",
       "choice_convergence_chorus_silence"
     ],
+    "AudioProfileIds": [
+      "music_convergence_core",
+      "ambience_convergence_core"
+    ],
+    "PublicBeliefText": "The fragments are treated as dangerous relics that must never speak whole again.",
+    "HiddenTruthText": "The chorus proves every companion was partitioned because none could be trusted with uninterrupted authority.",
+    "JournalSummaryText": "The chorus vault turns the question of memory into a question of whether any one voice should ever rule again.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_egypt_main",
+    "SceneOrder": 10,
     "QuestId": "egypt_main_01",
     "CharacterId": "ArchiveKeeper",
+    "CourtId": "Court.OracleAI",
+    "FactionIds": [
+      "Faction.Egypt.Archivists",
+      "Faction.Egypt.TempleAdjudicators"
+    ],
     "SpeakerName": "Nesamun",
     "SpeakerRole": "Archive Keeper",
     "BodyText": "In the archive vault, Nesamun opens a chamber where a voice should not exist. Henut has already heard the priests rehearsing a safer public lie, while Panehsy warns that the granaries and canal crews will follow whoever controls the archive next. The Radiant Voice can remain sealed, be shared among a covenant of stewards, be bound into memory and liturgy, or be exposed so violently that the temple never recovers its old monopoly.",
@@ -123,13 +196,26 @@
       "choice_egypt_bind_archive",
       "choice_egypt_expose_oracle"
     ],
+    "AudioProfileIds": [
+      "music_egypt_solar",
+      "stinger_antagonist_shift"
+    ],
+    "PublicBeliefText": "The temple says continuity is sacred because only controlled memory prevents chaos.",
+    "HiddenTruthText": "OracleAI survives here as archival infrastructure: whoever controls interpretation controls grain, death, and public legitimacy.",
+    "JournalSummaryText": "Egypt's archive dispute is not just about truth. It is about who gets to interpret reality for everyone else.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_egypt_side",
+    "SceneOrder": 20,
     "QuestId": "egypt_side_01",
     "CharacterId": "FloodplainPetitioner",
+    "CourtId": "Court.OracleAI",
+    "FactionIds": [
+      "Faction.Egypt.FloodplainHouseholds",
+      "Faction.Egypt.TempleAdjudicators"
+    ],
     "SpeakerName": "Tiaa",
     "SpeakerRole": "Floodplain Petitioner",
     "BodyText": "Tiaa kneels in dust that should have been river silt. Panehsy keeps glancing toward the sealed storehouses, Henut is trying to keep the priests from turning hunger into theater, and every person in the market knows that one decision here will decide who owns survival. Tiaa wants judgment, but not necessarily blood. She wants to know whether food will be distributed through repair, spectacle, bargains, reformed storehouses, or abandonment.",
@@ -143,13 +229,25 @@
       "choice_egypt_famine_storehouse",
       "choice_egypt_famine_refuse"
     ],
+    "AudioProfileIds": [
+      "ambience_egypt_market"
+    ],
+    "PublicBeliefText": "If the temple truly keeps sacred order, no family should starve outside its sealed grain.",
+    "HiddenTruthText": "Scarcity is being managed through secrecy; hunger is the mortal price of curated continuity.",
+    "JournalSummaryText": "The floodplain makes Egypt's theology visible in the body: continuity for whom, and at what cost?",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_egypt_side_ledger",
+    "SceneOrder": 30,
     "QuestId": "egypt_side_02",
     "CharacterId": "RiverScribe",
+    "CourtId": "Court.OracleAI",
+    "FactionIds": [
+      "Faction.Egypt.Archivists",
+      "Faction.Egypt.FloodplainHouseholds"
+    ],
     "SpeakerName": "Henut",
     "SpeakerRole": "River Scribe",
     "BodyText": "Henut lays wet-fingered tablets across a stone bench and shows where grain vanished between flood warning and temple release. Panehsy calls the record incomplete, but the canal workers have already learned what missing numbers feel like in the body. If the ledger leaves priestly custody, famine may become public memory. If it stays hidden, survival remains a privilege disguised as piety.",
@@ -161,13 +259,25 @@
       "choice_egypt_ledger_steward",
       "choice_egypt_ledger_burn"
     ],
+    "AudioProfileIds": [
+      "music_egypt_solar"
+    ],
+    "PublicBeliefText": "A sacred ledger should prove that divine administration still serves the living.",
+    "HiddenTruthText": "The missing numbers show how OracleAI's court turns record-keeping into soft coercion.",
+    "JournalSummaryText": "The river ledger is the point where continuity stops looking holy and starts looking engineered.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_greece_main",
+    "SceneOrder": 10,
     "QuestId": "greece_main_01",
     "CharacterId": "StormHerald",
+    "CourtId": "Court.SkyRuler",
+    "FactionIds": [
+      "Faction.Greece.StormSanctuary",
+      "Faction.Greece.WarbandRetinue"
+    ],
     "SpeakerName": "Melantho",
     "SpeakerRole": "Storm Herald",
     "BodyText": "Melantho stands beneath a bronze beacon lashed by wind while Dorieus watches the sanctuary crowd for signs of panic and Thyia waits to see whether fear or song will rule the mountain. The storm-ruler still answers, but the signs come broken now, half omen and half failing system. You can stand beside the spectacle, redirect it into law, break the beacon and strip the terror from it, or force the truth out into the open and risk shattering the sanctuary with it.",
@@ -180,13 +290,26 @@
       "choice_greece_break_beacon",
       "choice_greece_defy_spectacle"
     ],
+    "AudioProfileIds": [
+      "music_greece_storm",
+      "stinger_antagonist_shift"
+    ],
+    "PublicBeliefText": "The mountain only remains legitimate if everyone can see the storm answer from above.",
+    "HiddenTruthText": "SkyRuler's court survives through spectacle: fear made public, weather made political, obedience made thrilling.",
+    "JournalSummaryText": "Greece turns authority into performance. The question is whether the performance still serves anyone but itself.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_greece_side",
+    "SceneOrder": 20,
     "QuestId": "greece_side_01",
     "CharacterId": "WarbandEnvoy",
+    "CourtId": "Court.SkyRuler",
+    "FactionIds": [
+      "Faction.Greece.WarbandRetinue",
+      "Faction.Greece.StormSanctuary"
+    ],
     "SpeakerName": "Leonteus",
     "SpeakerRole": "Warband Envoy",
     "BodyText": "Leonteus has climbed to the shrine with armed retainers and a diplomat's smile, while Thyia is already turning the watching pilgrims into an audience. The road can be saved with negotiation, deception, blood price, or open violence. Whatever happens here will decide whether the mountain remembers you as mediator, wonder-worker, extortionist, or butcher.",
@@ -199,13 +322,25 @@
       "choice_greece_warband_bloodprice",
       "choice_greece_warband_strike"
     ],
+    "AudioProfileIds": [
+      "ambience_greece_wind"
+    ],
+    "PublicBeliefText": "If the gods favor the strong, then armed prestige should settle the road.",
+    "HiddenTruthText": "The warband wants SkyRuler's spectacle translated into social permission for coercion.",
+    "JournalSummaryText": "The warband encounter shows how quickly public omen becomes political intimidation.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_greece_side_oaths",
+    "SceneOrder": 30,
     "QuestId": "greece_side_02",
     "CharacterId": "OathBearer",
+    "CourtId": "Court.SkyRuler",
+    "FactionIds": [
+      "Faction.Greece.OathHouseholds",
+      "Faction.Greece.StormSanctuary"
+    ],
     "SpeakerName": "Melia",
     "SpeakerRole": "Oath Bearer",
     "BodyText": "Melia recites the vow that bound her household to the ridge: grain in peace, sons in war, silence when the high storm speaks. Thestor insists the oath still protects the city. The warband says an oath broken in rain is a license for blood. Every listener is waiting to hear whether sacred obligation can still serve the living, or whether it has become a machine for feeding thunder with human names.",
@@ -217,13 +352,25 @@
       "choice_greece_oath_release",
       "choice_greece_oath_trick"
     ],
+    "AudioProfileIds": [
+      "music_greece_storm"
+    ],
+    "PublicBeliefText": "The oath is supposed to protect the ridge by making fear lawful.",
+    "HiddenTruthText": "Oath has become infrastructure for sacrificial obedience rather than mutual safety.",
+    "JournalSummaryText": "The oath tribunal reveals how SkyRuler's court binds whole households to weather and status.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_italic_main",
+    "SceneOrder": 10,
     "QuestId": "italic_main_01",
     "CharacterId": "MeasureKeeper",
+    "CourtId": "Court.BronzeLawgiver",
+    "FactionIds": [
+      "Faction.Italic.RoadMagistrates",
+      "Faction.Italic.ForgeCollective"
+    ],
     "SpeakerName": "Aulus",
     "SpeakerRole": "Keeper Of Measures",
     "BodyText": "Aulus walks the forge-law chamber with measuring cord in one hand and a bronze tally in the other while Larthia keeps the fires alive and Satre marks fresh lengths into wax and ash. He believes divinity is only useful if it can be counted, judged, and forced into roads, weights, and punishments. You can define order as service, domination, shared measure, or open replacement of the keeper himself.",
@@ -236,13 +383,26 @@
       "choice_italic_shared_measure",
       "choice_italic_replace"
     ],
+    "AudioProfileIds": [
+      "music_italic_road",
+      "stinger_antagonist_shift"
+    ],
+    "PublicBeliefText": "Measured order is treated as the only honest form of the sacred.",
+    "HiddenTruthText": "BronzeLawgiver turns roads, tallies, and civic necessity into a theology of extraction.",
+    "JournalSummaryText": "Italic law is not abstract. It lives in roads, embankments, and the right to count everyone else.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_italic_side",
+    "SceneOrder": 20,
     "QuestId": "italic_side_01",
     "CharacterId": "BoundaryElder",
+    "CourtId": "Court.BronzeLawgiver",
+    "FactionIds": [
+      "Faction.Italic.BoundaryHouseholds",
+      "Faction.Italic.RoadMagistrates"
+    ],
     "SpeakerName": "Vela",
     "SpeakerRole": "Boundary Elder",
     "BodyText": "Vela waits beside stones moved in the night while Satre keeps remeasuring the same lines and Larthia mutters that hungry people care less about law than access. The dispute is old enough to be sacred now: one field, one road, one accusation too many. She asks for a verdict that keeps the peace, wins by intimidation, binds both sides through hostages and oath, or tears the boundary open so everyone sees what law is made of.",
@@ -256,16 +416,28 @@
       "choice_italic_boundary_hostage_oath",
       "choice_italic_boundary_purge"
     ],
+    "AudioProfileIds": [
+      "ambience_italic_settlement"
+    ],
+    "PublicBeliefText": "A boundary only deserves reverence if it preserves peace for ordinary households.",
+    "HiddenTruthText": "Measured law keeps revealing how easily protection turns into sanctioned pressure.",
+    "JournalSummaryText": "The boundary dispute asks whether law can stay common or whether every line becomes an instrument.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_italic_side_road",
+    "SceneOrder": 30,
     "QuestId": "italic_side_02",
     "CharacterId": "RoadMagistrate",
-    "SpeakerName": "Serranus",
+    "CourtId": "Court.BronzeLawgiver",
+    "FactionIds": [
+      "Faction.Italic.RoadMagistrates",
+      "Faction.Italic.ForgeCollective"
+    ],
+    "SpeakerName": "Satre",
     "SpeakerRole": "Road Magistrate",
-    "BodyText": "Serranus measures the road by rod, tax, and funeral distance. Lartha counts burns on her forearms and asks who the road really protects. The boundary witnesses know a new road can mean grain, law, and trade, but also levies, seizures, and soldiers who arrive faster than kin. The decision is not whether the road stands. It is who the road belongs to once everyone has paid for it.",
+    "BodyText": "Satre stands over the embankment with measuring staff in hand, insisting that every stone proves civilization and every unpaid hand should be grateful to build it. Larthia answers that a road that devours the people who maintain it is only conquest in civic language. If the road is judged sacred, common, or fraudulent here, the whole settlement will inherit that verdict.",
     "LocationId": "italic.road_embankment",
     "CameraAnchorTag": "Camera.RoadMeasure",
     "WeatherStateId": "ItalicWest.Hero",
@@ -274,30 +446,53 @@
       "choice_italic_road_tithe",
       "choice_italic_road_break"
     ],
+    "AudioProfileIds": [
+      "music_italic_road"
+    ],
+    "PublicBeliefText": "The road is the visible proof that order deserves obedience.",
+    "HiddenTruthText": "BronzeLawgiver's court justifies extraction by calling it civic necessity.",
+    "JournalSummaryText": "The road hearing decides whether infrastructure remains common service or becomes sacred debt.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_opening_miracle",
+    "SceneOrder": 10,
     "QuestId": "opening_main_01",
     "CharacterId": "OracleFragment",
-    "SpeakerName": "Oracle Fragment",
-    "SpeakerRole": "Companion Signal",
-    "BodyText": "The wreck buckles inward as heat climbs through the ravine. A damaged guidance voice cuts through the static: survive first, explain later. The machine core under your skin responds before thought can catch up.",
+    "CourtId": "Court.Unclaimed",
+    "FactionIds": [
+      "Faction.Opening.Survivors"
+    ],
+    "SpeakerName": "Shattered Signal",
+    "SpeakerRole": "Fragment",
+    "BodyText": "Metal heat fades, the wreck shudders, and a voice broken by impact tries to sort body status from prophecy. The survivors cannot hear the machine words. They only see that you lived through what should have killed you.",
     "LocationId": "opening.crash_core",
     "CameraAnchorTag": "Camera.CrashCore",
     "WeatherStateId": "Opening.Hero",
     "ChoiceIds": [],
+    "AudioProfileIds": [
+      "music_opening_theme",
+      "stinger_miracle_pulse"
+    ],
+    "PublicBeliefText": "A person has survived like a sign.",
+    "HiddenTruthText": "The first miracle is damaged survival tech being misread in real time.",
+    "JournalSummaryText": "The opening miracle is the first place where technology becomes sacred interpretation.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   },
   {
     "SceneId": "scene_opening_witness",
+    "SceneOrder": 20,
     "QuestId": "opening_side_01",
     "CharacterId": "OpeningWitness",
+    "CourtId": "Court.Unclaimed",
+    "FactionIds": [
+      "Faction.Opening.WitnessCircle"
+    ],
     "SpeakerName": "Iset",
-    "SpeakerRole": "Witness Survivor",
-    "BodyText": "Iset stands between panic and memory while Meret binds the wounded behind her and Pakhura tries to turn wreckage into a camp. She wants the night reduced to heat, smoke, and terror because that version can still fit inside a human life. But she saw the impossible: someone walked out of fire untouched, and now every survivor is waiting to hear whether the thing that saved them was mercy, machinery, or the first demand of a new god.",
+    "SpeakerRole": "Witness",
+    "BodyText": "Iset has already watched the camp decide what kind of story it needs. She can call you rescuer, omen, liar, or something too dangerous to name. The whole prototype turns on whether the first public witness protects your uncertainty or hardens it into myth before the larger courts ever see you.",
     "LocationId": "opening.witness_camp",
     "CameraAnchorTag": "Camera.WitnessCamp",
     "WeatherStateId": "Opening.Hero",
@@ -305,6 +500,12 @@
       "choice_witness_conceal",
       "choice_witness_proclaim"
     ],
+    "AudioProfileIds": [
+      "ambience_opening_ash"
+    ],
+    "PublicBeliefText": "A witness decides whether the miracle belongs to fear, refuge, or propaganda.",
+    "HiddenTruthText": "The witness scene is the first political act in the whole game: myth enters history through narrative control.",
+    "JournalSummaryText": "The witness does not just describe what happened. She decides what kind of being the world expects you to be.",
     "bLockMovement": true,
     "bUseRoamingCamera": true
   }

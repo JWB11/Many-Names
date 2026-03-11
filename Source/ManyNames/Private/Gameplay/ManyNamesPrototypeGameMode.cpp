@@ -1,23 +1,29 @@
 #include "Gameplay/ManyNamesPrototypeGameMode.h"
 
 #include "AudioDevice.h"
+#include "Camera/CameraActor.h"
+#include "Camera/CameraComponent.h"
 #include "Components/AudioComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
+#include "EngineUtils.h"
 #include "Gameplay/ManyNamesDialogueController.h"
 #include "Gameplay/ManyNamesEnvironmentController.h"
 #include "Gameplay/ManyNamesFirstPersonCharacter.h"
 #include "GameplayTagsManager.h"
+#include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "LevelSequence.h"
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
 #include "Misc/PackageName.h"
+#include "MovieScene.h"
 #include "Systems/ManyNamesContentSubsystem.h"
 #include "Systems/ManyNamesMythSubsystem.h"
 #include "Systems/ManyNamesQuestSubsystem.h"
 #include "Systems/ManyNamesWorldStateSubsystem.h"
 #include "Sound/SoundBase.h"
+#include "TimerManager.h"
 
 namespace
 {
@@ -51,6 +57,39 @@ namespace
 
 			return LeftId < RightId;
 		});
+	}
+
+	const TCHAR* CompanionLabel(EManyNamesCompanionId CompanionId)
+	{
+		switch (CompanionId)
+		{
+		case EManyNamesCompanionId::SkyRuler:
+			return TEXT("SkyRuler");
+		case EManyNamesCompanionId::BronzeLawgiver:
+			return TEXT("BronzeLawgiver");
+		case EManyNamesCompanionId::OracleAI:
+		default:
+			return TEXT("OracleAI");
+		}
+	}
+
+	FString PowerLabel(EManyNamesPowerId PowerId)
+	{
+		switch (PowerId)
+		{
+		case EManyNamesPowerId::TraumaRecovery:
+			return TEXT("Trauma Recovery");
+		case EManyNamesPowerId::ThermalShielding:
+			return TEXT("Thermal Shielding");
+		case EManyNamesPowerId::FocusShift:
+			return TEXT("Focus Shift");
+		case EManyNamesPowerId::InsightPulse:
+			return TEXT("Insight Pulse");
+		case EManyNamesPowerId::ArtifactRecognition:
+			return TEXT("Artifact Recognition");
+		default:
+			return TEXT("Unknown");
+		}
 	}
 }
 
@@ -281,6 +320,14 @@ void AManyNamesPrototypeGameMode::HandleMenuSelection(int32 SelectionIndex)
 		{
 			ShowStatusMessage(TEXT("That dialogue choice is not available."), FColor::Red);
 		}
+		else
+		{
+			if (!DialogueController->IsDialogueOpen())
+			{
+				StopDialogueSceneAudio();
+				OnDialogueStateChanged.Broadcast(NAME_None, false);
+			}
+		}
 		return;
 	}
 
@@ -371,6 +418,7 @@ FString AManyNamesPrototypeGameMode::GetJournalSummary() const
 	const UManyNamesQuestSubsystem* QuestSubsystem = GetQuestSubsystem();
 	const UManyNamesWorldStateSubsystem* WorldStateSubsystem = GetWorldStateSubsystem();
 	const UManyNamesContentSubsystem* ContentSubsystem = GetContentSubsystem();
+	const UManyNamesMythSubsystem* MythSubsystem = GetMythSubsystem();
 	if (!QuestSubsystem || !WorldStateSubsystem || !ContentSubsystem)
 	{
 		return TEXT("Journal unavailable.");
@@ -379,8 +427,42 @@ FString AManyNamesPrototypeGameMode::GetJournalSummary() const
 	const FManyNamesWorldState WorldState = WorldStateSubsystem->GetWorldState();
 	TStringBuilder<4096> Builder;
 	Builder.Append(TEXT("Many Names Journal\n"));
-	Builder.Appendf(TEXT("Visited regions: %d\n"), WorldState.RegionVisitOrder.Num());
-	Builder.Appendf(TEXT("Known outputs: %d\n"), WorldState.WorldStateOutputs.Num());
+	const EManyNamesRegionId CurrentRegionId = GetCurrentRegionId();
+	FManyNamesRegionBriefRecord RegionBrief;
+	if (ContentSubsystem->GetRegionBrief(CurrentRegionId, RegionBrief))
+	{
+		Builder.Appendf(TEXT("%s\n"), *UEnum::GetDisplayValueAsText(CurrentRegionId).ToString());
+		Builder.Appendf(TEXT("Dominant court: %s\n"), *RegionBrief.CourtDisplayName.ToString());
+		if (!RegionBrief.HubSummary.IsEmpty())
+		{
+			Builder.Appendf(TEXT("%s\n"), *RegionBrief.HubSummary.ToString());
+		}
+		if (!RegionBrief.SurfaceBeliefText.IsEmpty())
+		{
+			Builder.Appendf(TEXT("Public belief: %s\n"), *RegionBrief.SurfaceBeliefText.ToString());
+		}
+		if (!RegionBrief.HiddenTruthText.IsEmpty())
+		{
+			Builder.Appendf(TEXT("Buried truth: %s\n"), *RegionBrief.HiddenTruthText.ToString());
+		}
+		if (!RegionBrief.TravelAdvisoryText.IsEmpty())
+		{
+			Builder.Appendf(TEXT("Traveler's note: %s\n"), *RegionBrief.TravelAdvisoryText.ToString());
+		}
+
+		const TArray<FManyNamesCourtFactionRecord> Factions = ContentSubsystem->GetCourtFactionsForRegion(CurrentRegionId);
+		if (Factions.Num() > 0)
+		{
+			Builder.Append(TEXT("Factions:\n"));
+			for (const FManyNamesCourtFactionRecord& Faction : Factions)
+			{
+				Builder.Appendf(TEXT("  - %s: %s\n"), *Faction.FactionName.ToString(), *Faction.JournalLabel.ToString());
+			}
+		}
+		Builder.Append(TEXT("\n"));
+	}
+
+	Builder.Appendf(TEXT("Visited regions: %d | Known outputs: %d\n"), WorldState.RegionVisitOrder.Num(), WorldState.WorldStateOutputs.Num());
 	Builder.Appendf(TEXT("Public miracle: %d | Concealment: %d | Combat: %d\n"),
 		WorldState.RumorProfile.PublicMiracleScore,
 		WorldState.RumorProfile.ConcealmentScore,
@@ -388,19 +470,44 @@ FString AManyNamesPrototypeGameMode::GetJournalSummary() const
 	EManyNamesCompanionId DominantCompanionId = EManyNamesCompanionId::OracleAI;
 	if (WorldStateSubsystem->TryGetDominantAntagonist(DominantCompanionId))
 	{
-		const TCHAR* AntagonistName = TEXT("OracleAI");
-		switch (DominantCompanionId)
+		Builder.Appendf(TEXT("Dominant antagonist path: %s\n"), CompanionLabel(DominantCompanionId));
+	}
+
+	if (WorldState.UnlockedPowers.Num() > 0)
+	{
+		Builder.Append(TEXT("Unlocked powers: "));
+		bool bFirstPower = true;
+		for (EManyNamesPowerId PowerId : WorldState.UnlockedPowers)
 		{
-		case EManyNamesCompanionId::SkyRuler:
-			AntagonistName = TEXT("SkyRuler");
-			break;
-		case EManyNamesCompanionId::BronzeLawgiver:
-			AntagonistName = TEXT("BronzeLawgiver");
-			break;
-		default:
-			break;
+			if (!bFirstPower)
+			{
+				Builder.Append(TEXT(", "));
+			}
+			Builder.Append(PowerLabel(PowerId));
+			bFirstPower = false;
 		}
-		Builder.Appendf(TEXT("Dominant antagonist path: %s\n"), AntagonistName);
+		Builder.Append(TEXT("\n"));
+	}
+
+	if (MythSubsystem)
+	{
+		TArray<FGameplayTag> DomainTags;
+		WorldState.MythicDomainProfile.DomainScores.GetKeys(DomainTags);
+		DomainTags.Sort([](const FGameplayTag& Left, const FGameplayTag& Right)
+		{
+			return Left.ToString() < Right.ToString();
+		});
+		if (DomainTags.Num() > 0)
+		{
+			Builder.Append(TEXT("Domain resonance:\n"));
+			for (const FGameplayTag& DomainTag : DomainTags)
+			{
+				if (const int32* Score = WorldState.MythicDomainProfile.DomainScores.Find(DomainTag))
+				{
+					Builder.Appendf(TEXT("  - %s: %d\n"), *DomainTag.GetTagName().ToString().Replace(TEXT("Domain."), TEXT("")), *Score);
+				}
+			}
+		}
 	}
 
 	TArray<FManyNamesQuestRow> QuestRows = ContentSubsystem->GetAllQuestRows();
@@ -709,7 +816,7 @@ void AManyNamesPrototypeGameMode::AddQuestRewards(const FManyNamesQuestRow& Ques
 	}
 }
 
-void AManyNamesPrototypeGameMode::BroadcastJournalUpdated() const
+void AManyNamesPrototypeGameMode::BroadcastJournalUpdated()
 {
 	OnJournalUpdated.Broadcast(GetJournalSummaryText());
 }
@@ -721,6 +828,7 @@ void AManyNamesPrototypeGameMode::OpenDialogueInternal(FName QuestId)
 		return;
 	}
 
+	StopDialogueSceneAudio();
 	DialogueController->OpenDialogue(QuestId);
 	OnDialogueStateChanged.Broadcast(QuestId, DialogueController->IsDialogueOpen());
 	BroadcastJournalUpdated();
@@ -729,26 +837,89 @@ void AManyNamesPrototypeGameMode::OpenDialogueInternal(FName QuestId)
 	{
 		ShowStatusMessage(TEXT("No valid dialogue options are currently unlocked for that encounter."), FColor::Red);
 	}
+	else
+	{
+	TryPlayDialogueScenePresentation(QuestId);
+	}
 }
 
-bool AManyNamesPrototypeGameMode::TryPlaySceneVoice(FName SceneId)
+bool AManyNamesPrototypeGameMode::TryPlaySceneVoice(FName SceneId, TArray<TObjectPtr<UAudioComponent>>& TargetComponents)
 {
 	if (SceneId.IsNone())
 	{
 		return false;
 	}
 
-	const FString AssetPath = FString::Printf(TEXT("/Game/Audio/Generated/voices/%s.%s"), *SceneId.ToString(), *SceneId.ToString());
-	if (USoundBase* VoiceSound = Cast<USoundBase>(StaticLoadObject(USoundBase::StaticClass(), nullptr, *AssetPath)))
+	TArray<FString> CandidatePaths;
+	CandidatePaths.Add(FString::Printf(TEXT("/Game/Audio/Generated/voices/%s.%s"), *SceneId.ToString(), *SceneId.ToString()));
+	CandidatePaths.Add(FString::Printf(TEXT("/Game/Audio/Generated/Voices/%s.%s"), *SceneId.ToString(), *SceneId.ToString()));
+
+	for (const FString& AssetPath : CandidatePaths)
 	{
-		if (UAudioComponent* Component = UGameplayStatics::SpawnSound2D(this, VoiceSound))
+		if (USoundBase* VoiceSound = Cast<USoundBase>(StaticLoadObject(USoundBase::StaticClass(), nullptr, *AssetPath)))
 		{
-			ActiveSceneAudioComponents.Add(Component);
-			return true;
+			if (UAudioComponent* Component = UGameplayStatics::SpawnSound2D(this, VoiceSound))
+			{
+				TargetComponents.Add(Component);
+				return true;
+			}
 		}
 	}
 
 	return false;
+}
+
+void AManyNamesPrototypeGameMode::PlayAudioProfiles(const TArray<FName>& AudioProfileIds, TArray<TObjectPtr<UAudioComponent>>& TargetComponents)
+{
+	UManyNamesContentSubsystem* ContentSubsystem = GetContentSubsystem();
+	if (!ContentSubsystem)
+	{
+		return;
+	}
+
+	for (const FName& AudioId : AudioProfileIds)
+	{
+		FManyNamesAudioProfileRecord AudioRecord;
+		if (ContentSubsystem->GetAudioProfile(AudioId, AudioRecord))
+		{
+			if (USoundBase* Sound = Cast<USoundBase>(AudioRecord.SoundAsset.TryLoad()))
+			{
+				if (UAudioComponent* Component = UGameplayStatics::SpawnSound2D(this, Sound, AudioRecord.VolumeMultiplier))
+				{
+					TargetComponents.Add(Component);
+				}
+			}
+		}
+	}
+}
+
+void AManyNamesPrototypeGameMode::StopDialogueSceneAudio()
+{
+	for (UAudioComponent* AudioComponent : ActiveDialogueAudioComponents)
+	{
+		if (AudioComponent)
+		{
+			AudioComponent->Stop();
+		}
+	}
+	ActiveDialogueAudioComponents.Reset();
+}
+
+void AManyNamesPrototypeGameMode::TryPlayDialogueScenePresentation(FName QuestId)
+{
+	if (!DialogueController)
+	{
+		return;
+	}
+
+	const FManyNamesDialogueSceneRecord& SceneRecord = DialogueController->GetCurrentScene();
+	if (SceneRecord.SceneId.IsNone() || SceneRecord.QuestId != QuestId)
+	{
+		return;
+	}
+
+	PlayAudioProfiles(SceneRecord.AudioProfileIds, ActiveDialogueAudioComponents);
+	TryPlaySceneVoice(SceneRecord.SceneId, ActiveDialogueAudioComponents);
 }
 
 bool AManyNamesPrototypeGameMode::TryPlayQuestCinematic(FName QuestId, const FString& SceneToken)
@@ -807,9 +978,11 @@ bool AManyNamesPrototypeGameMode::TryPlaySceneById(FName SceneId, FName Dialogue
 	}
 
 	ULevelSequence* Sequence = Cast<ULevelSequence>(SceneRecord.SequenceAsset.TryLoad());
-	if (!Sequence)
+	const UMovieScene* MovieScene = Sequence ? Sequence->GetMovieScene() : nullptr;
+	const bool bUseProceduralFallback = !Sequence || !MovieScene || MovieScene->GetBindings().Num() == 0;
+	if (bUseProceduralFallback)
 	{
-		return false;
+		return TryPlayProceduralCinematic(SceneRecord, DialogueQuestId);
 	}
 
 	if (!SceneRecord.WeatherStateId.IsNone())
@@ -829,29 +1002,121 @@ bool AManyNamesPrototypeGameMode::TryPlaySceneById(FName SceneId, FName Dialogue
 		return false;
 	}
 
-	for (const FName& AudioId : SceneRecord.AudioProfileIds)
+	PlayAudioProfiles(SceneRecord.AudioProfileIds, ActiveSceneAudioComponents);
+	TryPlaySceneVoice(SceneRecord.SceneId, ActiveSceneAudioComponents);
+	OnCinematicStateChanged.Broadcast(SceneId, true);
+	ActiveSequencePlayer->OnFinished.AddUniqueDynamic(this, &AManyNamesPrototypeGameMode::HandleActiveCinematicFinished);
+	ActiveSequencePlayer->Play();
+	return true;
+}
+
+bool AManyNamesPrototypeGameMode::TryPlayProceduralCinematic(const FManyNamesCinematicSceneRecord& SceneRecord, FName DialogueQuestId)
+{
+	if (!GetWorld())
 	{
-		FManyNamesAudioProfileRecord AudioRecord;
-		if (ContentSubsystem->GetAudioProfile(AudioId, AudioRecord))
+		return false;
+	}
+
+	if (!SceneRecord.WeatherStateId.IsNone())
+	{
+		ApplyWeatherState(SceneRecord.WeatherStateId);
+	}
+
+	PlayAudioProfiles(SceneRecord.AudioProfileIds, ActiveSceneAudioComponents);
+	TryPlaySceneVoice(SceneRecord.SceneId, ActiveSceneAudioComponents);
+
+	AActor* FocusActor = FindSceneFocusActor(SceneRecord);
+	const FTransform CameraTransform = BuildProceduralCameraTransform(FocusActor, SceneRecord.BlockingPresetId);
+	ActiveFallbackCineCamera = GetWorld()->SpawnActor<ACameraActor>(CameraTransform.GetLocation(), CameraTransform.Rotator());
+	if (!ActiveFallbackCineCamera)
+	{
+		RestoreBaselineWeather();
+		for (UAudioComponent* AudioComponent : ActiveSceneAudioComponents)
 		{
-			if (USoundBase* Sound = Cast<USoundBase>(AudioRecord.SoundAsset.TryLoad()))
+			if (AudioComponent)
 			{
-				if (UAudioComponent* Component = UGameplayStatics::SpawnSound2D(this, Sound, AudioRecord.VolumeMultiplier))
-				{
-					ActiveSceneAudioComponents.Add(Component);
-				}
+				AudioComponent->Stop();
+			}
+		}
+		ActiveSceneAudioComponents.Reset();
+		return false;
+	}
+
+	if (UCameraComponent* CameraComponent = ActiveFallbackCineCamera->GetCameraComponent())
+	{
+		CameraComponent->SetFieldOfView(SceneRecord.RegionId == EManyNamesRegionId::Convergence ? 40.0f : 48.0f);
+	}
+
+	if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0))
+	{
+		SavedViewTarget = PlayerController->GetViewTarget();
+		PlayerController->SetViewTargetWithBlend(ActiveFallbackCineCamera, 0.45f);
+	}
+
+	PendingDialogueQuestId = DialogueQuestId;
+	ActiveCinematicSceneId = SceneRecord.SceneId;
+	OnCinematicStateChanged.Broadcast(SceneRecord.SceneId, true);
+	GetWorldTimerManager().SetTimer(
+		ActiveCinematicTimerHandle,
+		this,
+		&AManyNamesPrototypeGameMode::HandleActiveCinematicFinished,
+		FMath::Max(1.0f, SceneRecord.EstimatedDurationSeconds),
+		false);
+	return true;
+}
+
+AActor* AManyNamesPrototypeGameMode::FindSceneFocusActor(const FManyNamesCinematicSceneRecord& SceneRecord) const
+{
+	if (!GetWorld())
+	{
+		return nullptr;
+	}
+
+	TArray<FName> CandidateTags;
+	if (!SceneRecord.FallbackFocusTag.IsNone())
+	{
+		CandidateTags.Add(SceneRecord.FallbackFocusTag);
+	}
+	if (!SceneRecord.CameraAnchorTag.IsNone())
+	{
+		CandidateTags.Add(SceneRecord.CameraAnchorTag);
+	}
+	if (!SceneRecord.CharacterId.IsNone())
+	{
+		CandidateTags.Add(FName(*FString::Printf(TEXT("Character.%s"), *SceneRecord.CharacterId.ToString())));
+	}
+
+	for (const FName& CandidateTag : CandidateTags)
+	{
+		for (TActorIterator<AActor> It(GetWorld()); It; ++It)
+		{
+			if (It->ActorHasTag(CandidateTag))
+			{
+				return *It;
 			}
 		}
 	}
 
-	TryPlaySceneVoice(SceneRecord.SceneId);
-	OnCinematicStateChanged.Broadcast(SceneId, true);
-	ActiveSequencePlayer->OnFinished.AddWeakLambda(this, [this]()
-	{
-		FinishActiveCinematic(false);
-	});
-	ActiveSequencePlayer->Play();
-	return true;
+	return UGameplayStatics::GetPlayerPawn(this, 0);
+}
+
+FTransform AManyNamesPrototypeGameMode::BuildProceduralCameraTransform(const AActor* FocusActor, const FName& BlockingPresetId) const
+{
+	const FVector FocusLocation = FocusActor ? FocusActor->GetActorLocation() : FVector::ZeroVector;
+	const FVector Offset =
+		BlockingPresetId == TEXT("close_authority") ? FVector(-185.0f, 110.0f, 82.0f) :
+		BlockingPresetId == TEXT("wide_arrival") ? FVector(-720.0f, 260.0f, 220.0f) :
+		BlockingPresetId == TEXT("ritual_side") ? FVector(-320.0f, -210.0f, 120.0f) :
+		BlockingPresetId == TEXT("convergence_reveal") ? FVector(-560.0f, 120.0f, 180.0f) :
+		FVector(-420.0f, 170.0f, 128.0f);
+	const FVector CameraLocation = FocusLocation + Offset;
+	const FRotator CameraRotation = (FocusLocation - CameraLocation).Rotation();
+	return FTransform(CameraRotation, CameraLocation, FVector::OneVector);
+}
+
+void AManyNamesPrototypeGameMode::HandleActiveCinematicFinished()
+{
+	FinishActiveCinematic(false);
 }
 
 void AManyNamesPrototypeGameMode::FinishActiveCinematic(bool bWasSkipped)
@@ -870,6 +1135,7 @@ void AManyNamesPrototypeGameMode::FinishActiveCinematic(bool bWasSkipped)
 		}
 	}
 	ActiveSceneAudioComponents.Reset();
+	GetWorldTimerManager().ClearTimer(ActiveCinematicTimerHandle);
 
 	if (ActiveSequencePlayer)
 	{
@@ -881,6 +1147,16 @@ void AManyNamesPrototypeGameMode::FinishActiveCinematic(bool bWasSkipped)
 		ActiveSequenceActor->Destroy();
 		ActiveSequenceActor = nullptr;
 	}
+	if (ActiveFallbackCineCamera)
+	{
+		if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0))
+		{
+			PlayerController->SetViewTargetWithBlend(SavedViewTarget ? SavedViewTarget.Get() : UGameplayStatics::GetPlayerPawn(this, 0), 0.25f);
+		}
+		ActiveFallbackCineCamera->Destroy();
+		ActiveFallbackCineCamera = nullptr;
+		SavedViewTarget = nullptr;
+	}
 
 	RestoreBaselineWeather();
 	ActiveCinematicSceneId = NAME_None;
@@ -888,7 +1164,7 @@ void AManyNamesPrototypeGameMode::FinishActiveCinematic(bool bWasSkipped)
 
 	const FName DialogueQuestId = PendingDialogueQuestId;
 	PendingDialogueQuestId = NAME_None;
-	if (!bWasSkipped && !DialogueQuestId.IsNone())
+	if (!DialogueQuestId.IsNone())
 	{
 		OpenDialogueInternal(DialogueQuestId);
 	}
@@ -907,16 +1183,13 @@ bool AManyNamesPrototypeGameMode::SkipActiveCinematic()
 
 bool AManyNamesPrototypeGameMode::IsCinematicPlaying() const
 {
-	return ActiveSequencePlayer != nullptr && !ActiveCinematicSceneId.IsNone();
+	return !ActiveCinematicSceneId.IsNone() && (ActiveSequencePlayer != nullptr || ActiveFallbackCineCamera != nullptr);
 }
 
-void AManyNamesPrototypeGameMode::ShowStatusMessage(const FString& Message, FColor Color) const
+void AManyNamesPrototypeGameMode::ShowStatusMessage(const FString& Message, FColor Color)
 {
 	OnStatusMessage.Broadcast(FText::FromString(Message), FLinearColor(Color));
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 6.0f, Color, Message);
-	}
+	UE_LOG(LogTemp, Log, TEXT("%s"), *Message);
 }
 
 EManyNamesRegionId AManyNamesPrototypeGameMode::GetCurrentRegionId() const

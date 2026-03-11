@@ -34,6 +34,10 @@
   - `UManyNamesQuestSubsystem`
   - `UManyNamesContentSubsystem`
 - The authored data in `Data/` is the source of truth for region rows, quest rows, dialogue rows, dialogue scenes, quest steps, choice consequences, ending gates, cinematic scene rows, audio profiles, cast profiles, ambient crowd profiles, and external license records.
+- Region briefs and court/faction matrix records now live in:
+  - `Data/region_briefs.json`
+  - `Data/faction_courts.json`
+- Dialogue scenes now carry court/faction, belief, truth, journal, and scene-audio metadata.
 - Do not redesign save schema, quest ids, world-state outputs, or dialogue schema casually.
 
 ## Current Playable Maps
@@ -120,6 +124,7 @@ Use these domains instead of adding alignment systems or expanding into broad sp
   - runtime supports profile-driven NPC visuals, idle animation, cloth tier metadata, voice ids, and foot-IK profile ids through `FManyNamesNpcVisualProfile`
   - named story roles are authored as project MetaHumans under `Content/Characters/MetaHumans`
   - runtime MetaHuman assemblies are tracked through `Data/metahuman_manifest.json`
+  - named and ambient actors now add character/camera tags at runtime so procedural cutscene fallback can frame real scene subjects
   - ambient population is still lighter profile-driven crowd staging rather than full AI simulation
 - Do not reintroduce Manny/Quinn or mannequin fallback for named story roles.
 
@@ -164,6 +169,7 @@ The following work is already implemented and should be treated as current proje
 - authored data pack expanded and validated
 - supplemental JSON content loader added
 - cinematic scene, audio profile, and external license loading added to `UManyNamesContentSubsystem`
+- region brief and court/faction loading added to `UManyNamesContentSubsystem`
 - Blueprint/UI integration docs written
 - asset sourcing bible written
 - dynamic lighting setup applied to prototype maps
@@ -189,6 +195,10 @@ The following work is already implemented and should be treated as current proje
 - authored audio source generation and Unreal audio import scripts now exist for temporary motifs, ambience, stingers, and English placeholder voices
 - placeholder Sequencer generation now exists for cutscene assets referenced from `Data/cinematic_scenes.json`
 - additional named MetaHuman story roles were authored for the alpha cast expansion
+- runtime journal summary now surfaces region court, faction, rumor, domain, power, and quest-state context instead of only raw counts
+- dialogue scenes now play scene-linked temporary voice and audio profile content, not just text prompts
+- procedural cutscene fallback now frames tagged scene actors when placeholder Level Sequences are still empty
+- integration-analysis canon is now reflected in authored region briefs and court/faction data with soft regional court mapping
 - world build commandlet now completes with `0 errors, 0 warnings`
 
 ## Controls And Flow
@@ -244,6 +254,8 @@ The following work is already implemented and should be treated as current proje
 - Some structures remain hybrid Fab-plus-greybox because the current Fab library is heavier on isolated assets than complete modular regional kits.
 - Landscape is now live in the generated maps, but Landmass shaping, authored PCG node graphs, and Geometry Script-generated connective meshes still need a deeper follow-up pass.
 - Blueprint wrappers exist, but deeper UI polish, cutscene blocking polish, and audio mix polish are still pending.
+- The current cutscene layer is now playable via real-time fallback framing, but most authored Level Sequences still need hand-polished blocking and camera tracks.
+- Temporary/generated audio is fully wired, but still needs a stronger mix and less synthetic source quality for review-ready presentation.
 
 ## Guidance For Future Agents
 

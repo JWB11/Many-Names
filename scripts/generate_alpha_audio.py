@@ -43,7 +43,20 @@ def write_wav(path: Path, samples: list[float], sample_rate: int = SAMPLE_RATE) 
         handle.writeframes(frames)
 
 
-def synth_profile(audio_id: str, category: str, duration: float) -> list[float]:
+def harmonic_ratios_for_moods(moods: list[str]) -> tuple[float, float, float]:
+    mood_set = {m.lower() for m in moods}
+    if {"storm", "conquest", "spectacle"} & mood_set:
+        return (1.0, 1.33, 2.0)
+    if {"authority", "archive", "judgment"} & mood_set:
+        return (1.0, 1.25, 1.5)
+    if {"craft", "road", "order"} & mood_set:
+        return (1.0, 1.5, 1.875)
+    if {"catastrophe", "survival", "dust"} & mood_set:
+        return (1.0, 1.2, 1.7)
+    return (1.0, 1.5, 2.0)
+
+
+def synth_profile(audio_id: str, category: str, duration: float, moods: list[str]) -> list[float]:
     duration = max(duration, 2.0)
     total = int(SAMPLE_RATE * duration)
     rng = random.Random(audio_id)
@@ -52,21 +65,34 @@ def synth_profile(audio_id: str, category: str, duration: float) -> list[float]:
         "Ambience": 55.0 + rng.randint(0, 40),
         "Stinger": 180.0 + rng.randint(0, 120),
     }.get(category, 90.0 + rng.randint(0, 60))
+    harmonic_a, harmonic_b, harmonic_c = harmonic_ratios_for_moods(moods)
     samples = []
     for i in range(total):
         t = i / SAMPLE_RATE
-        env = min(1.0, t / 0.2) * min(1.0, (duration - t) / 0.35)
-        tone = math.sin(2.0 * math.pi * base * t)
-        overtone = 0.55 * math.sin(2.0 * math.pi * base * 1.5 * t + 0.7)
-        low = 0.35 * math.sin(2.0 * math.pi * (base * 0.5) * t + 1.2)
-        noise = (rng.random() * 2.0 - 1.0) * 0.08
+        fade_in = min(1.0, t / 0.3)
+        fade_out = min(1.0, (duration - t) / 0.45)
+        env = fade_in * fade_out
+        slow_mod = 0.82 + 0.18 * math.sin(t * 0.55 + 0.2)
+        shimmer = 0.5 + 0.5 * math.sin(t * 1.7 + 0.7)
+        tone = math.sin(2.0 * math.pi * base * harmonic_a * t)
+        overtone = 0.42 * math.sin(2.0 * math.pi * base * harmonic_b * t + 0.7)
+        low = 0.28 * math.sin(2.0 * math.pi * (base * 0.5) * t + 1.2)
+        air = 0.18 * math.sin(2.0 * math.pi * base * harmonic_c * t + 0.3)
+        noise = (rng.random() * 2.0 - 1.0) * 0.05
         if category == "Ambience":
-            noise *= 1.6
-            tone *= 0.35
+            noise *= 1.9
+            tone *= 0.26
+            overtone *= 0.18
+            air *= 0.12
         elif category == "Stinger":
-            tone *= 1.25
-            overtone *= 0.9
-        sample = (tone + overtone + low) * 0.18 * env + noise * env
+            tone *= 1.15
+            overtone *= 0.85
+            low *= 0.45
+            air *= 0.55
+        else:
+            tone *= 0.72
+            air *= 0.4
+        sample = ((tone + overtone + low + air) * 0.18 * env * slow_mod) + (noise * env * shimmer)
         samples.append(sample)
     return samples
 
@@ -85,13 +111,19 @@ def synth_voice_placeholder(text: str) -> list[float]:
     words = max(4, len(text.split()))
     duration = min(14.0, max(2.5, words * 0.32))
     total = int(SAMPLE_RATE * duration)
+    punctuation_count = sum(text.count(symbol) for symbol in ".?!,:;")
+    phrase_rate = 3.0 + punctuation_count * 0.15
     samples = []
     for i in range(total):
         t = i / SAMPLE_RATE
-        syllable = math.sin(2.0 * math.pi * (150.0 + 30.0 * math.sin(t * 6.0)) * t)
-        cadence = 0.5 + 0.5 * math.sin(t * 4.0)
+        syllable_freq = 138.0 + 24.0 * math.sin(t * phrase_rate) + 7.0 * math.sin(t * 12.0)
+        syllable = math.sin(2.0 * math.pi * syllable_freq * t)
+        undertone = 0.32 * math.sin(2.0 * math.pi * (syllable_freq * 0.5) * t + 0.9)
+        breath = (math.sin(t * 9.5) * 0.5 + 0.5) * 0.018
+        cadence = 0.45 + 0.55 * math.sin(t * 3.0 + 0.25)
+        phrase_gate = max(0.0, math.sin(t * 2.2) + 0.25)
         envelope = min(1.0, t / 0.06) * min(1.0, (duration - t) / 0.12)
-        samples.append(syllable * cadence * envelope * 0.14)
+        samples.append(((syllable + undertone) * cadence * phrase_gate * envelope * 0.14) + breath)
     return samples
 
 
@@ -127,7 +159,12 @@ def main() -> None:
 
     for profile in audio_profiles:
         output = GENERATED / profile["SourceFile"]
-        samples = synth_profile(profile["AudioId"], profile["CategoryId"], profile["EstimatedDurationSeconds"])
+        samples = synth_profile(
+            profile["AudioId"],
+            profile["CategoryId"],
+            profile["EstimatedDurationSeconds"],
+            profile.get("MoodTags", []),
+        )
         write_wav(output, samples)
 
     backend = available_tts_backend()

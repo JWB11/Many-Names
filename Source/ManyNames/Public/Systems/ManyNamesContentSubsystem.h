@@ -53,6 +53,21 @@ public:
 	TArray<FManyNamesAmbientProfileRecord> GetAllAmbientProfiles() const;
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	bool GetRegionBrief(EManyNamesRegionId RegionId, FManyNamesRegionBriefRecord& OutRecord) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesRegionBriefRecord> GetAllRegionBriefs() const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	bool GetCourtFaction(FName FactionId, FManyNamesCourtFactionRecord& OutRecord) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesCourtFactionRecord> GetCourtFactionsForRegion(EManyNamesRegionId RegionId) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesCourtFactionRecord> GetAllCourtFactions() const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
 	bool GetCinematicScene(FName SceneId, FManyNamesCinematicSceneRecord& OutRecord) const;
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
@@ -108,6 +123,8 @@ private:
 	bool LoadDialogueScenes();
 	bool LoadCharacterCast();
 	bool LoadAmbientProfiles();
+	bool LoadRegionBriefs();
+	bool LoadCourtFactions();
 	bool LoadCinematicScenes();
 	bool LoadAudioProfiles();
 	bool LoadExternalAssetLicenses();
@@ -163,6 +180,20 @@ private:
 
 	UPROPERTY(Transient)
 	TMap<FName, FManyNamesAmbientProfileRecord> AmbientProfilesById;
+
+	UPROPERTY(Transient)
+	TArray<FManyNamesRegionBriefRecord> RegionBriefs;
+
+	UPROPERTY(Transient)
+	TMap<EManyNamesRegionId, FManyNamesRegionBriefRecord> RegionBriefsById;
+
+	UPROPERTY(Transient)
+	TArray<FManyNamesCourtFactionRecord> CourtFactions;
+
+	UPROPERTY(Transient)
+	TMap<FName, FManyNamesCourtFactionRecord> CourtFactionsById;
+
+	TMap<EManyNamesRegionId, TArray<FManyNamesCourtFactionRecord>> CourtFactionsByRegionId;
 
 	UPROPERTY(Transient)
 	TArray<FManyNamesCinematicSceneRecord> CinematicScenes;

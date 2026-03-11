@@ -76,6 +76,19 @@ void AManyNamesScenicActor::ApplyNpcVisualProfile()
 		return;
 	}
 
+	if (!NpcVisualProfile.CameraAnchorTag.IsNone())
+	{
+		Tags.AddUnique(NpcVisualProfile.CameraAnchorTag);
+	}
+	if (!NpcVisualProfile.CharacterId.IsNone())
+	{
+		Tags.AddUnique(FName(*FString::Printf(TEXT("Character.%s"), *NpcVisualProfile.CharacterId.ToString())));
+	}
+	if (!NpcVisualProfile.StanceId.IsNone())
+	{
+		Tags.AddUnique(FName(*FString::Printf(TEXT("Stance.%s"), *NpcVisualProfile.StanceId.ToString())));
+	}
+
 	if (!NpcVisualProfile.FallbackStaticMesh.IsNull())
 	{
 		if (UStaticMesh* StaticMesh = NpcVisualProfile.FallbackStaticMesh.LoadSynchronous())
@@ -120,6 +133,9 @@ void AManyNamesScenicActor::ApplyNpcVisualProfile()
 				{
 					SkeletalMeshComponent->SetAnimationMode(EAnimationMode::AnimationSingleNode);
 					SkeletalMeshComponent->SetAnimation(IdleAnimation);
+					const float PlayOffset = FMath::Fmod(static_cast<float>(GetUniqueID()) * 0.13f, FMath::Max(0.1f, IdleAnimation->GetPlayLength()));
+					SkeletalMeshComponent->SetPosition(PlayOffset, false);
+					SkeletalMeshComponent->SetPlayRate(0.92f + (static_cast<float>(GetUniqueID() % 7) * 0.02f));
 					SkeletalMeshComponent->Play(true);
 				}
 			}

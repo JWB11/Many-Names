@@ -48,6 +48,12 @@ public:
 	FString AmbientProfilesJsonPath = TEXT("Data/ambient_profiles.json");
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
+	FString RegionBriefsJsonPath = TEXT("Data/region_briefs.json");
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
+	FString CourtFactionsJsonPath = TEXT("Data/faction_courts.json");
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
 	FString CinematicScenesJsonPath = TEXT("Data/cinematic_scenes.json");
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")

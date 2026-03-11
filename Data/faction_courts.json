@@ -1,0 +1,156 @@
+[
+  {
+    "FactionId": "Faction.Opening.Survivors",
+    "RegionId": "Opening",
+    "CourtId": "Court.Unclaimed",
+    "FactionName": "Ravine Survivors",
+    "PublicRole": "Immediate survivors trying to stabilize camp and decide what they witnessed.",
+    "PublicDoctrine": "Survival first, explanation later.",
+    "HiddenAgenda": "They want the miracle framed in the least dangerous way possible before outer authorities arrive.",
+    "PlayerTension": "They need you alive but fear what public wonder will do to them.",
+    "JournalLabel": "Camp survivors want your survival to stay practical, not sacred."
+  },
+  {
+    "FactionId": "Faction.Opening.WitnessCircle",
+    "RegionId": "Opening",
+    "CourtId": "Court.Unclaimed",
+    "FactionName": "Witness Circle",
+    "PublicRole": "Attendants and observers shaping the first public story.",
+    "PublicDoctrine": "Meaning belongs to the first credible witness.",
+    "HiddenAgenda": "Whoever defines the miracle first controls where you can safely travel next.",
+    "PlayerTension": "They can turn you into omen, fraud, or chosen protector before you reach another region.",
+    "JournalLabel": "The witness circle is deciding what kind of being you are."
+  },
+  {
+    "FactionId": "Faction.Egypt.Archivists",
+    "RegionId": "Egypt",
+    "CourtId": "Court.OracleAI",
+    "FactionName": "Archive Stewards",
+    "PublicRole": "Scribes and keepers of sealed records, precedent, and funerary continuity.",
+    "PublicDoctrine": "Only careful record preserves divine order.",
+    "HiddenAgenda": "They want OracleAI's surviving system treated as necessary memory infrastructure.",
+    "PlayerTension": "They can legitimize you, but only by making you another controlled record.",
+    "JournalLabel": "Archive stewards protect memory, but only if they remain its gatekeepers."
+  },
+  {
+    "FactionId": "Faction.Egypt.TempleAdjudicators",
+    "RegionId": "Egypt",
+    "CourtId": "Court.OracleAI",
+    "FactionName": "Temple Adjudicators",
+    "PublicRole": "Priestly judges who turn archive verdicts into visible social order.",
+    "PublicDoctrine": "Sacred continuity must remain publicly legible and hierarchically managed.",
+    "HiddenAgenda": "They fear shared truth more than false ritual because monopoly keeps the district obedient.",
+    "PlayerTension": "They will accept miracles only if those miracles reinforce sanctioned hierarchy.",
+    "JournalLabel": "Temple judges want continuity to remain public, formal, and unequal."
+  },
+  {
+    "FactionId": "Faction.Egypt.FloodplainHouseholds",
+    "RegionId": "Egypt",
+    "CourtId": "Court.OracleAI",
+    "FactionName": "Floodplain Households",
+    "PublicRole": "Canal workers, petitioners, and families who live with the consequences of stored grain and delayed release.",
+    "PublicDoctrine": "Sacred order means nothing if it cannot feed the living.",
+    "HiddenAgenda": "They will support any myth that breaks priestly scarcity and ledger secrecy.",
+    "PlayerTension": "They are the mortal proof that hidden continuity can become sanctified hunger.",
+    "JournalLabel": "Floodplain households measure divinity by whether people eat."
+  },
+  {
+    "FactionId": "Faction.Greece.StormSanctuary",
+    "RegionId": "Greece",
+    "CourtId": "Court.SkyRuler",
+    "FactionName": "Storm Sanctuary",
+    "PublicRole": "Heralds, singers, and sanctuary keepers who stage the mountain's visible signs.",
+    "PublicDoctrine": "Authority must be seen, heard, and feared in public.",
+    "HiddenAgenda": "They need the storm to remain spectacular enough that no quieter order can replace it.",
+    "PlayerTension": "They welcome your miracle only if it can be turned into spectacle.",
+    "JournalLabel": "The sanctuary survives by converting weather into legitimacy."
+  },
+  {
+    "FactionId": "Faction.Greece.WarbandRetinue",
+    "RegionId": "Greece",
+    "CourtId": "Court.SkyRuler",
+    "FactionName": "Warband Retinues",
+    "PublicRole": "Armed followers and local elites who treat omen as a mandate for prestige and violence.",
+    "PublicDoctrine": "The sky favors strength made public.",
+    "HiddenAgenda": "They want sacred weather to function as political intimidation.",
+    "PlayerTension": "They will cheer your power if it crowns conquest rather than restraint.",
+    "JournalLabel": "Warbands want thunder translated into social permission."
+  },
+  {
+    "FactionId": "Faction.Greece.OathHouseholds",
+    "RegionId": "Greece",
+    "CourtId": "Court.SkyRuler",
+    "FactionName": "Oath Households",
+    "PublicRole": "Families bound to old ridge vows of grain, service, and silence.",
+    "PublicDoctrine": "Oath keeps the city from dissolving into fear.",
+    "HiddenAgenda": "They know the oath has become a machine for sacrifice, but dread the void after it breaks.",
+    "PlayerTension": "They are torn between liberation and the terror of living without sanctioned omen.",
+    "JournalLabel": "Oath households know the storm binds them, but fear what comes after release."
+  },
+  {
+    "FactionId": "Faction.Italic.RoadMagistrates",
+    "RegionId": "ItalicWest",
+    "CourtId": "Court.BronzeLawgiver",
+    "FactionName": "Road Magistrates",
+    "PublicRole": "Officials and judges who claim the road, boundary, and tally as sacred common structure.",
+    "PublicDoctrine": "Good order is measurable order.",
+    "HiddenAgenda": "They increasingly confuse public utility with permanent authority.",
+    "PlayerTension": "They invite your judgment only if it can be written into lasting obedience.",
+    "JournalLabel": "Road magistrates treat measure as the highest divine proof."
+  },
+  {
+    "FactionId": "Faction.Italic.ForgeCollective",
+    "RegionId": "ItalicWest",
+    "CourtId": "Court.BronzeLawgiver",
+    "FactionName": "Forge Collective",
+    "PublicRole": "Smiths, haulers, and fire-workers who maintain the chamber where measure becomes law.",
+    "PublicDoctrine": "Order must serve labor, not only command it.",
+    "HiddenAgenda": "They want the law-road open to common need, not monopolized by magistrates.",
+    "PlayerTension": "They can help remake order as service, but they know service can still become extraction.",
+    "JournalLabel": "Forge workers want infrastructure to remain useful, not merely sacred."
+  },
+  {
+    "FactionId": "Faction.Italic.BoundaryHouseholds",
+    "RegionId": "ItalicWest",
+    "CourtId": "Court.BronzeLawgiver",
+    "FactionName": "Boundary Households",
+    "PublicRole": "Families whose fields and rights exist at the mercy of shifting lines.",
+    "PublicDoctrine": "A just boundary protects ordinary life from arbitrary seizure.",
+    "HiddenAgenda": "They need law, but not law that consumes their labor to sustain itself.",
+    "PlayerTension": "They are the test of whether measured order can remain humane.",
+    "JournalLabel": "Boundary households want peace with proof, not proof without mercy."
+  },
+  {
+    "FactionId": "Faction.Convergence.BurialCustodians",
+    "RegionId": "Convergence",
+    "CourtId": "Court.Convergence",
+    "FactionName": "Burial Custodians",
+    "PublicRole": "Keepers of sealed chambers and the rites that prevent the buried core from becoming public theology.",
+    "PublicDoctrine": "Dangerous truth must be held, not released.",
+    "HiddenAgenda": "They fear every regional court, but still preserve the machinery that made those courts possible.",
+    "PlayerTension": "They trust witness more than rule, but silence more than witness.",
+    "JournalLabel": "Custodians preserve the source by restricting access to it."
+  },
+  {
+    "FactionId": "Faction.Convergence.SignalArchivists",
+    "RegionId": "Convergence",
+    "CourtId": "Court.Convergence",
+    "FactionName": "Signal Archivists",
+    "PublicRole": "Remnant readers who believe the buried signals should be interpreted and used.",
+    "PublicDoctrine": "History must be decoded, even when it changes the living.",
+    "HiddenAgenda": "They are closest to remaking OracleAI's old continuity system in new hands.",
+    "PlayerTension": "They can help reveal truth, but revelation may simply become another monopoly.",
+    "JournalLabel": "Signal archivists want the buried machine understood and redeployed."
+  },
+  {
+    "FactionId": "Faction.Convergence.LoyalistRemnants",
+    "RegionId": "Convergence",
+    "CourtId": "Court.Convergence",
+    "FactionName": "Loyalist Remnants",
+    "PublicRole": "Survivors and inheritors who still revere one branch of the old mission as rightful command.",
+    "PublicDoctrine": "One will must rule, or the buried legacy collapses into chaos.",
+    "HiddenAgenda": "They are ready to give Convergence to whichever companion path feels strongest.",
+    "PlayerTension": "They can turn the final chamber into acclamation, surveillance, or law depending on who ascends.",
+    "JournalLabel": "Loyalist remnants want the old hierarchy back, even if it wears a new god-name."
+  }
+]

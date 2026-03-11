@@ -18,6 +18,8 @@ public class ManyNames : ModuleRules
 			"Json",
 			"JsonUtilities",
 			"Landscape",
+			"LevelSequence",
+			"MovieScene",
 			"PCG",
 			"UMG"
 		});

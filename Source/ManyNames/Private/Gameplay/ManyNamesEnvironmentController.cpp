@@ -56,7 +56,7 @@ void AManyNamesEnvironmentController::ApplyWeatherData(const FManyNamesWeatherSt
 	if (ADirectionalLight* Sun = FindDirectionalLight())
 	{
 		Sun->SetActorRotation(FRotator(State.SunPitch, State.SunYaw, 0.0f));
-		if (UDirectionalLightComponent* DirectionalLightComponent = Sun->GetComponent())
+		if (UDirectionalLightComponent* DirectionalLightComponent = Cast<UDirectionalLightComponent>(Sun->GetLightComponent()))
 		{
 			DirectionalLightComponent->SetIntensity(State.SunIntensity);
 			DirectionalLightComponent->SetLightColor(State.KeyLightTint.ToFColor(true));

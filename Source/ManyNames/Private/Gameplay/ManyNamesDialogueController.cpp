@@ -38,11 +38,11 @@ void AManyNamesDialogueController::OpenDialogue(FName QuestId, const FText& Prom
 	{
 		if (const UManyNamesWorldStateSubsystem* WorldStateSubsystem = GetWorldStateSubsystem())
 		{
-			const FManyNamesWorldState WorldState = WorldStateSubsystem->GetWorldState();
-			if (WorldState.bHasDominantAntagonist)
+			EManyNamesCompanionId DominantAntagonist = EManyNamesCompanionId::OracleAI;
+			if (WorldStateSubsystem->TryGetDominantAntagonist(DominantAntagonist))
 			{
 				FString AntagonistLine;
-				switch (WorldState.DominantAntagonist)
+				switch (DominantAntagonist)
 				{
 				case EManyNamesCompanionId::SkyRuler:
 					AntagonistLine = TEXT("\n\nThe loudest hostile signal in the chamber now comes from the storm-ruler branch: spectacle, punishment, and weather as obedience.");
@@ -137,6 +137,13 @@ FText AManyNamesDialogueController::GetChoiceMenuText() const
 	if (!CurrentPrompt.IsEmpty())
 	{
 		Builder.Append(CurrentPrompt.ToString());
+		Builder.Append(TEXT("\n"));
+	}
+
+	if (!CurrentScene.PublicBeliefText.IsEmpty())
+	{
+		Builder.Append(TEXT("\nPublic reading: "));
+		Builder.Append(CurrentScene.PublicBeliefText.ToString());
 		Builder.Append(TEXT("\n"));
 	}
 

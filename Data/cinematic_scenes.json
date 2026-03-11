@@ -10,6 +10,8 @@
     "LocationId": "opening.crash_core",
     "CameraAnchorTag": "Camera.CrashCore",
     "WeatherStateId": "Opening.Hero",
+    "BlockingPresetId": "wide_arrival",
+    "FallbackFocusTag": "Camera.CrashCore",
     "SequenceAsset": "/Game/Cinematics/Sequences/Opening/LS_Opening_Arrival.LS_Opening_Arrival",
     "AudioProfileIds": [
       "music_opening_theme",
@@ -32,6 +34,8 @@
     "LocationId": "opening.witness_camp",
     "CameraAnchorTag": "Camera.WitnessCamp",
     "WeatherStateId": "Opening.Hero",
+    "BlockingPresetId": "close_authority",
+    "FallbackFocusTag": "Camera.WitnessCamp",
     "SequenceAsset": "/Game/Cinematics/Sequences/Opening/LS_Opening_WitnessAftermath.LS_Opening_WitnessAftermath",
     "AudioProfileIds": [
       "music_opening_theme",
@@ -55,6 +59,8 @@
     "LocationId": "egypt.temple_court",
     "CameraAnchorTag": "Camera.EgyptArrival",
     "WeatherStateId": "Egypt.Baseline",
+    "BlockingPresetId": "wide_arrival",
+    "FallbackFocusTag": "Camera.ArchiveKeeper",
     "SequenceAsset": "/Game/Cinematics/Sequences/Egypt/LS_Egypt_Arrival.LS_Egypt_Arrival",
     "AudioProfileIds": [
       "music_egypt_solar",
@@ -78,6 +84,8 @@
     "LocationId": "egypt.archive_vault",
     "CameraAnchorTag": "Camera.ArchiveKeeper",
     "WeatherStateId": "Egypt.Hero",
+    "BlockingPresetId": "close_authority",
+    "FallbackFocusTag": "Camera.ArchiveKeeper",
     "SequenceAsset": "/Game/Cinematics/Sequences/Egypt/LS_Egypt_ArchiveReveal.LS_Egypt_ArchiveReveal",
     "AudioProfileIds": [
       "music_egypt_solar",
@@ -101,6 +109,8 @@
     "LocationId": "egypt.canal_ledger",
     "CameraAnchorTag": "Camera.RiverLedger",
     "WeatherStateId": "Egypt.Hero",
+    "BlockingPresetId": "ritual_side",
+    "FallbackFocusTag": "Camera.RiverLedger",
     "SequenceAsset": "/Game/Cinematics/Sequences/Egypt/LS_Egypt_RiverLedger.LS_Egypt_RiverLedger",
     "AudioProfileIds": [
       "music_egypt_solar",
@@ -124,6 +134,8 @@
     "LocationId": "greece.sanctuary_court",
     "CameraAnchorTag": "Camera.GreeceArrival",
     "WeatherStateId": "Greece.Baseline",
+    "BlockingPresetId": "wide_arrival",
+    "FallbackFocusTag": "Camera.StormHerald",
     "SequenceAsset": "/Game/Cinematics/Sequences/Greece/LS_Greece_Arrival.LS_Greece_Arrival",
     "AudioProfileIds": [
       "music_greece_storm",
@@ -147,6 +159,8 @@
     "LocationId": "greece.storm_ridge",
     "CameraAnchorTag": "Camera.StormHerald",
     "WeatherStateId": "Greece.Hero",
+    "BlockingPresetId": "ritual_side",
+    "FallbackFocusTag": "Camera.StormHerald",
     "SequenceAsset": "/Game/Cinematics/Sequences/Greece/LS_Greece_StormOmen.LS_Greece_StormOmen",
     "AudioProfileIds": [
       "music_greece_storm",
@@ -170,6 +184,8 @@
     "LocationId": "greece.oath_shelter",
     "CameraAnchorTag": "Camera.OathShelter",
     "WeatherStateId": "Greece.Hero",
+    "BlockingPresetId": "close_authority",
+    "FallbackFocusTag": "Camera.OathShelter",
     "SequenceAsset": "/Game/Cinematics/Sequences/Greece/LS_Greece_OathTribunal.LS_Greece_OathTribunal",
     "AudioProfileIds": [
       "music_greece_storm",
@@ -193,6 +209,8 @@
     "LocationId": "italic.hill_settlement",
     "CameraAnchorTag": "Camera.ItalicArrival",
     "WeatherStateId": "ItalicWest.Baseline",
+    "BlockingPresetId": "wide_arrival",
+    "FallbackFocusTag": "Camera.MeasureKeeper",
     "SequenceAsset": "/Game/Cinematics/Sequences/ItalicWest/LS_Italic_Arrival.LS_Italic_Arrival",
     "AudioProfileIds": [
       "music_italic_road",
@@ -216,6 +234,8 @@
     "LocationId": "italic.forge_chamber",
     "CameraAnchorTag": "Camera.MeasureKeeper",
     "WeatherStateId": "ItalicWest.Hero",
+    "BlockingPresetId": "close_authority",
+    "FallbackFocusTag": "Camera.MeasureKeeper",
     "SequenceAsset": "/Game/Cinematics/Sequences/ItalicWest/LS_Italic_ForgeLaw.LS_Italic_ForgeLaw",
     "AudioProfileIds": [
       "music_italic_road",
@@ -239,6 +259,8 @@
     "LocationId": "italic.road_embankment",
     "CameraAnchorTag": "Camera.RoadMeasure",
     "WeatherStateId": "ItalicWest.Hero",
+    "BlockingPresetId": "ritual_side",
+    "FallbackFocusTag": "Camera.RoadMeasure",
     "SequenceAsset": "/Game/Cinematics/Sequences/ItalicWest/LS_Italic_RoadMeasure.LS_Italic_RoadMeasure",
     "AudioProfileIds": [
       "music_italic_road",
@@ -262,6 +284,8 @@
     "LocationId": "convergence.ruin_shell",
     "CameraAnchorTag": "Camera.ConvergenceArrival",
     "WeatherStateId": "Convergence.Baseline",
+    "BlockingPresetId": "wide_arrival",
+    "FallbackFocusTag": "Camera.BridgeWatcher",
     "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_Arrival.LS_Convergence_Arrival",
     "AudioProfileIds": [
       "music_convergence_core",
@@ -287,6 +311,8 @@
     "LocationId": "convergence.descent_path",
     "CameraAnchorTag": "Camera.SystemsRemnant",
     "WeatherStateId": "Convergence.Hero",
+    "BlockingPresetId": "convergence_reveal",
+    "FallbackFocusTag": "Camera.SystemsRemnant",
     "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_Descent.LS_Convergence_Descent",
     "AudioProfileIds": [
       "music_convergence_core",
@@ -312,6 +338,8 @@
     "LocationId": "convergence.custodian_vault",
     "CameraAnchorTag": "Camera.ChorusVault",
     "WeatherStateId": "Convergence.Hero",
+    "BlockingPresetId": "close_authority",
+    "FallbackFocusTag": "Camera.ChorusVault",
     "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_Chorus.LS_Convergence_Chorus",
     "AudioProfileIds": [
       "music_convergence_core",
@@ -335,6 +363,8 @@
     "LocationId": "convergence.bridge_plateau",
     "CameraAnchorTag": "Camera.AntagonistOracle",
     "WeatherStateId": "Convergence.Hero",
+    "BlockingPresetId": "convergence_reveal",
+    "FallbackFocusTag": "Camera.AntagonistOracle",
     "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_AntagonistOracle.LS_Convergence_AntagonistOracle",
     "AudioProfileIds": [
       "music_oracle_path",
@@ -358,6 +388,8 @@
     "LocationId": "convergence.bridge_plateau",
     "CameraAnchorTag": "Camera.AntagonistSky",
     "WeatherStateId": "Convergence.Hero",
+    "BlockingPresetId": "convergence_reveal",
+    "FallbackFocusTag": "Camera.AntagonistSky",
     "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_AntagonistSky.LS_Convergence_AntagonistSky",
     "AudioProfileIds": [
       "music_sky_path",
@@ -381,6 +413,8 @@
     "LocationId": "convergence.bridge_plateau",
     "CameraAnchorTag": "Camera.AntagonistBronze",
     "WeatherStateId": "Convergence.Hero",
+    "BlockingPresetId": "convergence_reveal",
+    "FallbackFocusTag": "Camera.AntagonistBronze",
     "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_AntagonistBronze.LS_Convergence_AntagonistBronze",
     "AudioProfileIds": [
       "music_bronze_path",
@@ -404,6 +438,8 @@
     "LocationId": "convergence.bridge_plateau",
     "CameraAnchorTag": "Camera.EndingReturn",
     "WeatherStateId": "Convergence.Baseline",
+    "BlockingPresetId": "convergence_reveal",
+    "FallbackFocusTag": "Camera.EndingReturn",
     "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_ReturnToFuture.LS_Ending_ReturnToFuture",
     "AudioProfileIds": [
       "music_convergence_core",
@@ -427,6 +463,8 @@
     "LocationId": "convergence.bridge_plateau",
     "CameraAnchorTag": "Camera.EndingMyth",
     "WeatherStateId": "Convergence.Hero",
+    "BlockingPresetId": "convergence_reveal",
+    "FallbackFocusTag": "Camera.EndingMyth",
     "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_RemainAsMyth.LS_Ending_RemainAsMyth",
     "AudioProfileIds": [
       "music_sky_path",
@@ -450,6 +488,8 @@
     "LocationId": "convergence.bridge_plateau",
     "CameraAnchorTag": "Camera.EndingDismantle",
     "WeatherStateId": "Convergence.Baseline",
+    "BlockingPresetId": "convergence_reveal",
+    "FallbackFocusTag": "Camera.EndingDismantle",
     "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_DismantleDivinity.LS_Ending_DismantleDivinity",
     "AudioProfileIds": [
       "music_bronze_path",
@@ -473,6 +513,8 @@
     "LocationId": "convergence.bridge_plateau",
     "CameraAnchorTag": "Camera.EndingReplace",
     "WeatherStateId": "Convergence.Hero",
+    "BlockingPresetId": "convergence_reveal",
+    "FallbackFocusTag": "Camera.EndingReplace",
     "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_ReplaceCompanion.LS_Ending_ReplaceCompanion",
     "AudioProfileIds": [
       "music_oracle_path",
@@ -496,6 +538,8 @@
     "LocationId": "convergence.bridge_plateau",
     "CameraAnchorTag": "Camera.EndingFragment",
     "WeatherStateId": "Convergence.Baseline",
+    "BlockingPresetId": "convergence_reveal",
+    "FallbackFocusTag": "Camera.EndingFragment",
     "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_FragmentLegacy.LS_Ending_FragmentLegacy",
     "AudioProfileIds": [
       "music_convergence_core",

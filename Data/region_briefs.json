@@ -1,0 +1,76 @@
+[
+  {
+    "RegionId": "Opening",
+    "DominantCourtId": "Court.Unclaimed",
+    "CourtDisplayName": "Unclaimed Portents",
+    "HubSummary": "The ravine is not a kingdom, only a wound. Survivors, attendants, and frightened witnesses are trying to decide whether they saw a person survive a disaster or a god arrive in fire.",
+    "SurfaceBeliefText": "The first stories are still unstable: miracle, omen, punishment, and rescue all compete at once.",
+    "HiddenTruthText": "Every rumor formed here becomes the seed crystal for later divine courts.",
+    "TravelAdvisoryText": "What the witness says next determines whether the outer regions expect a savior, a liar, or a threat.",
+    "ConvergencePressureText": "The opening myth decides which later court can most easily claim you.",
+    "FactionIds": [
+      "Faction.Opening.Survivors",
+      "Faction.Opening.WitnessCircle"
+    ]
+  },
+  {
+    "RegionId": "Egypt",
+    "DominantCourtId": "Court.OracleAI",
+    "CourtDisplayName": "The Court of Hidden Continuity",
+    "HubSummary": "Egypt frames power as continuity: archives, funerary systems, calendars, and storehouses all insist that legitimacy belongs to those who preserve memory and interpret sanctioned signs.",
+    "SurfaceBeliefText": "The Radiant Voice is treated as a sacred continuity engine that keeps temple, archive, and river in proper order.",
+    "HiddenTruthText": "OracleAI's influence survives here as infrastructure disguised as ritual interpretation and managed scarcity.",
+    "TravelAdvisoryText": "Every document, procession, and sealed chamber asks who should be allowed to remember on behalf of everyone else.",
+    "ConvergencePressureText": "If Egypt keeps its monopoly on interpretation, Convergence becomes a vault of curated truth instead of shared inheritance.",
+    "FactionIds": [
+      "Faction.Egypt.Archivists",
+      "Faction.Egypt.TempleAdjudicators",
+      "Faction.Egypt.FloodplainHouseholds"
+    ]
+  },
+  {
+    "RegionId": "Greece",
+    "DominantCourtId": "Court.SkyRuler",
+    "CourtDisplayName": "The Court of High Storm",
+    "HubSummary": "Greece turns power into spectacle. Sanctuary politics, public omens, oath pressure, and military prestige all orbit a storm presence that demands to be seen and feared.",
+    "SurfaceBeliefText": "The mountain cult claims that only visible sign, thunder, and costly vow can prove which order the gods favor.",
+    "HiddenTruthText": "SkyRuler persists here as charisma architecture: weather, fear, and public theater fused into obedience.",
+    "TravelAdvisoryText": "Nothing stays private on the ridge for long; crowds, oaths, and warbands all convert your decisions into spectacle.",
+    "ConvergencePressureText": "If Greece wins the ideological contest, Convergence becomes a stage for fear, acclaim, and sanctioned violence.",
+    "FactionIds": [
+      "Faction.Greece.StormSanctuary",
+      "Faction.Greece.WarbandRetinue",
+      "Faction.Greece.OathHouseholds"
+    ]
+  },
+  {
+    "RegionId": "ItalicWest",
+    "DominantCourtId": "Court.BronzeLawgiver",
+    "CourtDisplayName": "The Court of Measure and Road",
+    "HubSummary": "Italic West sees power as systems made visible: roads, weights, embankments, forges, and boundary stones. Order matters only if it can be counted, enforced, and made public.",
+    "SurfaceBeliefText": "The lawful divine is the one that can bind labor, settle dispute, and turn raw landscape into measured civic life.",
+    "HiddenTruthText": "BronzeLawgiver survives here as coercive order: infrastructure, accounting, and punishment merged into reverence.",
+    "TravelAdvisoryText": "Every road and field line asks whether order serves the common route or only those who control the tally.",
+    "ConvergencePressureText": "If Italic law hardens into divinity, Convergence becomes a machine for measured extraction and permanent obedience.",
+    "FactionIds": [
+      "Faction.Italic.RoadMagistrates",
+      "Faction.Italic.ForgeCollective",
+      "Faction.Italic.BoundaryHouseholds"
+    ]
+  },
+  {
+    "RegionId": "Convergence",
+    "DominantCourtId": "Court.Convergence",
+    "CourtDisplayName": "The Buried Court",
+    "HubSummary": "Convergence is where every regional theology collides with the material remains that made it possible. Custodians, archivists, and loyal remnants all believe they are preserving history, but each preserves a different future.",
+    "SurfaceBeliefText": "The buried core is treated as a sealed chamber of dangerous divinity that only the worthy may interpret.",
+    "HiddenTruthText": "The ship core is the source of every court, and whichever logic dominates here will rewrite what the ancient world thinks the gods always were.",
+    "TravelAdvisoryText": "Convergence rewards no passive witness. Every choice here names a future keeper of memory, spectacle, or law.",
+    "ConvergencePressureText": "This is the collision point where soft regional influence becomes an actual ruling legacy.",
+    "FactionIds": [
+      "Faction.Convergence.BurialCustodians",
+      "Faction.Convergence.SignalArchivists",
+      "Faction.Convergence.LoyalistRemnants"
+    ]
+  }
+]

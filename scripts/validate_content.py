@@ -45,6 +45,8 @@ def main():
     scenes = load_json("dialogue_scenes.json")
     cast = load_json("character_cast.json")
     ambient = load_json("ambient_profiles.json")
+    region_briefs = load_json("region_briefs.json")
+    court_factions = load_json("faction_courts.json")
     manifest = load_json("metahuman_manifest.json")
     cinematic_scenes = load_json("cinematic_scenes.json")
     audio_profiles = load_json("audio_profiles.json")
@@ -62,6 +64,8 @@ def main():
     unique([row["SceneId"] for row in scenes], "scene id")
     unique([row["CharacterId"] for row in cast], "character id")
     unique([row["ProfileId"] for row in ambient], "ambient profile id")
+    unique([row["RegionId"] for row in region_briefs], "region brief region id")
+    unique([row["FactionId"] for row in court_factions], "court faction id")
     unique([row["SceneId"] for row in cinematic_scenes], "cinematic scene id")
     unique([row["AudioId"] for row in audio_profiles], "audio profile id")
     unique([row["AssetId"] for row in external_asset_licenses], "external asset license id")
@@ -71,6 +75,8 @@ def main():
     consequence_choice_id_set = set(consequence_choice_ids)
     scene_quest_ids = {row["QuestId"] for row in scenes if row.get("QuestId")}
     cast_id_set = {row["CharacterId"] for row in cast}
+    faction_id_set = {row["FactionId"] for row in court_factions}
+    region_brief_region_ids = {row["RegionId"] for row in region_briefs}
     cinematic_scene_id_set = {row["SceneId"] for row in cinematic_scenes}
     audio_profile_id_set = {row["AudioId"] for row in audio_profiles}
     licensed_asset_ids = {row["AssetId"] for row in external_asset_licenses}
@@ -94,9 +100,32 @@ def main():
             raise SystemExit(f"dialogue scene references unknown quest: {quest_id}")
         if row.get("CharacterId") and row["CharacterId"] not in cast_id_set:
             raise SystemExit(f"dialogue scene references unknown character: {row['CharacterId']}")
+        if row.get("CourtId") and row["CourtId"] != "Court.Unclaimed" and not row["CourtId"].startswith("Court."):
+            raise SystemExit(f"dialogue scene uses malformed court id: {row['SceneId']}")
+        for faction_id in row.get("FactionIds", []):
+            if faction_id not in faction_id_set:
+                raise SystemExit(f"dialogue scene references unknown faction: {faction_id}")
         for choice_id in row.get("ChoiceIds", []):
             if choice_id not in choice_id_set:
                 raise SystemExit(f"dialogue scene references unknown choice: {choice_id}")
+        for audio_id in row.get("AudioProfileIds", []):
+            if audio_id not in audio_profile_id_set:
+                raise SystemExit(f"dialogue scene references unknown audio profile: {audio_id}")
+
+    expected_brief_regions = {"Opening", "Egypt", "Greece", "ItalicWest", "Convergence"}
+    if region_brief_region_ids != expected_brief_regions:
+        raise SystemExit(f"unexpected region brief coverage: {sorted(region_brief_region_ids)}")
+
+    for row in region_briefs:
+        for faction_id in row.get("FactionIds", []):
+            if faction_id not in faction_id_set:
+                raise SystemExit(f"region brief references unknown faction: {faction_id}")
+
+    for row in court_factions:
+        if row["RegionId"] not in expected_brief_regions:
+            raise SystemExit(f"court faction uses unexpected region id: {row['FactionId']}")
+        if row.get("CourtId") and not row["CourtId"].startswith("Court."):
+            raise SystemExit(f"court faction uses malformed court id: {row['FactionId']}")
 
     for row in cinematic_scenes:
         if row["QuestId"] not in quest_id_set:
@@ -116,7 +145,10 @@ def main():
         if not source_file:
             raise SystemExit(f"audio profile missing source file: {row['AudioId']}")
         if not (GENERATED_AUDIO / source_file).exists():
-            raise SystemExit(f"audio profile source file missing on disk: {source_file}")
+            raise SystemExit(
+                f"audio profile source file missing on disk: {source_file}. "
+                "Run scripts/generate_alpha_audio.py before validating content."
+            )
         if row.get("SoundAsset") and not asset_path_exists(row["SoundAsset"]):
             raise SystemExit(f"audio profile missing imported sound asset: {row['AudioId']}")
 
@@ -227,6 +259,8 @@ def main():
     print(f"External licenses: {len(external_asset_licenses)}")
     print(f"Character cast: {len(cast)}")
     print(f"Ambient profiles: {len(ambient)}")
+    print(f"Region briefs: {len(region_briefs)}")
+    print(f"Court factions: {len(court_factions)}")
 
 
 if __name__ == "__main__":

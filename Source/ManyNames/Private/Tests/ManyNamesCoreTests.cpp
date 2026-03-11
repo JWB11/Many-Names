@@ -151,4 +151,63 @@ bool FManyNamesPrimaryContentLoadTest::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FManyNamesWorldStateInitTest, "ManyNames.Core.WorldStateInit", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+bool FManyNamesWorldStateInitTest::RunTest(const FString& Parameters)
+{
+	UManyNamesGameInstance* GameInstance = NewObject<UManyNamesGameInstance>(GetTransientPackage(), UManyNamesGameInstance::StaticClass());
+	TestNotNull(TEXT("ManyNames game instance can be instantiated"), GameInstance);
+	if (!GameInstance)
+	{
+		return false;
+	}
+
+	GameInstance->InitializeDefaultWorldState();
+	const FManyNamesWorldState& WorldState = GameInstance->GetWorldState();
+
+	const FManyNamesRegionState* EgyptState = WorldState.Regions.Find(EManyNamesRegionId::Egypt);
+	TestNotNull(TEXT("Egypt region state exists after init"), EgyptState);
+	if (EgyptState)
+	{
+		TestTrue(TEXT("Egypt AvailableQuestIds includes egypt_main_01"), EgyptState->AvailableQuestIds.Contains(TEXT("egypt_main_01")));
+		TestTrue(TEXT("Egypt AvailableQuestIds includes egypt_side_01"), EgyptState->AvailableQuestIds.Contains(TEXT("egypt_side_01")));
+		TestTrue(TEXT("Egypt AvailableQuestIds includes egypt_side_02"), EgyptState->AvailableQuestIds.Contains(TEXT("egypt_side_02")));
+	}
+
+	const FManyNamesRegionState* GreeceState = WorldState.Regions.Find(EManyNamesRegionId::Greece);
+	TestNotNull(TEXT("Greece region state exists after init"), GreeceState);
+	if (GreeceState)
+	{
+		TestTrue(TEXT("Greece AvailableQuestIds includes greece_main_01"), GreeceState->AvailableQuestIds.Contains(TEXT("greece_main_01")));
+		TestTrue(TEXT("Greece AvailableQuestIds includes greece_side_01"), GreeceState->AvailableQuestIds.Contains(TEXT("greece_side_01")));
+		TestTrue(TEXT("Greece AvailableQuestIds includes greece_side_02"), GreeceState->AvailableQuestIds.Contains(TEXT("greece_side_02")));
+	}
+
+	const FManyNamesRegionState* ItalicState = WorldState.Regions.Find(EManyNamesRegionId::ItalicWest);
+	TestNotNull(TEXT("Italic West region state exists after init"), ItalicState);
+	if (ItalicState)
+	{
+		TestTrue(TEXT("Italic West AvailableQuestIds includes italic_main_01"), ItalicState->AvailableQuestIds.Contains(TEXT("italic_main_01")));
+		TestTrue(TEXT("Italic West AvailableQuestIds includes italic_side_01"), ItalicState->AvailableQuestIds.Contains(TEXT("italic_side_01")));
+		TestTrue(TEXT("Italic West AvailableQuestIds includes italic_side_02"), ItalicState->AvailableQuestIds.Contains(TEXT("italic_side_02")));
+	}
+
+	const FManyNamesRegionState* ConvergenceState = WorldState.Regions.Find(EManyNamesRegionId::Convergence);
+	TestNotNull(TEXT("Convergence region state exists after init"), ConvergenceState);
+	if (ConvergenceState)
+	{
+		TestTrue(TEXT("Convergence AvailableQuestIds includes convergence_main_01"), ConvergenceState->AvailableQuestIds.Contains(TEXT("convergence_main_01")));
+		TestTrue(TEXT("Convergence AvailableQuestIds includes convergence_side_02"), ConvergenceState->AvailableQuestIds.Contains(TEXT("convergence_side_02")));
+	}
+
+	TestTrue(TEXT("Opening region starts unlocked"), WorldState.Regions.FindRef(EManyNamesRegionId::Opening).bUnlocked);
+	TestFalse(TEXT("Egypt region starts locked"), WorldState.Regions.FindRef(EManyNamesRegionId::Egypt).bUnlocked);
+	TestFalse(TEXT("Greece region starts locked"), WorldState.Regions.FindRef(EManyNamesRegionId::Greece).bUnlocked);
+	TestFalse(TEXT("Italic West region starts locked"), WorldState.Regions.FindRef(EManyNamesRegionId::ItalicWest).bUnlocked);
+
+	TestTrue(TEXT("All three companions are initialized"), WorldState.Companions.Num() == 3);
+	TestTrue(TEXT("TraumaRecovery power starts unlocked"), WorldState.UnlockedPowers.Contains(EManyNamesPowerId::TraumaRecovery));
+
+	return true;
+}
+
 #endif

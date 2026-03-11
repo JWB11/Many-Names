@@ -74,6 +74,7 @@ def main():
     choice_id_set = set(choice_ids)
     consequence_choice_id_set = set(consequence_choice_ids)
     scene_quest_ids = {row["QuestId"] for row in scenes if row.get("QuestId")}
+    dialogue_scene_id_set = {row["SceneId"] for row in scenes}
     cast_id_set = {row["CharacterId"] for row in cast}
     faction_id_set = {row["FactionId"] for row in court_factions}
     region_brief_region_ids = {row["RegionId"] for row in region_briefs}
@@ -130,7 +131,7 @@ def main():
     for row in cinematic_scenes:
         if row["QuestId"] not in quest_id_set:
             raise SystemExit(f"cinematic scene references unknown quest: {row['QuestId']}")
-        if row.get("DialogueSceneId") and row["DialogueSceneId"] not in {scene["SceneId"] for scene in scenes}:
+        if row.get("DialogueSceneId") and row["DialogueSceneId"] not in dialogue_scene_id_set:
             raise SystemExit(f"cinematic scene references unknown dialogue scene: {row['DialogueSceneId']}")
         if row.get("CharacterId") and row["CharacterId"] not in cast_id_set:
             raise SystemExit(f"cinematic scene references unknown character: {row['CharacterId']}")
@@ -187,8 +188,16 @@ def main():
             raise SystemExit(f"missing choice consequence for: {choice_id}")
 
     for row in consequences:
+        if row["ChoiceId"] not in choice_id_set:
+            raise SystemExit(f"choice consequence references unknown choice: {row['ChoiceId']}")
         if row["QuestId"] not in quest_id_set:
             raise SystemExit(f"choice consequence references unknown quest: {row['QuestId']}")
+        matching_choice = next((choice for choice in dialogue if choice["ChoiceId"] == row["ChoiceId"]), None)
+        if matching_choice and matching_choice["QuestId"] != row["QuestId"]:
+            raise SystemExit(
+                "choice consequence quest mismatch: "
+                f"{row['ChoiceId']} choice quest={matching_choice['QuestId']} consequence quest={row['QuestId']}"
+            )
 
     required_regions = {"Opening", "Egypt", "Greece", "ItalicWest", "Convergence"}
     regions_seen = {row["RegionId"] for row in quests}

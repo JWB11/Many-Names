@@ -15,6 +15,7 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	class UStaticMeshComponent* GetStaticMeshComponent() const { return StaticMeshComponent; }
 	class USkeletalMeshComponent* GetSkeletalMeshComponent() const { return SkeletalMeshComponent; }
@@ -27,6 +28,8 @@ public:
 
 protected:
 	void ApplyNpcVisualProfile();
+	void UpdateAmbientBehavior(float DeltaSeconds);
+	void FindNewRoamDestination();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="ManyNames|Scene")
 	TObjectPtr<class USceneComponent> SceneRoot;
@@ -39,4 +42,20 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ManyNames|Scene")
 	FManyNamesNpcVisualProfile NpcVisualProfile;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ManyNames|Scene")
+	float AmbientRoamRadius = 1500.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ManyNames|Scene")
+	float LookAtDistance = 800.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="ManyNames|Scene")
+	float AmbientMoveSpeed = 90.0f;
+
+private:
+	FTimerHandle RoamTimerHandle;
+	TObjectPtr<class ACharacter> PlayerCharacter;
+	FVector CurrentRoamDestination = FVector::ZeroVector;
+	float GroundSnapAccumulator = 0.0f;
+	bool bHasRoamDestination = false;
 };

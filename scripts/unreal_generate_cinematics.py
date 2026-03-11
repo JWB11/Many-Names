@@ -17,6 +17,37 @@ def ensure_directory(path: str) -> None:
         unreal.EditorAssetLibrary.make_directory(path)
 
 
+def ensure_camera_scaffold(sequence: unreal.LevelSequence, duration_frames: int) -> None:
+    bindings = list(sequence.get_bindings())
+    camera_binding = None
+    for binding in bindings:
+        try:
+            if binding.get_display_name() == "HeroCamera":
+                camera_binding = binding
+                break
+        except Exception:
+            continue
+
+    if camera_binding is None:
+        camera_binding = sequence.add_spawnable_from_class(unreal.CineCameraActor)
+        camera_binding.set_display_name("HeroCamera")
+
+    has_transform_track = any(track.get_class().get_name() == "MovieScene3DTransformTrack" for track in camera_binding.get_tracks())
+    if not has_transform_track:
+        transform_track = camera_binding.add_track(unreal.MovieScene3DTransformTrack)
+        transform_section = transform_track.add_section()
+        transform_section.set_range(0, duration_frames)
+
+    camera_cut_tracks = sequence.find_master_tracks_by_type(unreal.MovieSceneCameraCutTrack)
+    if not camera_cut_tracks:
+        camera_cut_track = sequence.add_master_track(unreal.MovieSceneCameraCutTrack)
+        camera_cut_section = camera_cut_track.add_section()
+        camera_cut_section.set_range(0, duration_frames)
+        camera_binding_id = unreal.MovieSceneObjectBindingID()
+        camera_binding_id.set_editor_property("guid", camera_binding.get_id())
+        camera_cut_section.set_camera_binding_id(camera_binding_id)
+
+
 def create_sequence(asset_path: str, duration_seconds: float) -> None:
     package_path, asset_name = asset_path.rsplit("/", 1)
     package_path = package_path.rsplit(".", 1)[0]
@@ -31,8 +62,10 @@ def create_sequence(asset_path: str, duration_seconds: float) -> None:
             asset_class=unreal.LevelSequence,
             factory=unreal.LevelSequenceFactoryNew(),
         )
+    duration_frames = max(24, int(duration_seconds * 24.0))
     sequence.set_playback_start(0)
-    sequence.set_playback_end(int(duration_seconds * 24.0))
+    sequence.set_playback_end(duration_frames)
+    ensure_camera_scaffold(sequence, duration_frames)
     unreal.EditorAssetLibrary.save_loaded_asset(sequence, only_if_is_dirty=False)
 
 

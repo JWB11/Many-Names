@@ -20,6 +20,7 @@ public class ManyNames : ModuleRules
 			"Landscape",
 			"LevelSequence",
 			"MovieScene",
+			"NavigationSystem",
 			"PCG",
 			"UMG"
 		});

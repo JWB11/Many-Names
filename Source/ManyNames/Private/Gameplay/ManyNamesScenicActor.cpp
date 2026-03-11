@@ -6,6 +6,10 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
+#include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "NavigationSystem.h"
 
 namespace
 {
@@ -33,7 +37,7 @@ void SnapScenicActorToGround(AActor* Actor, float MaxTraceDistance)
 
 AManyNamesScenicActor::AManyNamesScenicActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
 	SetRootComponent(SceneRoot);
@@ -61,6 +65,18 @@ void AManyNamesScenicActor::BeginPlay()
 {
 	Super::BeginPlay();
 	ApplyNpcVisualProfile();
+	PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+
+	if (NpcVisualProfile.CrowdBehaviorTier == EManyNamesCrowdBehaviorTier::HubAmbient)
+	{
+		FindNewRoamDestination();
+	}
+}
+
+void AManyNamesScenicActor::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	UpdateAmbientBehavior(DeltaSeconds);
 }
 
 void AManyNamesScenicActor::SetNpcVisualProfile(const FManyNamesNpcVisualProfile& InProfile)
@@ -150,4 +166,86 @@ void AManyNamesScenicActor::ApplyNpcVisualProfile()
 	StaticMeshComponent->SetVisibility(true);
 	StaticMeshComponent->SetHiddenInGame(false);
 	SnapScenicActorToGround(this, 2400.0f);
+}
+
+void AManyNamesScenicActor::UpdateAmbientBehavior(float DeltaSeconds)
+{
+	if (!GetWorld() || !SkeletalMeshComponent || !SkeletalMeshComponent->IsVisible())
+	{
+		return;
+	}
+
+	const bool bCanFacePlayer = NpcVisualProfile.bLockFacingToPlayer || NpcVisualProfile.CrowdBehaviorTier == EManyNamesCrowdBehaviorTier::StoryFacing;
+	const bool bIsAmbientMover = NpcVisualProfile.CrowdBehaviorTier == EManyNamesCrowdBehaviorTier::HubAmbient;
+	bool bPlayerIsClose = false;
+
+	if (PlayerCharacter && bCanFacePlayer)
+	{
+		const float DistanceToPlayer = FVector::Dist(GetActorLocation(), PlayerCharacter->GetActorLocation());
+		bPlayerIsClose = DistanceToPlayer <= LookAtDistance;
+		if (bPlayerIsClose)
+		{
+			FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
+			TargetRotation.Pitch = 0.0f;
+			TargetRotation.Roll = 0.0f;
+			SetActorRotation(FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaSeconds, 3.0f));
+			return;
+		}
+	}
+
+	if (!bIsAmbientMover || !bHasRoamDestination)
+	{
+		return;
+	}
+
+	FVector CurrentLocation = GetActorLocation();
+	FVector Destination = CurrentRoamDestination;
+	Destination.Z = CurrentLocation.Z;
+	const FVector ToDestination = Destination - CurrentLocation;
+	if (ToDestination.SizeSquared2D() <= FMath::Square(60.0f))
+	{
+		bHasRoamDestination = false;
+		FindNewRoamDestination();
+		return;
+	}
+
+	const FVector MoveStep = ToDestination.GetSafeNormal2D() * AmbientMoveSpeed * DeltaSeconds;
+	SetActorLocation(CurrentLocation + MoveStep, true);
+	SetActorRotation(FMath::RInterpTo(GetActorRotation(), ToDestination.Rotation(), DeltaSeconds, 2.2f));
+
+	GroundSnapAccumulator += DeltaSeconds;
+	if (GroundSnapAccumulator >= 0.45f)
+	{
+		GroundSnapAccumulator = 0.0f;
+		SnapScenicActorToGround(this, 1200.0f);
+	}
+}
+
+void AManyNamesScenicActor::FindNewRoamDestination()
+{
+	if (!GetWorld() || NpcVisualProfile.CrowdBehaviorTier != EManyNamesCrowdBehaviorTier::HubAmbient)
+	{
+		return;
+	}
+
+	if (PlayerCharacter && FVector::Dist(GetActorLocation(), PlayerCharacter->GetActorLocation()) <= LookAtDistance)
+	{
+		bHasRoamDestination = false;
+		return;
+	}
+
+	if (UNavigationSystemV1* NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld()))
+	{
+		FNavLocation RandomLocation;
+		if (NavSystem->GetRandomReachablePointInRadius(GetActorLocation(), AmbientRoamRadius, RandomLocation))
+		{
+			CurrentRoamDestination = RandomLocation.Location;
+			bHasRoamDestination = true;
+			return;
+		}
+	}
+
+	const FVector FallbackOffset(FMath::FRandRange(-AmbientRoamRadius, AmbientRoamRadius), FMath::FRandRange(-AmbientRoamRadius, AmbientRoamRadius), 0.0f);
+	CurrentRoamDestination = GetActorLocation() + FallbackOffset;
+	bHasRoamDestination = true;
 }

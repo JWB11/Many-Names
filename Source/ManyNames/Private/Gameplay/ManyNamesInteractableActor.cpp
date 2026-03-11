@@ -4,8 +4,11 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
-#include "Systems/ManyNamesContentSubsystem.h"
+#include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Gameplay/ManyNamesPrototypeGameMode.h"
+#include "Systems/ManyNamesContentSubsystem.h"
 #include "Systems/ManyNamesWorldStateSubsystem.h"
 
 namespace
@@ -31,7 +34,7 @@ void SnapInteractableActorToGround(AActor* Actor, float MaxTraceDistance)
 
 AManyNamesInteractableActor::AManyNamesInteractableActor()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(MeshComponent);
@@ -58,6 +61,28 @@ void AManyNamesInteractableActor::BeginPlay()
 {
 	Super::BeginPlay();
 	ApplyNpcVisualProfile();
+	PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+}
+
+void AManyNamesInteractableActor::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (!PlayerCharacter || !NpcVisualProfile.bLockFacingToPlayer || !SkeletalMeshComponent || !SkeletalMeshComponent->IsVisible())
+	{
+		return;
+	}
+
+	const float DistanceToPlayer = FVector::Dist(GetActorLocation(), PlayerCharacter->GetActorLocation());
+	if (DistanceToPlayer > LookAtDistance)
+	{
+		return;
+	}
+
+	FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerCharacter->GetActorLocation());
+	TargetRotation.Pitch = 0.0f;
+	TargetRotation.Roll = 0.0f;
+	SetActorRotation(FMath::RInterpTo(GetActorRotation(), TargetRotation, DeltaSeconds, 3.0f));
 }
 
 FText AManyNamesInteractableActor::GetInteractionLabel_Implementation() const

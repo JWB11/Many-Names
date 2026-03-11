@@ -7,6 +7,7 @@ import random
 import shutil
 import struct
 import subprocess
+import urllib.request
 import wave
 from pathlib import Path
 
@@ -17,6 +18,7 @@ GENERATED = ROOT / "Generated" / "AudioSources"
 VOICE_DIR = GENERATED / "voices"
 VOICE_MANIFEST = GENERATED / "voice_manifest.json"
 SAMPLE_RATE = 22050
+OPENAI_TTS_URL = "https://api.openai.com/v1/audio/speech"
 
 
 def load_json(name: str):
@@ -98,6 +100,8 @@ def synth_profile(audio_id: str, category: str, duration: float, moods: list[str
 
 
 def available_tts_backend() -> str:
+    if os.environ.get("MANYNAMES_USE_OPENAI_TTS") == "1" and os.environ.get("OPENAI_API_KEY"):
+        return "openai"
     if shutil.which("piper"):
         return "piper"
     if shutil.which("espeak-ng"):
@@ -105,6 +109,42 @@ def available_tts_backend() -> str:
     if shutil.which("say") and shutil.which("ffmpeg"):
         return "say"
     return "synthetic"
+
+
+def choose_openai_voice(scene_id: str, speaker_name: str, speaker_role: str, character_id: str) -> str:
+    identity = f"{scene_id} {speaker_name} {speaker_role} {character_id}".lower()
+    if any(token in identity for token in ("sky", "storm", "war", "oath")):
+        return "onyx"
+    if any(token in identity for token in ("bronze", "law", "measure", "road", "forge")):
+        return "echo"
+    if any(token in identity for token in ("oracle", "archive", "scribe", "legacy", "projection")):
+        return "nova"
+    if any(token in identity for token in ("custodian", "remnant", "chorus", "convergence", "burial")):
+        return "fable"
+    return "alloy"
+
+
+def generate_openai_voice(scene_id: str, text: str, output_path: Path, speaker_name: str, speaker_role: str, character_id: str) -> dict:
+    payload = json.dumps(
+        {
+            "model": os.environ.get("OPENAI_TTS_MODEL", "tts-1"),
+            "input": text,
+            "voice": choose_openai_voice(scene_id, speaker_name, speaker_role, character_id),
+            "response_format": "wav",
+        }
+    ).encode("utf-8")
+    request = urllib.request.Request(
+        OPENAI_TTS_URL,
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(request, timeout=120) as response:
+        output_path.write_bytes(response.read())
+    return {"SceneId": scene_id, "Backend": "openai", "File": output_path.name}
 
 
 def synth_voice_placeholder(text: str) -> list[float]:
@@ -127,25 +167,38 @@ def synth_voice_placeholder(text: str) -> list[float]:
     return samples
 
 
-def generate_voice(scene_id: str, text: str, output_path: Path, backend: str) -> dict:
+def generate_voice(
+    scene_id: str,
+    text: str,
+    output_path: Path,
+    backend: str,
+    speaker_name: str = "",
+    speaker_role: str = "",
+    character_id: str = "",
+) -> dict:
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    if backend == "piper":
-        model = os.environ.get("PIPER_VOICE_MODEL", "")
-        if model and Path(model).exists():
-            subprocess.run(
-                ["piper", "--model", model, "--output_file", str(output_path)],
-                input=text.encode("utf-8"),
-                check=True,
-            )
-            return {"SceneId": scene_id, "Backend": "piper", "File": output_path.name}
-    elif backend == "espeak-ng":
-        subprocess.run(["espeak-ng", "-w", str(output_path), text], check=True)
-        return {"SceneId": scene_id, "Backend": "espeak-ng", "File": output_path.name}
-    elif backend == "say":
-        subprocess.run(["say", "-o", str(output_path.with_suffix(".aiff")), text], check=True)
-        subprocess.run(["ffmpeg", "-y", "-i", str(output_path.with_suffix(".aiff")), str(output_path)], check=True)
-        output_path.with_suffix(".aiff").unlink(missing_ok=True)
-        return {"SceneId": scene_id, "Backend": "say", "File": output_path.name}
+    try:
+        if backend == "openai":
+            return generate_openai_voice(scene_id, text, output_path, speaker_name, speaker_role, character_id)
+        if backend == "piper":
+            model = os.environ.get("PIPER_VOICE_MODEL", "")
+            if model and Path(model).exists():
+                subprocess.run(
+                    ["piper", "--model", model, "--output_file", str(output_path)],
+                    input=text.encode("utf-8"),
+                    check=True,
+                )
+                return {"SceneId": scene_id, "Backend": "piper", "File": output_path.name}
+        elif backend == "espeak-ng":
+            subprocess.run(["espeak-ng", "-w", str(output_path), text], check=True)
+            return {"SceneId": scene_id, "Backend": "espeak-ng", "File": output_path.name}
+        elif backend == "say":
+            subprocess.run(["say", "-o", str(output_path.with_suffix(".aiff")), text], check=True)
+            subprocess.run(["ffmpeg", "-y", "-i", str(output_path.with_suffix(".aiff")), str(output_path)], check=True)
+            output_path.with_suffix(".aiff").unlink(missing_ok=True)
+            return {"SceneId": scene_id, "Backend": "say", "File": output_path.name}
+    except Exception as exc:
+        print(f"Voice backend {backend} failed for {scene_id}: {exc}. Falling back to synthetic placeholder.")
 
     write_wav(output_path, synth_voice_placeholder(text))
     return {"SceneId": scene_id, "Backend": "synthetic", "File": output_path.name}
@@ -174,14 +227,30 @@ def main() -> None:
         scene_id = scene["SceneId"]
         seen_scene_ids.add(scene_id)
         voice_manifest.append(
-            generate_voice(scene_id, f"{scene.get('SpeakerName', '')}. {scene.get('BodyText', '')}", VOICE_DIR / f"{scene_id}.wav", backend)
+            generate_voice(
+                scene_id,
+                f"{scene.get('SpeakerName', '')}. {scene.get('BodyText', '')}",
+                VOICE_DIR / f"{scene_id}.wav",
+                backend,
+                scene.get("SpeakerName", ""),
+                scene.get("SpeakerRole", ""),
+                scene.get("CharacterId", ""),
+            )
         )
     for cinematic in cinematic_scenes:
         scene_id = cinematic["SceneId"]
         if scene_id in seen_scene_ids:
             continue
         voice_manifest.append(
-            generate_voice(scene_id, f"{cinematic.get('Title', '')}. {cinematic.get('Summary', '')}", VOICE_DIR / f"{scene_id}.wav", backend)
+            generate_voice(
+                scene_id,
+                f"{cinematic.get('Title', '')}. {cinematic.get('Summary', '')}",
+                VOICE_DIR / f"{scene_id}.wav",
+                backend,
+                cinematic.get("Title", ""),
+                cinematic.get("RegionId", ""),
+                cinematic.get("CharacterId", ""),
+            )
         )
 
     VOICE_MANIFEST.write_text(json.dumps(voice_manifest, indent=2) + "\n", encoding="utf-8")

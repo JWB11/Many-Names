@@ -24,6 +24,7 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	virtual FText GetInteractionLabel_Implementation() const override;
 	virtual bool CanInteract_Implementation(APawn* InteractingPawn) const override;
@@ -76,4 +77,8 @@ protected:
 
 private:
 	bool bConsumed = false;
+	TObjectPtr<class ACharacter> PlayerCharacter;
+
+	UPROPERTY(EditAnywhere, Category="ManyNames|Interaction")
+	float LookAtDistance = 850.0f;
 };

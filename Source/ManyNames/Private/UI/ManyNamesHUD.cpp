@@ -12,7 +12,7 @@
 
 namespace
 {
-FString QuestStateLabel(EManyNamesQuestState QuestState)
+FString HudQuestStateLabel(EManyNamesQuestState QuestState)
 {
 	switch (QuestState)
 	{
@@ -32,12 +32,12 @@ FString QuestStateLabel(EManyNamesQuestState QuestState)
 	}
 }
 
-FString DomainShortName(const FGameplayTag& DomainTag)
+FString HudDomainShortName(const FGameplayTag& DomainTag)
 {
 	return DomainTag.GetTagName().ToString().Replace(TEXT("Domain."), TEXT(""));
 }
 
-EManyNamesRegionId ResolveRegionFromLevelName(const UWorld* World)
+EManyNamesRegionId ResolveHudRegionFromLevelName(const UWorld* World)
 {
 	if (!World)
 	{
@@ -232,7 +232,7 @@ void AManyNamesHUD::RefreshCachedJournal()
 		return;
 	}
 
-	const EManyNamesRegionId CurrentRegionId = ResolveRegionFromLevelName(GetWorld());
+	const EManyNamesRegionId CurrentRegionId = ResolveHudRegionFromLevelName(GetWorld());
 	FManyNamesRegionBriefRecord RegionBrief;
 	if (ContentSubsystem->GetRegionBrief(CurrentRegionId, RegionBrief))
 	{
@@ -274,7 +274,7 @@ void AManyNamesHUD::RefreshCachedJournal()
 		QuestBuilder.Appendf(TEXT("  [%s] %s - %s\n"),
 			*QuestType,
 			*QuestRow.Title.ToString(),
-			*QuestStateLabel(QuestSubsystem->GetQuestState(QuestRow.QuestId)));
+			*HudQuestStateLabel(QuestSubsystem->GetQuestState(QuestRow.QuestId)));
 	}
 	QuestSummary = FText::FromString(QuestBuilder.ToString());
 
@@ -291,7 +291,7 @@ void AManyNamesHUD::RefreshCachedJournal()
 	{
 		if (const int32* Score = WorldState.MythicDomainProfile.DomainScores.Find(DomainTag))
 		{
-			DomainBuilder.Appendf(TEXT("%s: %d\n"), *DomainShortName(DomainTag), *Score);
+			DomainBuilder.Appendf(TEXT("%s: %d\n"), *HudDomainShortName(DomainTag), *Score);
 		}
 	}
 	DomainSummary = FText::FromString(DomainBuilder.ToString());

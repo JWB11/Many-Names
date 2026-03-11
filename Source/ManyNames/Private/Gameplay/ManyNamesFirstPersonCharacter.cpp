@@ -4,12 +4,14 @@
 #include "Components/CapsuleComponent.h"
 #include "Engine/Engine.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PlayerController.h"
 #include "Gameplay/ManyNamesEnvironmentController.h"
 #include "Gameplay/ManyNamesPrototypeGameMode.h"
 #include "Interaction/ManyNamesInteractable.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Systems/ManyNamesGameInstance.h"
+#include "UI/ManyNamesHUD.h"
 
 AManyNamesFirstPersonCharacter::AManyNamesFirstPersonCharacter()
 {
@@ -135,6 +137,16 @@ void AManyNamesFirstPersonCharacter::AttemptInteract()
 
 void AManyNamesFirstPersonCharacter::OpenJournal()
 {
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (AManyNamesHUD* ManyNamesHUD = PlayerController->GetHUD<AManyNamesHUD>())
+		{
+			const bool bIsOpen = ManyNamesHUD->ToggleJournal();
+			ShowMessage(bIsOpen ? TEXT("Journal opened.") : TEXT("Journal closed."), FColor::Cyan);
+			return;
+		}
+	}
+
 	if (const AManyNamesPrototypeGameMode* GameMode = GetWorld() ? Cast<AManyNamesPrototypeGameMode>(GetWorld()->GetAuthGameMode()) : nullptr)
 	{
 		ShowMessage(GameMode->GetJournalSummary(), FColor::Cyan);
@@ -199,7 +211,9 @@ void AManyNamesFirstPersonCharacter::SelectOption4()
 
 void AManyNamesFirstPersonCharacter::UpdateInteractionPrompt()
 {
-	if (!GEngine)
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	AManyNamesHUD* ManyNamesHUD = PlayerController ? PlayerController->GetHUD<AManyNamesHUD>() : nullptr;
+	if (!ManyNamesHUD)
 	{
 		return;
 	}
@@ -207,17 +221,16 @@ void AManyNamesFirstPersonCharacter::UpdateInteractionPrompt()
 	if (AActor* HitActor = TraceForInteractable())
 	{
 		const FText Label = IManyNamesInteractable::Execute_GetInteractionLabel(HitActor);
-		GEngine->AddOnScreenDebugMessage(1001, 0.05f, FColor::White, FString::Printf(TEXT("[E] %s"), *Label.ToString()));
+		ManyNamesHUD->SetInteractionPrompt(FText::FromString(FString::Printf(TEXT("[E] %s"), *Label.ToString())));
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(1001, 0.05f, FColor::Transparent, TEXT(""));
+		ManyNamesHUD->SetInteractionPrompt(FText::GetEmpty());
 	}
 
 	if (const AManyNamesPrototypeGameMode* GameMode = GetWorld() ? Cast<AManyNamesPrototypeGameMode>(GetWorld()->GetAuthGameMode()) : nullptr)
 	{
-		const FText MenuPrompt = GameMode->GetMenuPromptText();
-		GEngine->AddOnScreenDebugMessage(1002, 0.05f, FColor::Silver, MenuPrompt.ToString());
+		ManyNamesHUD->SetMenuPrompt(GameMode->GetMenuPromptText());
 	}
 }
 
@@ -290,6 +303,15 @@ void AManyNamesFirstPersonCharacter::TryRecoverInvalidSpawn()
 
 void AManyNamesFirstPersonCharacter::ShowMessage(const FString& Message, FColor Color) const
 {
+	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (AManyNamesHUD* ManyNamesHUD = PlayerController->GetHUD<AManyNamesHUD>())
+		{
+			ManyNamesHUD->PushStatusMessage(FText::FromString(Message), FLinearColor(Color));
+			return;
+		}
+	}
+
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 6.0f, Color, Message);

@@ -24,6 +24,7 @@
 #include "Systems/ManyNamesWorldStateSubsystem.h"
 #include "Sound/SoundBase.h"
 #include "TimerManager.h"
+#include "UI/ManyNamesHUD.h"
 
 namespace
 {
@@ -96,6 +97,7 @@ namespace
 AManyNamesPrototypeGameMode::AManyNamesPrototypeGameMode()
 {
 	DefaultPawnClass = AManyNamesFirstPersonCharacter::StaticClass();
+	HUDClass = AManyNamesHUD::StaticClass();
 }
 
 void AManyNamesPrototypeGameMode::BeginPlay()

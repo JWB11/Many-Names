@@ -206,8 +206,9 @@ void AManyNamesHUD::HandleWorldStateChanged(const FManyNamesWorldState& WorldSta
 		RefreshCachedJournal();
 	}
 
-	if (WorldState.bHasDominantAntagonist)
+	if (WorldState.bHasDominantAntagonist && !bDominantAntagonistMessageShown)
 	{
+		bDominantAntagonistMessageShown = true;
 		PushStatusMessage(FText::FromString(TEXT("A dominant antagonist path is now taking shape.")), FLinearColor(0.85f, 0.5f, 0.45f, 1.0f));
 	}
 }

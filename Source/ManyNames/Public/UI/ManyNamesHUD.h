@@ -56,6 +56,10 @@ private:
 	FText MenuPrompt;
 	bool bJournalVisible = false;
 	bool bCinematicPlaying = false;
+	// Tracks whether the one-time dominant-antagonist HUD banner has fired this session.
+	// The flag is intentionally session-scoped: the banner will replay once after each game
+	// load, which is acceptable UX for a world-state change of this significance.
+	bool bDominantAntagonistMessageShown = false;
 
 	UPROPERTY()
 	TArray<FManyNamesHudMessage> StatusMessages;

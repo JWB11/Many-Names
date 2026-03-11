@@ -28,6 +28,7 @@
 #include "Gameplay/ManyNamesScenicActor.h"
 #include "GameplayTagsManager.h"
 #include "Landscape.h"
+#include "LandscapeComponent.h"
 #include "LandscapeConfigHelper.h"
 #include "LandscapeDataAccess.h"
 #include "Materials/MaterialInterface.h"
@@ -899,6 +900,10 @@ namespace
 					break;
 				}
 
+				// Add subtle continuous relief so generated components do not collapse to perfectly
+				// flat cached bounds, while keeping traversal unchanged at gameplay scale.
+				HeightWorld += (FMath::Sin(WorldX * 0.00083) * 1.15) + (FMath::Cos(WorldY * 0.00077) * 1.05);
+
 				const float LocalHeight = static_cast<float>(HeightWorld / ZScale);
 				HeightData[Y * VertsX + X] = LandscapeDataAccess::GetTexHeight(LocalHeight);
 			}
@@ -952,6 +957,17 @@ namespace
 			TArrayView<const FLandscapeLayer>());
 
 		Landscape->CreateLandscapeInfo();
+		for (ULandscapeComponent* Component : Landscape->LandscapeComponents)
+		{
+			if (!Component)
+			{
+				continue;
+			}
+
+			Component->UpdateCachedBounds(false);
+			Component->UpdateMaterialInstances();
+		}
+		Landscape->RecreateCollisionComponents();
 		Landscape->MarkComponentsRenderStateDirty();
 		Landscape->ReregisterAllComponents();
 		Landscape->PostEditChange();

@@ -32,6 +32,7 @@
 #include "LandscapeConfigHelper.h"
 #include "LandscapeDataAccess.h"
 #include "Materials/MaterialInterface.h"
+#include "HAL/IConsoleManager.h"
 #include "Misc/PackageName.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
@@ -857,6 +858,32 @@ namespace
 			return Strength * FMath::Exp(-(DX * DX + DY * DY));
 		};
 
+		// Named constants for the separable continuous-relief term.
+		constexpr double ReliefFreqX = 0.00083;
+		constexpr double ReliefFreqY = 0.00077;
+		constexpr double ReliefAmpX  = 1.15;
+		constexpr double ReliefAmpY  = 1.05;
+
+		// Precompute per-column Sin and per-row Cos values so the inner heightmap
+		// loop performs O(VertsX + VertsY) trig calls instead of O(VertsX * VertsY).
+		TArray<double> SinX;
+		SinX.SetNumUninitialized(VertsX);
+		for (int32 X = 0; X < VertsX; ++X)
+		{
+			const double AlphaX = VertsX > 1 ? static_cast<double>(X) / static_cast<double>(VertsX - 1) : 0.0;
+			const double WorldX = FMath::Lerp(-HalfGeomExtent.X, HalfGeomExtent.X, AlphaX);
+			SinX[X] = FMath::Sin(WorldX * ReliefFreqX) * ReliefAmpX;
+		}
+
+		TArray<double> CosY;
+		CosY.SetNumUninitialized(VertsY);
+		for (int32 Y = 0; Y < VertsY; ++Y)
+		{
+			const double AlphaY = VertsY > 1 ? static_cast<double>(Y) / static_cast<double>(VertsY - 1) : 0.0;
+			const double WorldY = FMath::Lerp(-HalfGeomExtent.Y, HalfGeomExtent.Y, AlphaY);
+			CosY[Y] = FMath::Cos(WorldY * ReliefFreqY) * ReliefAmpY;
+		}
+
 		for (int32 Y = 0; Y < VertsY; ++Y)
 		{
 			for (int32 X = 0; X < VertsX; ++X)
@@ -902,7 +929,7 @@ namespace
 
 				// Add subtle continuous relief so generated components do not collapse to perfectly
 				// flat cached bounds, while keeping traversal unchanged at gameplay scale.
-				HeightWorld += (FMath::Sin(WorldX * 0.00083) * 1.15) + (FMath::Cos(WorldY * 0.00077) * 1.05);
+				HeightWorld += SinX[X] + CosY[Y];
 
 				const float LocalHeight = static_cast<float>(HeightWorld / ZScale);
 				HeightData[Y * VertsX + X] = LandscapeDataAccess::GetTexHeight(LocalHeight);
@@ -2021,6 +2048,14 @@ UManyNamesWorldBuildCommandlet::UManyNamesWorldBuildCommandlet()
 
 int32 UManyNamesWorldBuildCommandlet::Main(const FString& Params)
 {
+	// Suppress the editor home-screen browser during headless/commandlet runs so it does
+	// not produce spurious warnings.  Setting this here (rather than in DefaultEngine.ini)
+	// keeps the home screen available for normal interactive editor sessions.
+	if (IConsoleVariable* HomeScreenCVar = IConsoleManager::Get().FindConsoleVariable(TEXT("HomeScreen.EnableHomeScreen")))
+	{
+		HomeScreenCVar->Set(0, ECVF_SetByCode);
+	}
+
 	const FManyNamesBuildAssets Assets = LoadBuildAssets();
 	if (!ValidateAssets(Assets))
 	{

@@ -13,7 +13,6 @@ TArray<FName> GetCompatibleOutputAliases(FName OutputId)
 		return Outputs;
 	}
 
-	Outputs.Add(OutputId);
 	if (OutputId == TEXT("Region.Egypt.MainResolved") || OutputId == TEXT("State.Region.Egypt.Complete"))
 	{
 		Outputs.Add(TEXT("Region.Egypt.MainResolved"));
@@ -29,24 +28,11 @@ TArray<FName> GetCompatibleOutputAliases(FName OutputId)
 		Outputs.Add(TEXT("Region.ItalicWest.MainResolved"));
 		Outputs.Add(TEXT("State.Region.ItalicWest.Complete"));
 	}
-	else if (OutputId == TEXT("State.Region.Opening.Complete"))
+	else
 	{
-		Outputs.Add(TEXT("State.Region.Opening.Complete"));
-	}
-	else if (OutputId == TEXT("State.Region.Convergence.Complete"))
-	{
-		Outputs.Add(TEXT("State.Region.Convergence.Complete"));
+		Outputs.Add(OutputId);
 	}
 
-	TArray<FName> UniqueOutputs;
-	for (const FName& Candidate : Outputs)
-	{
-		if (!UniqueOutputs.Contains(Candidate))
-		{
-			UniqueOutputs.Add(Candidate);
-		}
-	}
-	Outputs = MoveTemp(UniqueOutputs);
 	return Outputs;
 }
 

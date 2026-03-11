@@ -50,17 +50,27 @@ bool UManyNamesQuestSubsystem::IsQuestAvailable(const FManyNamesQuestRow& QuestR
 	return true;
 }
 
-TArray<FName> UManyNamesQuestSubsystem::GetActiveQuestsForRegion(EManyNamesRegionId RegionId) const
+TArray<FName> UManyNamesQuestSubsystem::GetQuestsByStateForRegion(EManyNamesRegionId RegionId, EManyNamesQuestState State) const
 {
 	TArray<FName> Results;
 	const FString Prefix = GetRegionQuestPrefix(RegionId);
 	for (const TPair<FName, EManyNamesQuestState>& Pair : QuestStates)
 	{
-		if (Pair.Value == EManyNamesQuestState::Active && Pair.Key.ToString().StartsWith(Prefix))
+		if (Pair.Value == State && Pair.Key.ToString().StartsWith(Prefix))
 		{
 			Results.Add(Pair.Key);
 		}
 	}
 
 	return Results;
+}
+
+TArray<FName> UManyNamesQuestSubsystem::GetActiveQuestsForRegion(EManyNamesRegionId RegionId) const
+{
+	return GetQuestsByStateForRegion(RegionId, EManyNamesQuestState::Active);
+}
+
+TArray<FName> UManyNamesQuestSubsystem::GetCompletedQuestsForRegion(EManyNamesRegionId RegionId) const
+{
+	return GetQuestsByStateForRegion(RegionId, EManyNamesQuestState::Completed);
 }

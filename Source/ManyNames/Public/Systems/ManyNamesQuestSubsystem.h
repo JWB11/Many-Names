@@ -23,7 +23,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="ManyNames|Quests")
 	TArray<FName> GetActiveQuestsForRegion(EManyNamesRegionId RegionId) const;
 
+	UFUNCTION(BlueprintCallable, Category="ManyNames|Quests")
+	TArray<FName> GetCompletedQuestsForRegion(EManyNamesRegionId RegionId) const;
+
 private:
+	TArray<FName> GetQuestsByStateForRegion(EManyNamesRegionId RegionId, EManyNamesQuestState State) const;
+
 	UPROPERTY(Transient)
 	TMap<FName, EManyNamesQuestState> QuestStates;
 };

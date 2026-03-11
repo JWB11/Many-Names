@@ -70,27 +70,27 @@ void UManyNamesGameInstance::InitializeDefaultWorldState()
 	EgyptState.RegionId = EManyNamesRegionId::Egypt;
 	EgyptState.bUnlocked = false;
 	EgyptState.ActiveDeityId = TEXT("radiant_voice");
-	EgyptState.AvailableQuestIds = {TEXT("egypt_main_01"), TEXT("egypt_side_01")};
+	EgyptState.AvailableQuestIds = {TEXT("egypt_main_01"), TEXT("egypt_side_01"), TEXT("egypt_side_02")};
 	WorldState.Regions.Add(EManyNamesRegionId::Egypt, EgyptState);
 
 	FManyNamesRegionState GreeceState;
 	GreeceState.RegionId = EManyNamesRegionId::Greece;
 	GreeceState.bUnlocked = false;
 	GreeceState.ActiveDeityId = TEXT("high_one_of_storm");
-	GreeceState.AvailableQuestIds = {TEXT("greece_main_01"), TEXT("greece_side_01")};
+	GreeceState.AvailableQuestIds = {TEXT("greece_main_01"), TEXT("greece_side_01"), TEXT("greece_side_02")};
 	WorldState.Regions.Add(EManyNamesRegionId::Greece, GreeceState);
 
 	FManyNamesRegionState ItalicState;
 	ItalicState.RegionId = EManyNamesRegionId::ItalicWest;
 	ItalicState.bUnlocked = false;
 	ItalicState.ActiveDeityId = TEXT("keeper_of_measures");
-	ItalicState.AvailableQuestIds = {TEXT("italic_main_01"), TEXT("italic_side_01")};
+	ItalicState.AvailableQuestIds = {TEXT("italic_main_01"), TEXT("italic_side_01"), TEXT("italic_side_02")};
 	WorldState.Regions.Add(EManyNamesRegionId::ItalicWest, ItalicState);
 
 	FManyNamesRegionState ConvergenceState;
 	ConvergenceState.RegionId = EManyNamesRegionId::Convergence;
 	ConvergenceState.ActiveDeityId = TEXT("many_names");
-	ConvergenceState.AvailableQuestIds = {TEXT("convergence_main_01")};
+	ConvergenceState.AvailableQuestIds = {TEXT("convergence_main_01"), TEXT("convergence_side_02")};
 	WorldState.Regions.Add(EManyNamesRegionId::Convergence, ConvergenceState);
 
 	FManyNamesCompanionState OracleState;

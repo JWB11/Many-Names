@@ -200,6 +200,7 @@ def main():
         "Egypt": {"main": False, "side": False},
         "Greece": {"main": False, "side": False},
         "ItalicWest": {"main": False, "side": False},
+        "Convergence": {"main": False, "side": False},
     }
     for row in quests:
         quest_id = row["QuestId"]

@@ -488,7 +488,6 @@ void UManyNamesWorldStateSubsystem::RefreshDominantAntagonist()
 	for (TPair<EManyNamesCompanionId, FManyNamesCompanionState>& Pair : WorldState.Companions)
 	{
 		const int32 Score = ComputeCompanionThreatScore(WorldState, Pair.Key, Pair.Value);
-		Pair.Value.EscalationScore = FMath::Max(Pair.Value.EscalationScore, Score);
 		Pair.Value.ThreatState = ComputeThreatState(Score);
 		Pair.Value.bDominantAntagonist = false;
 		if (Pair.Value.ThreatState == EManyNamesCompanionThreatState::Ascendant || Pair.Value.ThreatState == EManyNamesCompanionThreatState::Dominant)

@@ -90,6 +90,16 @@ def main():
             if choice_id not in choice_id_set:
                 raise SystemExit(f"quest_steps references unknown choice: {choice_id}")
 
+    step_indices_by_quest: dict = {}
+    for row in steps:
+        quest_id = row["QuestId"]
+        step_index = row.get("StepIndex")
+        if step_index is not None:
+            seen_indices = step_indices_by_quest.setdefault(quest_id, set())
+            if step_index in seen_indices:
+                raise SystemExit(f"duplicate StepIndex {step_index} in quest: {quest_id}")
+            seen_indices.add(step_index)
+
     for row in dialogue:
         if row["QuestId"] not in quest_id_set:
             raise SystemExit(f"dialogue choice references unknown quest: {row['QuestId']}")

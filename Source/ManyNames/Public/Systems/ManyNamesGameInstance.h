@@ -27,11 +27,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="ManyNames|State")
 	void SetWorldState(const FManyNamesWorldState& InWorldState);
 
+	UFUNCTION(BlueprintCallable, Category="ManyNames|State")
+	void InitializeDefaultWorldState();
+
 	UPROPERTY(BlueprintAssignable, Category="ManyNames|State")
 	FManyNamesWorldStateChanged OnWorldStateChanged;
 
 private:
 	FManyNamesWorldState WorldState;
-
-	void InitializeDefaultWorldState();
 };

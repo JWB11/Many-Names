@@ -16,6 +16,7 @@
 #include "Engine/ExponentialHeightFog.h"
 #include "Engine/HitResult.h"
 #include "Engine/PointLight.h"
+#include "Engine/PostProcessVolume.h"
 #include "Engine/SkyLight.h"
 #include "Engine/SkeletalMesh.h"
 #include "Engine/StaticMesh.h"
@@ -1421,6 +1422,9 @@ namespace
 				DirectionalLightComponent->SetMobility(EComponentMobility::Movable);
 				DirectionalLightComponent->SetIntensity(WeatherState.SunIntensity);
 				DirectionalLightComponent->SetLightColor(WeatherState.KeyLightTint.ToFColor(true));
+				DirectionalLightComponent->SetAtmosphereSunLight(true);
+				DirectionalLightComponent->SetVolumetricScatteringIntensity(1.4f);
+				DirectionalLightComponent->DynamicShadowDistanceMovableLight = 40000.0f;
 			}
 		}
 
@@ -1432,6 +1436,7 @@ namespace
 			{
 				SkyLightComponent->SetMobility(EComponentMobility::Movable);
 				SkyLightComponent->SetIntensity(WeatherState.SkyIntensity);
+				SkyLightComponent->SetRealTimeCapture(true);
 			}
 		}
 
@@ -1444,6 +1449,9 @@ namespace
 				FogComponent->FogDensity = WeatherState.FogDensity;
 				FogComponent->FogHeightFalloff = 0.2f;
 				FogComponent->SetFogInscatteringColor(WeatherState.FogTint);
+				FogComponent->bEnableVolumetricFog = true;
+				FogComponent->VolumetricFogScatteringDistribution = 0.55f;
+				FogComponent->VolumetricFogExtinctionScale = 1.2f;
 			}
 		}
 
@@ -1451,6 +1459,66 @@ namespace
 		if (Atmosphere)
 		{
 			Atmosphere->SetActorLabel(TEXT("SkyAtmosphere"));
+		}
+	}
+
+	void SpawnCinematicPostProcess(UWorld* World, EManyNamesRegionId RegionId)
+	{
+		if (!World)
+		{
+			return;
+		}
+
+		APostProcessVolume* Volume = World->SpawnActor<APostProcessVolume>(FVector::ZeroVector, FRotator::ZeroRotator);
+		if (!Volume)
+		{
+			return;
+		}
+
+		Volume->SetActorLabel(TEXT("CinematicPostProcess"));
+		Volume->bUnbound = true;
+		Volume->BlendWeight = 1.0f;
+		FPostProcessSettings& Settings = Volume->Settings;
+		Settings.bOverride_AutoExposureMethod = true;
+		Settings.AutoExposureMethod = EAutoExposureMethod::AEM_Manual;
+		Settings.bOverride_AutoExposureBias = true;
+		Settings.AutoExposureBias = 0.15f;
+		Settings.bOverride_Contrast = true;
+		Settings.Contrast = FVector4(1.03f, 1.03f, 1.03f, 1.0f);
+
+		switch (RegionId)
+		{
+		case EManyNamesRegionId::Opening:
+			Settings.bOverride_ColorSaturation = true;
+			Settings.ColorSaturation = FVector4(0.92f, 0.91f, 0.88f, 1.0f);
+			Settings.bOverride_ColorGain = true;
+			Settings.ColorGain = FVector4(1.02f, 0.98f, 0.95f, 1.0f);
+			break;
+		case EManyNamesRegionId::Egypt:
+			Settings.bOverride_ColorSaturation = true;
+			Settings.ColorSaturation = FVector4(1.08f, 1.03f, 0.95f, 1.0f);
+			Settings.bOverride_ColorGain = true;
+			Settings.ColorGain = FVector4(1.07f, 1.0f, 0.95f, 1.0f);
+			break;
+		case EManyNamesRegionId::Greece:
+			Settings.bOverride_ColorSaturation = true;
+			Settings.ColorSaturation = FVector4(0.96f, 1.01f, 1.05f, 1.0f);
+			Settings.bOverride_ColorGain = true;
+			Settings.ColorGain = FVector4(0.95f, 1.0f, 1.06f, 1.0f);
+			break;
+		case EManyNamesRegionId::ItalicWest:
+			Settings.bOverride_ColorSaturation = true;
+			Settings.ColorSaturation = FVector4(0.95f, 0.93f, 0.9f, 1.0f);
+			Settings.bOverride_ColorGain = true;
+			Settings.ColorGain = FVector4(1.01f, 0.98f, 0.94f, 1.0f);
+			break;
+		case EManyNamesRegionId::Convergence:
+		default:
+			Settings.bOverride_ColorSaturation = true;
+			Settings.ColorSaturation = FVector4(0.84f, 0.9f, 0.98f, 1.0f);
+			Settings.bOverride_ColorGain = true;
+			Settings.ColorGain = FVector4(0.87f, 0.93f, 1.02f, 1.0f);
+			break;
 		}
 	}
 
@@ -1504,6 +1572,7 @@ namespace
 		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::Opening, Assets);
 		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
+		SpawnCinematicPostProcess(World, EManyNamesRegionId::Opening);
 		SpawnEnvironmentController(World, EnvironmentProfile);
 		BuildTerrainSystems(World, TerrainProfile);
 
@@ -1622,6 +1691,7 @@ namespace
 		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::Egypt, Assets);
 		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
+		SpawnCinematicPostProcess(World, EManyNamesRegionId::Egypt);
 		SpawnEnvironmentController(World, EnvironmentProfile);
 		BuildTerrainSystems(World, TerrainProfile);
 
@@ -1751,6 +1821,7 @@ namespace
 		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::Greece, Assets);
 		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
+		SpawnCinematicPostProcess(World, EManyNamesRegionId::Greece);
 		SpawnEnvironmentController(World, EnvironmentProfile);
 		BuildTerrainSystems(World, TerrainProfile);
 
@@ -1849,6 +1920,7 @@ namespace
 		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::ItalicWest, Assets);
 		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
+		SpawnCinematicPostProcess(World, EManyNamesRegionId::ItalicWest);
 		SpawnEnvironmentController(World, EnvironmentProfile);
 		BuildTerrainSystems(World, TerrainProfile);
 
@@ -1942,6 +2014,7 @@ namespace
 		const FManyNamesTerrainProfile TerrainProfile = BuildTerrainProfile(EManyNamesRegionId::Convergence, Assets);
 		ValidateNaniteProfile(TerrainProfile);
 		SpawnSky(World, EnvironmentProfile.BaselineState);
+		SpawnCinematicPostProcess(World, EManyNamesRegionId::Convergence);
 		SpawnEnvironmentController(World, EnvironmentProfile);
 		BuildTerrainSystems(World, TerrainProfile);
 

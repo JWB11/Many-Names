@@ -5,6 +5,51 @@
 
 namespace
 {
+TArray<FName> GetCompatibleOutputAliases(FName OutputId)
+{
+	TArray<FName> Outputs;
+	if (OutputId.IsNone())
+	{
+		return Outputs;
+	}
+
+	Outputs.Add(OutputId);
+	if (OutputId == TEXT("Region.Egypt.MainResolved") || OutputId == TEXT("State.Region.Egypt.Complete"))
+	{
+		Outputs.Add(TEXT("Region.Egypt.MainResolved"));
+		Outputs.Add(TEXT("State.Region.Egypt.Complete"));
+	}
+	else if (OutputId == TEXT("Region.Greece.MainResolved") || OutputId == TEXT("State.Region.Greece.Complete"))
+	{
+		Outputs.Add(TEXT("Region.Greece.MainResolved"));
+		Outputs.Add(TEXT("State.Region.Greece.Complete"));
+	}
+	else if (OutputId == TEXT("Region.ItalicWest.MainResolved") || OutputId == TEXT("State.Region.ItalicWest.Complete"))
+	{
+		Outputs.Add(TEXT("Region.ItalicWest.MainResolved"));
+		Outputs.Add(TEXT("State.Region.ItalicWest.Complete"));
+	}
+	else if (OutputId == TEXT("State.Region.Opening.Complete"))
+	{
+		Outputs.Add(TEXT("State.Region.Opening.Complete"));
+	}
+	else if (OutputId == TEXT("State.Region.Convergence.Complete"))
+	{
+		Outputs.Add(TEXT("State.Region.Convergence.Complete"));
+	}
+
+	TArray<FName> UniqueOutputs;
+	for (const FName& Candidate : Outputs)
+	{
+		if (!UniqueOutputs.Contains(Candidate))
+		{
+			UniqueOutputs.Add(Candidate);
+		}
+	}
+	Outputs = MoveTemp(UniqueOutputs);
+	return Outputs;
+}
+
 int32 GetDomainScore(const FManyNamesWorldState& WorldState, const TCHAR* TagName)
 {
 	const FGameplayTag Tag = UGameplayTagsManager::Get().RequestGameplayTag(FName(TagName), false);
@@ -128,6 +173,40 @@ FName ThreatOutputForCompanion(EManyNamesCompanionId CompanionId, bool bDominant
 }
 }
 
+FName UManyNamesWorldStateSubsystem::GetCanonicalRegionCompletionOutput(EManyNamesRegionId RegionId)
+{
+	switch (RegionId)
+	{
+	case EManyNamesRegionId::Opening:
+		return TEXT("State.Region.Opening.Complete");
+	case EManyNamesRegionId::Egypt:
+		return TEXT("State.Region.Egypt.Complete");
+	case EManyNamesRegionId::Greece:
+		return TEXT("State.Region.Greece.Complete");
+	case EManyNamesRegionId::ItalicWest:
+		return TEXT("State.Region.ItalicWest.Complete");
+	case EManyNamesRegionId::Convergence:
+		return TEXT("State.Region.Convergence.Complete");
+	default:
+		return NAME_None;
+	}
+}
+
+bool UManyNamesWorldStateSubsystem::TryGetDominantAntagonist(EManyNamesCompanionId& OutCompanionId) const
+{
+	if (const UManyNamesGameInstance* GameInstance = GetManyNamesGameInstance())
+	{
+		const FManyNamesWorldState& WorldState = GameInstance->GetWorldState();
+		if (WorldState.bHasDominantAntagonist)
+		{
+			OutCompanionId = WorldState.DominantAntagonist;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 FManyNamesWorldState UManyNamesWorldStateSubsystem::GetWorldState() const
 {
 	if (const UManyNamesGameInstance* GameInstance = GetManyNamesGameInstance())
@@ -142,7 +221,14 @@ bool UManyNamesWorldStateSubsystem::HasWorldStateOutput(FName OutputId) const
 {
 	if (const UManyNamesGameInstance* GameInstance = GetManyNamesGameInstance())
 	{
-		return GameInstance->GetWorldState().WorldStateOutputs.Contains(OutputId);
+		const TSet<FName>& WorldOutputs = GameInstance->GetWorldState().WorldStateOutputs;
+		for (const FName& Alias : GetCompatibleOutputAliases(OutputId))
+		{
+			if (WorldOutputs.Contains(Alias))
+			{
+				return true;
+			}
+		}
 	}
 
 	return false;
@@ -157,7 +243,10 @@ void UManyNamesWorldStateSubsystem::AddWorldStateOutput(FName OutputId)
 	}
 
 	FManyNamesWorldState WorldState = GameInstance->GetWorldState();
-	WorldState.WorldStateOutputs.Add(OutputId);
+	for (const FName& Alias : GetCompatibleOutputAliases(OutputId))
+	{
+		WorldState.WorldStateOutputs.Add(Alias);
+	}
 	GameInstance->SetWorldState(WorldState);
 }
 
@@ -170,7 +259,10 @@ void UManyNamesWorldStateSubsystem::RemoveWorldStateOutput(FName OutputId)
 	}
 
 	FManyNamesWorldState WorldState = GameInstance->GetWorldState();
-	WorldState.WorldStateOutputs.Remove(OutputId);
+	for (const FName& Alias : GetCompatibleOutputAliases(OutputId))
+	{
+		WorldState.WorldStateOutputs.Remove(Alias);
+	}
 	GameInstance->SetWorldState(WorldState);
 }
 

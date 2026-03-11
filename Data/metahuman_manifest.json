@@ -17,22 +17,35 @@
     "WarSinger": "/Game/MetaHumans/WarSinger/WarSinger/Body/SKM_WarSinger_BodyMesh.SKM_WarSinger_BodyMesh",
     "ForgeMatron": "/Game/MetaHumans/ForgeMatron/ForgeMatron/Body/SKM_ForgeMatron_BodyMesh.SKM_ForgeMatron_BodyMesh",
     "RoadSurveyor": "/Game/MetaHumans/RoadSurveyor/RoadSurveyor/Body/SKM_RoadSurveyor_BodyMesh.SKM_RoadSurveyor_BodyMesh",
-    "CompanionChorus": "/Game/MetaHumans/CompanionChorus/CompanionChorus/Body/SKM_CompanionChorus_BodyMesh.SKM_CompanionChorus_BodyMesh"
+    "CompanionChorus": "/Game/MetaHumans/CompanionChorus/CompanionChorus/Body/SKM_CompanionChorus_BodyMesh.SKM_CompanionChorus_BodyMesh",
+    "BurialCustodian": "/Game/MetaHumans/BurialCustodian/BurialCustodian/Body/SKM_BurialCustodian_BodyMesh.SKM_BurialCustodian_BodyMesh",
+    "ForgeApprentice": "/Game/MetaHumans/ForgeApprentice/ForgeApprentice/Body/SKM_ForgeApprentice_BodyMesh.SKM_ForgeApprentice_BodyMesh",
+    "HillOracle": "/Game/MetaHumans/HillOracle/HillOracle/Body/SKM_HillOracle_BodyMesh.SKM_HillOracle_BodyMesh",
+    "LoyalistRemnant": "/Game/MetaHumans/LoyalistRemnant/LoyalistRemnant/Body/SKM_LoyalistRemnant_BodyMesh.SKM_LoyalistRemnant_BodyMesh",
+    "OathBearer": "/Game/MetaHumans/OathBearer/OathBearer/Body/SKM_OathBearer_BodyMesh.SKM_OathBearer_BodyMesh",
+    "RiverScribe": "/Game/MetaHumans/RiverScribe/RiverScribe/Body/SKM_RiverScribe_BodyMesh.SKM_RiverScribe_BodyMesh",
+    "RoadMagistrate": "/Game/MetaHumans/RoadMagistrate/RoadMagistrate/Body/SKM_RoadMagistrate_BodyMesh.SKM_RoadMagistrate_BodyMesh",
+    "SignalArchivist": "/Game/MetaHumans/SignalArchivist/SignalArchivist/Body/SKM_SignalArchivist_BodyMesh.SKM_SignalArchivist_BodyMesh",
+    "TempleAdjudicator": "/Game/MetaHumans/TempleAdjudicator/TempleAdjudicator/Body/SKM_TempleAdjudicator_BodyMesh.SKM_TempleAdjudicator_BodyMesh"
   },
   "ambient": {
-    "Opening.Survivors": "/Game/MetaHumans/OpeningWitness/OpeningWitness/Body/SKM_OpeningWitness_BodyMesh.SKM_OpeningWitness_BodyMesh",
-    "Opening.Guards": "/Game/MetaHumans/OpeningQuartermaster/OpeningQuartermaster/Body/SKM_OpeningQuartermaster_BodyMesh.SKM_OpeningQuartermaster_BodyMesh",
+    "Convergence.Custodians": "/Game/MetaHumans/BurialCustodian/BurialCustodian/Body/SKM_BurialCustodian_BodyMesh.SKM_BurialCustodian_BodyMesh",
+    "Convergence.Remnants": "/Game/MetaHumans/BridgeWatcher/BridgeWatcher/Body/SKM_BridgeWatcher_BodyMesh.SKM_BridgeWatcher_BodyMesh",
+    "Egypt.Adjudicators": "/Game/MetaHumans/TempleAdjudicator/TempleAdjudicator/Body/SKM_TempleAdjudicator_BodyMesh.SKM_TempleAdjudicator_BodyMesh",
+    "Egypt.Guards": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
     "Egypt.Priests": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
     "Egypt.Scribes": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
     "Egypt.Vendors": "/Game/MetaHumans/FloodplainPetitioner/FloodplainPetitioner/Body/SKM_FloodplainPetitioner_BodyMesh.SKM_FloodplainPetitioner_BodyMesh",
-    "Egypt.Guards": "/Game/MetaHumans/ArchiveKeeper/ArchiveKeeper/Body/SKM_ArchiveKeeper_BodyMesh.SKM_ArchiveKeeper_BodyMesh",
-    "Greece.Heralds": "/Game/MetaHumans/StormHerald/StormHerald/Body/SKM_StormHerald_BodyMesh.SKM_StormHerald_BodyMesh",
-    "Greece.Pilgrims": "/Game/MetaHumans/StormHerald/StormHerald/Body/SKM_StormHerald_BodyMesh.SKM_StormHerald_BodyMesh",
     "Greece.Guards": "/Game/MetaHumans/WarbandEnvoy/WarbandEnvoy/Body/SKM_WarbandEnvoy_BodyMesh.SKM_WarbandEnvoy_BodyMesh",
+    "Greece.Heralds": "/Game/MetaHumans/StormHerald/StormHerald/Body/SKM_StormHerald_BodyMesh.SKM_StormHerald_BodyMesh",
+    "Greece.Oathkeepers": "/Game/MetaHumans/OathBearer/OathBearer/Body/SKM_OathBearer_BodyMesh.SKM_OathBearer_BodyMesh",
+    "Greece.Pilgrims": "/Game/MetaHumans/StormHerald/StormHerald/Body/SKM_StormHerald_BodyMesh.SKM_StormHerald_BodyMesh",
     "Italic.Guards": "/Game/MetaHumans/MeasureKeeper/MeasureKeeper/Body/SKM_MeasureKeeper_BodyMesh.SKM_MeasureKeeper_BodyMesh",
-    "Italic.Workers": "/Game/MetaHumans/MeasureKeeper/MeasureKeeper/Body/SKM_MeasureKeeper_BodyMesh.SKM_MeasureKeeper_BodyMesh",
+    "Italic.Magistrates": "/Game/MetaHumans/RoadMagistrate/RoadMagistrate/Body/SKM_RoadMagistrate_BodyMesh.SKM_RoadMagistrate_BodyMesh",
     "Italic.Ritual": "/Game/MetaHumans/BoundaryElder/BoundaryElder/Body/SKM_BoundaryElder_BodyMesh.SKM_BoundaryElder_BodyMesh",
-    "Convergence.Remnants": "/Game/MetaHumans/BridgeWatcher/BridgeWatcher/Body/SKM_BridgeWatcher_BodyMesh.SKM_BridgeWatcher_BodyMesh"
+    "Italic.Workers": "/Game/MetaHumans/MeasureKeeper/MeasureKeeper/Body/SKM_MeasureKeeper_BodyMesh.SKM_MeasureKeeper_BodyMesh",
+    "Opening.Guards": "/Game/MetaHumans/OpeningQuartermaster/OpeningQuartermaster/Body/SKM_OpeningQuartermaster_BodyMesh.SKM_OpeningQuartermaster_BodyMesh",
+    "Opening.Survivors": "/Game/MetaHumans/OpeningWitness/OpeningWitness/Body/SKM_OpeningWitness_BodyMesh.SKM_OpeningWitness_BodyMesh"
   },
   "named_character_assets": {
     "OpeningWitness": "/Game/Characters/MetaHumans/OpeningWitness.OpeningWitness",
@@ -52,7 +65,16 @@
     "WarSinger": "/Game/Characters/MetaHumans/WarSinger.WarSinger",
     "ForgeMatron": "/Game/Characters/MetaHumans/ForgeMatron.ForgeMatron",
     "RoadSurveyor": "/Game/Characters/MetaHumans/RoadSurveyor.RoadSurveyor",
-    "CompanionChorus": "/Game/Characters/MetaHumans/CompanionChorus.CompanionChorus"
+    "CompanionChorus": "/Game/Characters/MetaHumans/CompanionChorus.CompanionChorus",
+    "BurialCustodian": "/Game/Characters/MetaHumans/BurialCustodian.BurialCustodian",
+    "ForgeApprentice": "/Game/Characters/MetaHumans/ForgeApprentice.ForgeApprentice",
+    "HillOracle": "/Game/Characters/MetaHumans/HillOracle.HillOracle",
+    "LoyalistRemnant": "/Game/Characters/MetaHumans/LoyalistRemnant.LoyalistRemnant",
+    "OathBearer": "/Game/Characters/MetaHumans/OathBearer.OathBearer",
+    "RiverScribe": "/Game/Characters/MetaHumans/RiverScribe.RiverScribe",
+    "RoadMagistrate": "/Game/Characters/MetaHumans/RoadMagistrate.RoadMagistrate",
+    "SignalArchivist": "/Game/Characters/MetaHumans/SignalArchivist.SignalArchivist",
+    "TempleAdjudicator": "/Game/Characters/MetaHumans/TempleAdjudicator.TempleAdjudicator"
   },
   "ambient_character_assets": {}
 }

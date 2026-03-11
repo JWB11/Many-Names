@@ -23,7 +23,8 @@
     "HubMap": "/Game/Maps/L_EgyptHub",
     "QuestIds": [
       "egypt_main_01",
-      "egypt_side_01"
+      "egypt_side_01",
+      "egypt_side_02"
     ],
     "EntryConditions": [
       "State.Region.Opening.Complete"
@@ -39,7 +40,8 @@
     "HubMap": "/Game/Maps/L_GreeceHub",
     "QuestIds": [
       "greece_main_01",
-      "greece_side_01"
+      "greece_side_01",
+      "greece_side_02"
     ],
     "EntryConditions": [
       "State.Region.Opening.Complete"
@@ -55,7 +57,8 @@
     "HubMap": "/Game/Maps/L_ItalicHub",
     "QuestIds": [
       "italic_main_01",
-      "italic_side_01"
+      "italic_side_01",
+      "italic_side_02"
     ],
     "EntryConditions": [
       "State.Region.Opening.Complete"
@@ -70,7 +73,8 @@
     "ActiveDeityId": "many_names",
     "HubMap": "/Game/Maps/L_Convergence",
     "QuestIds": [
-      "convergence_main_01"
+      "convergence_main_01",
+      "convergence_side_02"
     ],
     "EntryConditions": [
       "State.Region.Egypt.Complete",

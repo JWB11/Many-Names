@@ -1,73 +1,59 @@
 [
   {
-    "Name": "WitnessConceal",
-    "ChoiceId": "choice_witness_conceal",
-    "QuestId": "opening_side_01",
-    "Prompt": "A terrified witness asks what they saw.",
-    "OptionText": "Tell them it was smoke and panic, not divinity.",
+    "Name": "ConvergenceChorusFree",
+    "ChoiceId": "choice_convergence_chorus_free",
+    "QuestId": "convergence_side_02",
+    "Prompt": "The trapped chorus asks whether memory should remain partitioned.",
+    "OptionText": "Free the chorus into many witnesses and accept a future without a single governing voice.",
     "RequiredDomains": [
+      "Domain.Light",
       "Domain.Deception"
     ],
     "GrantedDomains": [
+      "Domain.Light",
       "Domain.Deception"
     ],
     "CombatDelta": -1,
     "ResultTags": [
-      "Result.Witness.Concealed"
+      "Result.Convergence.Chorus.Free"
     ]
   },
   {
-    "Name": "WitnessProclaim",
-    "ChoiceId": "choice_witness_proclaim",
-    "QuestId": "opening_side_01",
-    "Prompt": "A terrified witness asks what they saw.",
-    "OptionText": "Let the witness call it a miracle and bind your fate to the rumor.",
+    "Name": "ConvergenceChorusMerge",
+    "ChoiceId": "choice_convergence_chorus_merge",
+    "QuestId": "convergence_side_02",
+    "Prompt": "The trapped chorus asks whether memory should remain partitioned.",
+    "OptionText": "Merge the fragments into one sovereign signal and risk giving coherence back to domination.",
     "RequiredDomains": [
-      "Domain.Light"
-    ],
-    "GrantedDomains": [
-      "Domain.Light"
-    ],
-    "CombatDelta": 0,
-    "ResultTags": [
-      "Result.Witness.Public"
-    ]
-  },
-  {
-    "Name": "EgyptHideOracle",
-    "ChoiceId": "choice_egypt_hide_oracle",
-    "QuestId": "egypt_main_01",
-    "Prompt": "The priesthood begs you to preserve the Radiant Voice.",
-    "OptionText": "Keep the oracle hidden and work through trusted intermediaries.",
-    "RequiredDomains": [
-      "Domain.Deception",
-      "Domain.Judgment"
-    ],
-    "GrantedDomains": [
+      "Domain.Order",
       "Domain.Deception"
     ],
-    "CombatDelta": 0,
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Deception"
+    ],
+    "CombatDelta": 1,
     "ResultTags": [
-      "Result.Egypt.HiddenOracle"
+      "Result.Convergence.Chorus.Merge"
     ]
   },
   {
-    "Name": "EgyptShareOracle",
-    "ChoiceId": "choice_egypt_share_oracle",
-    "QuestId": "egypt_main_01",
-    "Prompt": "The archive reveals a machine where a god should be.",
-    "OptionText": "Share the oracle's truth with a small circle and build a guarded covenant around it.",
+    "Name": "ConvergenceChorusSilence",
+    "ChoiceId": "choice_convergence_chorus_silence",
+    "QuestId": "convergence_side_02",
+    "Prompt": "The trapped chorus asks whether memory should remain partitioned.",
+    "OptionText": "Silence the chamber and refuse every legacy that demands survival through control.",
     "RequiredDomains": [
-      "Domain.Light",
-      "Domain.Judgment"
+      "Domain.Judgment",
+      "Domain.Death"
     ],
     "GrantedDomains": [
-      "Domain.Light",
-      "Domain.Order"
+      "Domain.Judgment",
+      "Domain.Death"
     ],
-    "CombatDelta": 0,
+    "CombatDelta": 2,
     "ResultTags": [
-      "Result.Egypt.SharedOracle"
+      "Result.Convergence.Chorus.Silence"
     ]
   },
   {
@@ -127,6 +113,25 @@
     ]
   },
   {
+    "Name": "EgyptFaminePriestlyAlliance",
+    "ChoiceId": "choice_egypt_famine_priestly_alliance",
+    "QuestId": "egypt_side_01",
+    "Prompt": "The floodplain fails and the temple granary is under guard.",
+    "OptionText": "Strike a bargain with the priesthood and control food through ritual rationing.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Deception"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Deception"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Egypt.PriestlyRationing"
+    ]
+  },
+  {
     "Name": "EgyptFaminePublicMiracle",
     "ChoiceId": "choice_egypt_famine_public_miracle",
     "QuestId": "egypt_side_01",
@@ -146,22 +151,20 @@
     ]
   },
   {
-    "Name": "EgyptFaminePriestlyAlliance",
-    "ChoiceId": "choice_egypt_famine_priestly_alliance",
+    "Name": "EgyptFamineRefuse",
+    "ChoiceId": "choice_egypt_famine_refuse",
     "QuestId": "egypt_side_01",
     "Prompt": "The floodplain fails and the temple granary is under guard.",
-    "OptionText": "Strike a bargain with the priesthood and control food through ritual rationing.",
+    "OptionText": "Refuse divine intervention and let local power absorb the blame for the famine.",
     "RequiredDomains": [
-      "Domain.Order",
-      "Domain.Deception"
+      "Domain.Judgment"
     ],
     "GrantedDomains": [
-      "Domain.Order",
-      "Domain.Deception"
+      "Domain.Judgment"
     ],
-    "CombatDelta": 0,
+    "CombatDelta": 2,
     "ResultTags": [
-      "Result.Egypt.PriestlyRationing"
+      "Result.Egypt.RefusedIntervention"
     ]
   },
   {
@@ -184,57 +187,188 @@
     ]
   },
   {
-    "Name": "EgyptFamineRefuse",
-    "ChoiceId": "choice_egypt_famine_refuse",
-    "QuestId": "egypt_side_01",
-    "Prompt": "The floodplain fails and the temple granary is under guard.",
-    "OptionText": "Refuse divine intervention and let local power absorb the blame for the famine.",
+    "Name": "EgyptHideOracle",
+    "ChoiceId": "choice_egypt_hide_oracle",
+    "QuestId": "egypt_main_01",
+    "Prompt": "The priesthood begs you to preserve the Radiant Voice.",
+    "OptionText": "Keep the oracle hidden and work through trusted intermediaries.",
     "RequiredDomains": [
+      "Domain.Deception",
       "Domain.Judgment"
     ],
     "GrantedDomains": [
-      "Domain.Judgment"
+      "Domain.Deception"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Egypt.HiddenOracle"
+    ]
+  },
+  {
+    "Name": "EgyptLedgerBurn",
+    "ChoiceId": "choice_egypt_ledger_burn",
+    "QuestId": "egypt_side_02",
+    "Prompt": "Henut asks who should own the river's memory.",
+    "OptionText": "Burn the ledger and make every faction live without the certainty it abused.",
+    "RequiredDomains": [
+      "Domain.Light",
+      "Domain.Death"
+    ],
+    "GrantedDomains": [
+      "Domain.Light",
+      "Domain.Death"
     ],
     "CombatDelta": 2,
     "ResultTags": [
-      "Result.Egypt.RefusedIntervention"
+      "Result.Egypt.Ledger.Burn"
     ]
   },
   {
-    "Name": "GreeceJoinSpectacle",
-    "ChoiceId": "choice_greece_join_spectacle",
-    "QuestId": "greece_main_01",
-    "Prompt": "The storm-ruler offers shared divinity.",
-    "OptionText": "Stand beside them and make spectacle into power.",
+    "Name": "EgyptLedgerRelease",
+    "ChoiceId": "choice_egypt_ledger_release",
+    "QuestId": "egypt_side_02",
+    "Prompt": "Henut asks who should own the river's memory.",
+    "OptionText": "Open the ledgers to the people and let the flood record outlive the temple monopoly.",
     "RequiredDomains": [
-      "Domain.Storm"
+      "Domain.Judgment"
     ],
     "GrantedDomains": [
-      "Domain.Storm",
-      "Domain.Deception"
+      "Domain.Judgment",
+      "Domain.Healing"
     ],
-    "CombatDelta": 1,
+    "CombatDelta": -1,
     "ResultTags": [
-      "Result.Greece.JoinedRuler"
+      "Result.Egypt.Ledger.Release"
     ]
   },
   {
-    "Name": "GreeceRedirectProphecy",
-    "ChoiceId": "choice_greece_redirect_prophecy",
-    "QuestId": "greece_main_01",
-    "Prompt": "The storm-ruler offers shared divinity.",
-    "OptionText": "Redirect the prophecy and force the ruler into a narrower, accountable role.",
+    "Name": "EgyptLedgerSteward",
+    "ChoiceId": "choice_egypt_ledger_steward",
+    "QuestId": "egypt_side_02",
+    "Prompt": "Henut asks who should own the river's memory.",
+    "OptionText": "Keep the record in a covenant of scribes and workers, hidden from panic but no longer from need.",
     "RequiredDomains": [
-      "Domain.Storm",
       "Domain.Order"
     ],
     "GrantedDomains": [
-      "Domain.Storm",
+      "Domain.Order",
+      "Domain.Healing"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Egypt.Ledger.Steward"
+    ]
+  },
+  {
+    "Name": "EgyptShareOracle",
+    "ChoiceId": "choice_egypt_share_oracle",
+    "QuestId": "egypt_main_01",
+    "Prompt": "The archive reveals a machine where a god should be.",
+    "OptionText": "Share the oracle's truth with a small circle and build a guarded covenant around it.",
+    "RequiredDomains": [
+      "Domain.Light",
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Light",
       "Domain.Order"
     ],
     "CombatDelta": 0,
     "ResultTags": [
-      "Result.Greece.RedirectedProphecy"
+      "Result.Egypt.SharedOracle"
+    ]
+  },
+  {
+    "Name": "EndingDismantle",
+    "ChoiceId": "choice_ending_dismantle",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Dismantle the apparatus and sever as much temporal contamination as you can.",
+    "RequiredDomains": [
+      "Domain.Judgment",
+      "Domain.Craft"
+    ],
+    "GrantedDomains": [
+      "Domain.Craft",
+      "Domain.Judgment"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Ending.DismantleDivinity"
+    ]
+  },
+  {
+    "Name": "EndingFragment",
+    "ChoiceId": "choice_ending_fragment",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Scatter the truth and your legacy so no single culture can own it.",
+    "RequiredDomains": [
+      "Domain.Deception",
+      "Domain.Light"
+    ],
+    "GrantedDomains": [
+      "Domain.Deception",
+      "Domain.Light"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Ending.FragmentLegacy"
+    ]
+  },
+  {
+    "Name": "EndingRemain",
+    "ChoiceId": "choice_ending_remain",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Remain here and become the final composite remembered by later cultures.",
+    "RequiredDomains": [
+      "Domain.Light",
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Light"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Ending.RemainAsMyth"
+    ]
+  },
+  {
+    "Name": "EndingReplaceCompanion",
+    "ChoiceId": "choice_ending_replace_companion",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Replace one companion-deity and formalize a new order under your name.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Storm"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Storm"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Ending.ReplaceCompanion"
+    ]
+  },
+  {
+    "Name": "EndingReturn",
+    "ChoiceId": "choice_ending_return",
+    "QuestId": "convergence_main_01",
+    "Prompt": "The apparatus opens one final path.",
+    "OptionText": "Return to the future and face what your myth changed.",
+    "RequiredDomains": [
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Ending.ReturnToFuture"
     ]
   },
   {
@@ -275,6 +409,118 @@
     ]
   },
   {
+    "Name": "GreeceJoinSpectacle",
+    "ChoiceId": "choice_greece_join_spectacle",
+    "QuestId": "greece_main_01",
+    "Prompt": "The storm-ruler offers shared divinity.",
+    "OptionText": "Stand beside them and make spectacle into power.",
+    "RequiredDomains": [
+      "Domain.Storm"
+    ],
+    "GrantedDomains": [
+      "Domain.Storm",
+      "Domain.Deception"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Greece.JoinedRuler"
+    ]
+  },
+  {
+    "Name": "GreeceOathBind",
+    "ChoiceId": "choice_greece_oath_bind",
+    "QuestId": "greece_side_02",
+    "Prompt": "Melia asks whether the old oath still binds the living.",
+    "OptionText": "Bind the oath again and force the city to bear its promised burden openly.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Storm"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Storm"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Greece.Oath.Bind"
+    ]
+  },
+  {
+    "Name": "GreeceOathRelease",
+    "ChoiceId": "choice_greece_oath_release",
+    "QuestId": "greece_side_02",
+    "Prompt": "Melia asks whether the old oath still binds the living.",
+    "OptionText": "Release the oath and let duty return to consent instead of inherited fear.",
+    "RequiredDomains": [
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment",
+      "Domain.Healing"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Result.Greece.Oath.Release"
+    ]
+  },
+  {
+    "Name": "GreeceOathTrick",
+    "ChoiceId": "choice_greece_oath_trick",
+    "QuestId": "greece_side_02",
+    "Prompt": "Melia asks whether the old oath still binds the living.",
+    "OptionText": "Redirect the oath toward spectacle and make the warband worship its own theater.",
+    "RequiredDomains": [
+      "Domain.Deception",
+      "Domain.Storm"
+    ],
+    "GrantedDomains": [
+      "Domain.Deception",
+      "Domain.Storm"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Greece.Oath.Redirect"
+    ]
+  },
+  {
+    "Name": "GreeceRedirectProphecy",
+    "ChoiceId": "choice_greece_redirect_prophecy",
+    "QuestId": "greece_main_01",
+    "Prompt": "The storm-ruler offers shared divinity.",
+    "OptionText": "Redirect the prophecy and force the ruler into a narrower, accountable role.",
+    "RequiredDomains": [
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Greece.RedirectedProphecy"
+    ]
+  },
+  {
+    "Name": "GreeceWarbandBloodPrice",
+    "ChoiceId": "choice_greece_warband_bloodprice",
+    "QuestId": "greece_side_01",
+    "Prompt": "A warband advances on the sanctuary road.",
+    "OptionText": "Demand hostages and blood price, then let the warband leave in humiliation rather than victory.",
+    "RequiredDomains": [
+      "Domain.Judgment",
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Judgment",
+      "Domain.Order"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Greece.BloodPrice"
+    ]
+  },
+  {
     "Name": "GreeceWarbandNegotiate",
     "ChoiceId": "choice_greece_warband_negotiate",
     "QuestId": "greece_side_01",
@@ -312,25 +558,6 @@
     ]
   },
   {
-    "Name": "GreeceWarbandBloodPrice",
-    "ChoiceId": "choice_greece_warband_bloodprice",
-    "QuestId": "greece_side_01",
-    "Prompt": "A warband advances on the sanctuary road.",
-    "OptionText": "Demand hostages and blood price, then let the warband leave in humiliation rather than victory.",
-    "RequiredDomains": [
-      "Domain.Judgment",
-      "Domain.Order"
-    ],
-    "GrantedDomains": [
-      "Domain.Judgment",
-      "Domain.Order"
-    ],
-    "CombatDelta": 1,
-    "ResultTags": [
-      "Result.Greece.BloodPrice"
-    ]
-  },
-  {
     "Name": "GreeceWarbandStrike",
     "ChoiceId": "choice_greece_warband_strike",
     "QuestId": "greece_side_01",
@@ -349,81 +576,6 @@
     ]
   },
   {
-    "Name": "ItalicLawByService",
-    "ChoiceId": "choice_italic_service",
-    "QuestId": "italic_main_01",
-    "Prompt": "The bronze lawgiver asks what order is for.",
-    "OptionText": "Define order as service and measured protection.",
-    "RequiredDomains": [
-      "Domain.Order"
-    ],
-    "GrantedDomains": [
-      "Domain.Order",
-      "Domain.Healing"
-    ],
-    "CombatDelta": -1,
-    "ResultTags": [
-      "Result.Italic.Service"
-    ]
-  },
-  {
-    "Name": "ItalicLawByDomination",
-    "ChoiceId": "choice_italic_domination",
-    "QuestId": "italic_main_01",
-    "Prompt": "The bronze lawgiver asks what order is for.",
-    "OptionText": "Define order as rule backed by fear and permanence.",
-    "RequiredDomains": [
-      "Domain.Order",
-      "Domain.Judgment"
-    ],
-    "GrantedDomains": [
-      "Domain.Order",
-      "Domain.Judgment"
-    ],
-    "CombatDelta": 2,
-    "ResultTags": [
-      "Result.Italic.Domination"
-    ]
-  },
-  {
-    "Name": "ItalicLawSharedMeasure",
-    "ChoiceId": "choice_italic_shared_measure",
-    "QuestId": "italic_main_01",
-    "Prompt": "The bronze lawgiver asks what order is for.",
-    "OptionText": "Define order as shared measure: law must be visible, negotiated, and survivable to those beneath it.",
-    "RequiredDomains": [
-      "Domain.Order",
-      "Domain.Craft"
-    ],
-    "GrantedDomains": [
-      "Domain.Order",
-      "Domain.Craft"
-    ],
-    "CombatDelta": 0,
-    "ResultTags": [
-      "Result.Italic.SharedMeasure"
-    ]
-  },
-  {
-    "Name": "ItalicLawReplace",
-    "ChoiceId": "choice_italic_replace",
-    "QuestId": "italic_main_01",
-    "Prompt": "The bronze lawgiver asks what order is for.",
-    "OptionText": "Take command of the law machinery yourself and replace the keeper outright.",
-    "RequiredDomains": [
-      "Domain.Order",
-      "Domain.Craft"
-    ],
-    "GrantedDomains": [
-      "Domain.Order",
-      "Domain.Craft"
-    ],
-    "CombatDelta": 1,
-    "ResultTags": [
-      "Result.Italic.ReplacedKeeper"
-    ]
-  },
-  {
     "Name": "ItalicBoundaryArbitrate",
     "ChoiceId": "choice_italic_boundary_arbitrate",
     "QuestId": "italic_side_01",
@@ -438,25 +590,6 @@
     "CombatDelta": -1,
     "ResultTags": [
       "Result.Italic.ArbitratedBoundary"
-    ]
-  },
-  {
-    "Name": "ItalicBoundaryRitual",
-    "ChoiceId": "choice_italic_boundary_ritual",
-    "QuestId": "italic_side_01",
-    "Prompt": "Two clans demand the same stretch of sacred boundary.",
-    "OptionText": "Stage a boundary fire rite and let fear of taboo settle the dispute.",
-    "RequiredDomains": [
-      "Domain.Deception",
-      "Domain.Order"
-    ],
-    "GrantedDomains": [
-      "Domain.Deception",
-      "Domain.Order"
-    ],
-    "CombatDelta": 0,
-    "ResultTags": [
-      "Result.Italic.RitualBoundary"
     ]
   },
   {
@@ -516,96 +649,186 @@
     ]
   },
   {
-    "Name": "EndingReturn",
-    "ChoiceId": "choice_ending_return",
-    "QuestId": "convergence_main_01",
-    "Prompt": "The apparatus opens one final path.",
-    "OptionText": "Return to the future and face what your myth changed.",
+    "Name": "ItalicBoundaryRitual",
+    "ChoiceId": "choice_italic_boundary_ritual",
+    "QuestId": "italic_side_01",
+    "Prompt": "Two clans demand the same stretch of sacred boundary.",
+    "OptionText": "Stage a boundary fire rite and let fear of taboo settle the dispute.",
     "RequiredDomains": [
-      "Domain.Judgment"
-    ],
-    "GrantedDomains": [
-      "Domain.Judgment"
-    ],
-    "CombatDelta": 0,
-    "ResultTags": [
-      "Ending.ReturnToFuture"
-    ]
-  },
-  {
-    "Name": "EndingRemain",
-    "ChoiceId": "choice_ending_remain",
-    "QuestId": "convergence_main_01",
-    "Prompt": "The apparatus opens one final path.",
-    "OptionText": "Remain here and become the final composite remembered by later cultures.",
-    "RequiredDomains": [
-      "Domain.Light",
-      "Domain.Storm",
+      "Domain.Deception",
       "Domain.Order"
     ],
     "GrantedDomains": [
-      "Domain.Light"
+      "Domain.Deception",
+      "Domain.Order"
     ],
-    "CombatDelta": 1,
+    "CombatDelta": 0,
     "ResultTags": [
-      "Ending.RemainAsMyth"
+      "Result.Italic.RitualBoundary"
     ]
   },
   {
-    "Name": "EndingDismantle",
-    "ChoiceId": "choice_ending_dismantle",
-    "QuestId": "convergence_main_01",
-    "Prompt": "The apparatus opens one final path.",
-    "OptionText": "Dismantle the apparatus and sever as much temporal contamination as you can.",
+    "Name": "ItalicLawByDomination",
+    "ChoiceId": "choice_italic_domination",
+    "QuestId": "italic_main_01",
+    "Prompt": "The bronze lawgiver asks what order is for.",
+    "OptionText": "Define order as rule backed by fear and permanence.",
     "RequiredDomains": [
-      "Domain.Judgment",
+      "Domain.Order",
+      "Domain.Judgment"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Judgment"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Result.Italic.Domination"
+    ]
+  },
+  {
+    "Name": "ItalicLawReplace",
+    "ChoiceId": "choice_italic_replace",
+    "QuestId": "italic_main_01",
+    "Prompt": "The bronze lawgiver asks what order is for.",
+    "OptionText": "Take command of the law machinery yourself and replace the keeper outright.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Italic.ReplacedKeeper"
+    ]
+  },
+  {
+    "Name": "ItalicRoadBreak",
+    "ChoiceId": "choice_italic_road_break",
+    "QuestId": "italic_side_02",
+    "Prompt": "Serranus asks who the road should serve.",
+    "OptionText": "Break the road before it becomes a perfect line of obedience through the hills.",
+    "RequiredDomains": [
+      "Domain.Storm",
+      "Domain.Death"
+    ],
+    "GrantedDomains": [
+      "Domain.Storm",
+      "Domain.Death"
+    ],
+    "CombatDelta": 2,
+    "ResultTags": [
+      "Result.Italic.Road.Break"
+    ]
+  },
+  {
+    "Name": "ItalicRoadCommon",
+    "ChoiceId": "choice_italic_road_common",
+    "QuestId": "italic_side_02",
+    "Prompt": "Serranus asks who the road should serve.",
+    "OptionText": "Declare the road common work and protect it from private levy and sacred tax alike.",
+    "RequiredDomains": [
       "Domain.Craft"
     ],
     "GrantedDomains": [
       "Domain.Craft",
-      "Domain.Judgment"
-    ],
-    "CombatDelta": 0,
-    "ResultTags": [
-      "Ending.DismantleDivinity"
-    ]
-  },
-  {
-    "Name": "EndingReplaceCompanion",
-    "ChoiceId": "choice_ending_replace_companion",
-    "QuestId": "convergence_main_01",
-    "Prompt": "The apparatus opens one final path.",
-    "OptionText": "Replace one companion-deity and formalize a new order under your name.",
-    "RequiredDomains": [
-      "Domain.Order",
-      "Domain.Storm"
-    ],
-    "GrantedDomains": [
-      "Domain.Order",
-      "Domain.Storm"
-    ],
-    "CombatDelta": 2,
-    "ResultTags": [
-      "Ending.ReplaceCompanion"
-    ]
-  },
-  {
-    "Name": "EndingFragment",
-    "ChoiceId": "choice_ending_fragment",
-    "QuestId": "convergence_main_01",
-    "Prompt": "The apparatus opens one final path.",
-    "OptionText": "Scatter the truth and your legacy so no single culture can own it.",
-    "RequiredDomains": [
-      "Domain.Deception",
-      "Domain.Light"
-    ],
-    "GrantedDomains": [
-      "Domain.Deception",
-      "Domain.Light"
+      "Domain.Healing"
     ],
     "CombatDelta": -1,
     "ResultTags": [
-      "Ending.FragmentLegacy"
+      "Result.Italic.Road.Common"
+    ]
+  },
+  {
+    "Name": "ItalicRoadTithe",
+    "ChoiceId": "choice_italic_road_tithe",
+    "QuestId": "italic_side_02",
+    "Prompt": "Serranus asks who the road should serve.",
+    "OptionText": "Bind the road to law and tithe, then promise fairness through stricter measurement.",
+    "RequiredDomains": [
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "CombatDelta": 1,
+    "ResultTags": [
+      "Result.Italic.Road.Tithe"
+    ]
+  },
+  {
+    "Name": "ItalicLawByService",
+    "ChoiceId": "choice_italic_service",
+    "QuestId": "italic_main_01",
+    "Prompt": "The bronze lawgiver asks what order is for.",
+    "OptionText": "Define order as service and measured protection.",
+    "RequiredDomains": [
+      "Domain.Order"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Healing"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Result.Italic.Service"
+    ]
+  },
+  {
+    "Name": "ItalicLawSharedMeasure",
+    "ChoiceId": "choice_italic_shared_measure",
+    "QuestId": "italic_main_01",
+    "Prompt": "The bronze lawgiver asks what order is for.",
+    "OptionText": "Define order as shared measure: law must be visible, negotiated, and survivable to those beneath it.",
+    "RequiredDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "GrantedDomains": [
+      "Domain.Order",
+      "Domain.Craft"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Italic.SharedMeasure"
+    ]
+  },
+  {
+    "Name": "WitnessConceal",
+    "ChoiceId": "choice_witness_conceal",
+    "QuestId": "opening_side_01",
+    "Prompt": "A terrified witness asks what they saw.",
+    "OptionText": "Tell them it was smoke and panic, not divinity.",
+    "RequiredDomains": [
+      "Domain.Deception"
+    ],
+    "GrantedDomains": [
+      "Domain.Deception"
+    ],
+    "CombatDelta": -1,
+    "ResultTags": [
+      "Result.Witness.Concealed"
+    ]
+  },
+  {
+    "Name": "WitnessProclaim",
+    "ChoiceId": "choice_witness_proclaim",
+    "QuestId": "opening_side_01",
+    "Prompt": "A terrified witness asks what they saw.",
+    "OptionText": "Let the witness call it a miracle and bind your fate to the rumor.",
+    "RequiredDomains": [
+      "Domain.Light"
+    ],
+    "GrantedDomains": [
+      "Domain.Light"
+    ],
+    "CombatDelta": 0,
+    "ResultTags": [
+      "Result.Witness.Public"
     ]
   }
 ]

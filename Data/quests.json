@@ -1,37 +1,45 @@
 [
   {
-    "Name": "OpeningMain",
-    "QuestId": "opening_main_01",
-    "RegionId": "Opening",
-    "Title": "Ashes of Arrival",
-    "Summary": "Escape the catastrophe, survive the first miracle, and choose where to seek answers next.",
-    "PrerequisiteQuestIds": [],
-    "RequiredDomains": [],
-    "RewardDomains": [
-      "Domain.Healing",
-      "Domain.Light"
+    "Name": "ConvergenceMain",
+    "QuestId": "convergence_main_01",
+    "RegionId": "Convergence",
+    "Title": "Many Names",
+    "Summary": "Decide the fate of the descent apparatus, your companions, and the identity history will remember.",
+    "PrerequisiteQuestIds": [
+      "egypt_main_01",
+      "greece_main_01",
+      "italic_main_01"
     ],
-    "bCanEscalateToCombat": false,
-    "FailureStateId": "OpeningFailure",
-    "WorldStateOutputId": "Story.Prologue.Complete"
+    "RequiredDomains": [
+      "Domain.Light",
+      "Domain.Storm",
+      "Domain.Order"
+    ],
+    "RewardDomains": [
+      "Domain.Death",
+      "Domain.Judgment"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "ConvergenceBroken",
+    "WorldStateOutputId": "Story.Ending.Selected"
   },
   {
-    "Name": "OpeningSide",
-    "QuestId": "opening_side_01",
-    "RegionId": "Opening",
-    "Title": "Witness of Fire",
-    "Summary": "Decide whether to conceal the miracle from the first mortal witness or let the story spread.",
+    "Name": "ConvergenceSideChorus",
+    "QuestId": "convergence_side_02",
+    "RegionId": "Convergence",
+    "Title": "The Chorus Below",
+    "Summary": "Resolve the trapped companion chorus beneath the sealed bridge before the dominant deity path absorbs or silences it.",
     "PrerequisiteQuestIds": [
-      "opening_main_01"
+      "convergence_main_01"
     ],
     "RequiredDomains": [],
     "RewardDomains": [
       "Domain.Deception",
-      "Domain.Judgment"
+      "Domain.Light"
     ],
-    "bCanEscalateToCombat": false,
-    "FailureStateId": "WitnessLost",
-    "WorldStateOutputId": "Story.Witness.Defined"
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "ConvergenceChorusFailure",
+    "WorldStateOutputId": "State.Convergence.Chorus.Resolved"
   },
   {
     "Name": "EgyptMain",
@@ -72,6 +80,24 @@
     "WorldStateOutputId": "Region.Egypt.SideResolved"
   },
   {
+    "Name": "EgyptSideLedger",
+    "QuestId": "egypt_side_02",
+    "RegionId": "Egypt",
+    "Title": "The River Ledger",
+    "Summary": "Decide whether grain and flood records remain sacred property, shared survival law, or public tinder.",
+    "PrerequisiteQuestIds": [
+      "egypt_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Judgment",
+      "Domain.Healing"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "EgyptLedgerFailure",
+    "WorldStateOutputId": "State.Egypt.Ledger.Resolved"
+  },
+  {
     "Name": "GreeceMain",
     "QuestId": "greece_main_01",
     "RegionId": "Greece",
@@ -108,6 +134,24 @@
     "bCanEscalateToCombat": true,
     "FailureStateId": "GreeceWarbandFailed",
     "WorldStateOutputId": "Region.Greece.SideResolved"
+  },
+  {
+    "Name": "GreeceSideOaths",
+    "QuestId": "greece_side_02",
+    "RegionId": "Greece",
+    "Title": "Oaths in the Rain",
+    "Summary": "Judge whether storm-oaths bind the living, free the desperate, or become instruments of performance and control.",
+    "PrerequisiteQuestIds": [
+      "greece_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Storm",
+      "Domain.Judgment"
+    ],
+    "bCanEscalateToCombat": true,
+    "FailureStateId": "GreeceOathFailure",
+    "WorldStateOutputId": "State.Greece.Oaths.Resolved"
   },
   {
     "Name": "ItalicMain",
@@ -148,27 +192,55 @@
     "WorldStateOutputId": "Region.Italic.SideResolved"
   },
   {
-    "Name": "ConvergenceMain",
-    "QuestId": "convergence_main_01",
-    "RegionId": "Convergence",
-    "Title": "Many Names",
-    "Summary": "Decide the fate of the descent apparatus, your companions, and the identity history will remember.",
+    "Name": "ItalicSideRoad",
+    "QuestId": "italic_side_02",
+    "RegionId": "ItalicWest",
+    "Title": "Measure of the Road",
+    "Summary": "Choose whether the road belongs to the commons, the tally keepers, or those willing to break it rather than be counted by it.",
     "PrerequisiteQuestIds": [
-      "egypt_main_01",
-      "greece_main_01",
       "italic_main_01"
     ],
-    "RequiredDomains": [
-      "Domain.Light",
-      "Domain.Storm",
-      "Domain.Order"
-    ],
+    "RequiredDomains": [],
     "RewardDomains": [
-      "Domain.Death",
-      "Domain.Judgment"
+      "Domain.Order",
+      "Domain.Craft"
     ],
     "bCanEscalateToCombat": true,
-    "FailureStateId": "ConvergenceBroken",
-    "WorldStateOutputId": "Story.Ending.Selected"
+    "FailureStateId": "ItalicRoadFailure",
+    "WorldStateOutputId": "State.Italic.Road.Resolved"
+  },
+  {
+    "Name": "OpeningMain",
+    "QuestId": "opening_main_01",
+    "RegionId": "Opening",
+    "Title": "Ashes of Arrival",
+    "Summary": "Escape the catastrophe, survive the first miracle, and choose where to seek answers next.",
+    "PrerequisiteQuestIds": [],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Healing",
+      "Domain.Light"
+    ],
+    "bCanEscalateToCombat": false,
+    "FailureStateId": "OpeningFailure",
+    "WorldStateOutputId": "Story.Prologue.Complete"
+  },
+  {
+    "Name": "OpeningSide",
+    "QuestId": "opening_side_01",
+    "RegionId": "Opening",
+    "Title": "Witness of Fire",
+    "Summary": "Decide whether to conceal the miracle from the first mortal witness or let the story spread.",
+    "PrerequisiteQuestIds": [
+      "opening_main_01"
+    ],
+    "RequiredDomains": [],
+    "RewardDomains": [
+      "Domain.Deception",
+      "Domain.Judgment"
+    ],
+    "bCanEscalateToCombat": false,
+    "FailureStateId": "WitnessLost",
+    "WorldStateOutputId": "Story.Witness.Defined"
   }
 ]

@@ -35,6 +35,9 @@ public:
 	bool GetDialogueSceneForQuest(FName QuestId, FManyNamesDialogueSceneRecord& OutRecord) const;
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesDialogueSceneRecord> GetDialogueScenesForQuest(FName QuestId) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
 	TArray<FManyNamesDialogueSceneRecord> GetAllDialogueScenes() const;
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
@@ -48,6 +51,27 @@ public:
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
 	TArray<FManyNamesAmbientProfileRecord> GetAllAmbientProfiles() const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	bool GetCinematicScene(FName SceneId, FManyNamesCinematicSceneRecord& OutRecord) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesCinematicSceneRecord> GetAllCinematicScenes() const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesCinematicSceneRecord> GetCinematicScenesForQuest(FName QuestId) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	bool GetAudioProfile(FName AudioId, FManyNamesAudioProfileRecord& OutRecord) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesAudioProfileRecord> GetAllAudioProfiles() const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	bool GetExternalAssetLicense(FName AssetId, FManyNamesExternalAssetLicenseRecord& OutRecord) const;
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
+	TArray<FManyNamesExternalAssetLicenseRecord> GetAllExternalAssetLicenses() const;
 
 	UFUNCTION(BlueprintPure, Category="ManyNames|Content")
 	TArray<FManyNamesQuestStepRecord> GetQuestStepsForQuest(FName QuestId) const;
@@ -84,6 +108,9 @@ private:
 	bool LoadDialogueScenes();
 	bool LoadCharacterCast();
 	bool LoadAmbientProfiles();
+	bool LoadCinematicScenes();
+	bool LoadAudioProfiles();
+	bool LoadExternalAssetLicenses();
 	FString ResolveDataPath(const FString& RelativePath) const;
 
 	UPROPERTY(Transient)
@@ -123,8 +150,7 @@ private:
 	UPROPERTY(Transient)
 	TArray<FManyNamesDialogueSceneRecord> DialogueScenes;
 
-	UPROPERTY(Transient)
-	TMap<FName, FManyNamesDialogueSceneRecord> DialogueScenesByQuestId;
+	TMap<FName, TArray<FManyNamesDialogueSceneRecord>> DialogueScenesByQuestId;
 
 	UPROPERTY(Transient)
 	TArray<FManyNamesCharacterCastRecord> CharacterCast;
@@ -137,4 +163,24 @@ private:
 
 	UPROPERTY(Transient)
 	TMap<FName, FManyNamesAmbientProfileRecord> AmbientProfilesById;
+
+	UPROPERTY(Transient)
+	TArray<FManyNamesCinematicSceneRecord> CinematicScenes;
+
+	UPROPERTY(Transient)
+	TMap<FName, FManyNamesCinematicSceneRecord> CinematicScenesById;
+
+	TMap<FName, TArray<FManyNamesCinematicSceneRecord>> CinematicScenesByQuestId;
+
+	UPROPERTY(Transient)
+	TArray<FManyNamesAudioProfileRecord> AudioProfiles;
+
+	UPROPERTY(Transient)
+	TMap<FName, FManyNamesAudioProfileRecord> AudioProfilesById;
+
+	UPROPERTY(Transient)
+	TArray<FManyNamesExternalAssetLicenseRecord> ExternalAssetLicenses;
+
+	UPROPERTY(Transient)
+	TMap<FName, FManyNamesExternalAssetLicenseRecord> ExternalAssetLicensesById;
 };

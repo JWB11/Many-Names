@@ -1,0 +1,202 @@
+[
+  {
+    "SceneId": "scene_ending_return",
+    "Backend": "say",
+    "File": "scene_ending_return.wav"
+  },
+  {
+    "SceneId": "scene_ending_myth",
+    "Backend": "say",
+    "File": "scene_ending_myth.wav"
+  },
+  {
+    "SceneId": "scene_ending_dismantle",
+    "Backend": "say",
+    "File": "scene_ending_dismantle.wav"
+  },
+  {
+    "SceneId": "scene_ending_replace",
+    "Backend": "say",
+    "File": "scene_ending_replace.wav"
+  },
+  {
+    "SceneId": "scene_ending_fragment",
+    "Backend": "say",
+    "File": "scene_ending_fragment.wav"
+  },
+  {
+    "SceneId": "scene_convergence_main",
+    "Backend": "say",
+    "File": "scene_convergence_main.wav"
+  },
+  {
+    "SceneId": "scene_convergence_side_chorus",
+    "Backend": "say",
+    "File": "scene_convergence_side_chorus.wav"
+  },
+  {
+    "SceneId": "scene_egypt_main",
+    "Backend": "say",
+    "File": "scene_egypt_main.wav"
+  },
+  {
+    "SceneId": "scene_egypt_side",
+    "Backend": "say",
+    "File": "scene_egypt_side.wav"
+  },
+  {
+    "SceneId": "scene_egypt_side_ledger",
+    "Backend": "say",
+    "File": "scene_egypt_side_ledger.wav"
+  },
+  {
+    "SceneId": "scene_greece_main",
+    "Backend": "say",
+    "File": "scene_greece_main.wav"
+  },
+  {
+    "SceneId": "scene_greece_side",
+    "Backend": "say",
+    "File": "scene_greece_side.wav"
+  },
+  {
+    "SceneId": "scene_greece_side_oaths",
+    "Backend": "say",
+    "File": "scene_greece_side_oaths.wav"
+  },
+  {
+    "SceneId": "scene_italic_main",
+    "Backend": "say",
+    "File": "scene_italic_main.wav"
+  },
+  {
+    "SceneId": "scene_italic_side",
+    "Backend": "say",
+    "File": "scene_italic_side.wav"
+  },
+  {
+    "SceneId": "scene_italic_side_road",
+    "Backend": "say",
+    "File": "scene_italic_side_road.wav"
+  },
+  {
+    "SceneId": "scene_opening_miracle",
+    "Backend": "say",
+    "File": "scene_opening_miracle.wav"
+  },
+  {
+    "SceneId": "scene_opening_witness",
+    "Backend": "say",
+    "File": "scene_opening_witness.wav"
+  },
+  {
+    "SceneId": "cin_opening_arrival",
+    "Backend": "say",
+    "File": "cin_opening_arrival.wav"
+  },
+  {
+    "SceneId": "cin_opening_witness_aftermath",
+    "Backend": "say",
+    "File": "cin_opening_witness_aftermath.wav"
+  },
+  {
+    "SceneId": "cin_egypt_arrival",
+    "Backend": "say",
+    "File": "cin_egypt_arrival.wav"
+  },
+  {
+    "SceneId": "cin_egypt_archive_reveal",
+    "Backend": "say",
+    "File": "cin_egypt_archive_reveal.wav"
+  },
+  {
+    "SceneId": "cin_egypt_ledger_hearing",
+    "Backend": "say",
+    "File": "cin_egypt_ledger_hearing.wav"
+  },
+  {
+    "SceneId": "cin_greece_arrival",
+    "Backend": "say",
+    "File": "cin_greece_arrival.wav"
+  },
+  {
+    "SceneId": "cin_greece_storm_omen",
+    "Backend": "say",
+    "File": "cin_greece_storm_omen.wav"
+  },
+  {
+    "SceneId": "cin_greece_oath_tribunal",
+    "Backend": "say",
+    "File": "cin_greece_oath_tribunal.wav"
+  },
+  {
+    "SceneId": "cin_italic_arrival",
+    "Backend": "say",
+    "File": "cin_italic_arrival.wav"
+  },
+  {
+    "SceneId": "cin_italic_forge_law",
+    "Backend": "say",
+    "File": "cin_italic_forge_law.wav"
+  },
+  {
+    "SceneId": "cin_italic_road_measure",
+    "Backend": "say",
+    "File": "cin_italic_road_measure.wav"
+  },
+  {
+    "SceneId": "cin_convergence_arrival",
+    "Backend": "say",
+    "File": "cin_convergence_arrival.wav"
+  },
+  {
+    "SceneId": "cin_convergence_descent",
+    "Backend": "say",
+    "File": "cin_convergence_descent.wav"
+  },
+  {
+    "SceneId": "cin_convergence_chorus",
+    "Backend": "say",
+    "File": "cin_convergence_chorus.wav"
+  },
+  {
+    "SceneId": "cin_antagonist_oracle",
+    "Backend": "say",
+    "File": "cin_antagonist_oracle.wav"
+  },
+  {
+    "SceneId": "cin_antagonist_sky",
+    "Backend": "say",
+    "File": "cin_antagonist_sky.wav"
+  },
+  {
+    "SceneId": "cin_antagonist_bronze",
+    "Backend": "say",
+    "File": "cin_antagonist_bronze.wav"
+  },
+  {
+    "SceneId": "cin_ending_return",
+    "Backend": "say",
+    "File": "cin_ending_return.wav"
+  },
+  {
+    "SceneId": "cin_ending_myth",
+    "Backend": "say",
+    "File": "cin_ending_myth.wav"
+  },
+  {
+    "SceneId": "cin_ending_dismantle",
+    "Backend": "say",
+    "File": "cin_ending_dismantle.wav"
+  },
+  {
+    "SceneId": "cin_ending_replace",
+    "Backend": "say",
+    "File": "cin_ending_replace.wav"
+  },
+  {
+    "SceneId": "cin_ending_fragment",
+    "Backend": "say",
+    "File": "cin_ending_fragment.wav"
+  }
+]

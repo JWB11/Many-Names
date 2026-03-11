@@ -619,8 +619,8 @@ namespace
 			Profile.RegionPcgGraphId = TEXT("PCG.Opening.AshScatter");
 			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Opening_AshScatter.PCG_Opening_AshScatter"));
 			Profile.TerrainOrigin = FVector(-600.0f, 0.0f, -260.0f);
-			Profile.TerrainExtent = FVector(76000.0f, 52000.0f, 0.0f);
-			Profile.LandscapeComponentCount = FIntPoint(14, 10);
+			Profile.TerrainExtent = FVector(120000.0f, 120000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(18, 18);
 			Profile.HeightAmplitude = 860.0f;
 			Profile.HeightBias = -30.0f;
 			Profile.PrimaryHubLocation = FVector(-2800.0f, 1200.0f, 0.0f);
@@ -642,8 +642,8 @@ namespace
 			Profile.RegionPcgGraphId = TEXT("PCG.Egypt.DryScatter");
 			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Egypt_DryScatter.PCG_Egypt_DryScatter"));
 			Profile.TerrainOrigin = FVector(0.0f, 0.0f, -260.0f);
-			Profile.TerrainExtent = FVector(92000.0f, 62000.0f, 0.0f);
-			Profile.LandscapeComponentCount = FIntPoint(16, 12);
+			Profile.TerrainExtent = FVector(220000.0f, 200000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(24, 22);
 			Profile.HeightAmplitude = 620.0f;
 			Profile.PrimaryHubLocation = FVector(0.0f, -220.0f, 0.0f);
 			Profile.PrimarySpawnLocation = FVector(-9800.0f, -600.0f, 180.0f);
@@ -667,14 +667,14 @@ namespace
 			Profile.RegionPcgGraphId = TEXT("PCG.Greece.MediterraneanScatter");
 			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Greece_MediterraneanScatter.PCG_Greece_MediterraneanScatter"));
 			Profile.TerrainOrigin = FVector(0.0f, 0.0f, -320.0f);
-			Profile.TerrainExtent = FVector(86000.0f, 62000.0f, 0.0f);
-			Profile.LandscapeComponentCount = FIntPoint(15, 12);
+			Profile.TerrainExtent = FVector(240000.0f, 220000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(24, 22);
 			Profile.HeightAmplitude = 980.0f;
 			Profile.PrimaryHubLocation = FVector(0.0f, -180.0f, 0.0f);
-			Profile.PrimarySpawnLocation = FVector(-9200.0f, -200.0f, 220.0f);
+			Profile.PrimarySpawnLocation = FVector(-6200.0f, -120.0f, 220.0f);
 			Profile.bEnableNaniteFoliage = true;
 			Profile.RouteSplines = {
-				{ TEXT("Greece.SpawnToSanctuary"), { FVector(-9200.0f, -200.0f, 0.0f), FVector(-6200.0f, -120.0f, 0.0f), FVector(-2400.0f, 140.0f, 0.0f), FVector(0.0f, -180.0f, 0.0f) }, 760.0f, TEXT("Main ascent into the sanctuary court.") },
+				{ TEXT("Greece.SpawnToSanctuary"), { FVector(-6200.0f, -120.0f, 0.0f), FVector(-4200.0f, -20.0f, 0.0f), FVector(-2400.0f, 140.0f, 0.0f), FVector(0.0f, -180.0f, 0.0f) }, 760.0f, TEXT("Main ascent into the sanctuary court.") },
 				{ TEXT("Greece.SanctuaryToShrine"), { FVector(0.0f, -180.0f, 0.0f), FVector(1200.0f, 620.0f, 0.0f), FVector(2100.0f, 1400.0f, 0.0f), FVector(3600.0f, 3200.0f, 0.0f) }, 700.0f, TEXT("Cliff route from sanctuary to the upper shrine court.") },
 				{ TEXT("Greece.SanctuaryToStormRidge"), { FVector(0.0f, -180.0f, 0.0f), FVector(-600.0f, -1200.0f, 0.0f), FVector(-200.0f, -2800.0f, 0.0f), FVector(800.0f, -4600.0f, 0.0f) }, 700.0f, TEXT("Exposed storm-ridge route beneath the divine landmark.") }
 			};
@@ -689,14 +689,14 @@ namespace
 			Profile.RegionPcgGraphId = TEXT("PCG.Italic.RoadsideScatter");
 			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Italic_RoadsideScatter.PCG_Italic_RoadsideScatter"));
 			Profile.TerrainOrigin = FVector(0.0f, 0.0f, -280.0f);
-			Profile.TerrainExtent = FVector(84000.0f, 56000.0f, 0.0f);
-			Profile.LandscapeComponentCount = FIntPoint(15, 11);
+			Profile.TerrainExtent = FVector(200000.0f, 200000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(22, 22);
 			Profile.HeightAmplitude = 700.0f;
 			Profile.PrimaryHubLocation = FVector(-1200.0f, -600.0f, 0.0f);
-			Profile.PrimarySpawnLocation = FVector(-9200.0f, -300.0f, 210.0f);
+			Profile.PrimarySpawnLocation = FVector(-6200.0f, -360.0f, 220.0f);
 			Profile.bEnableNaniteFoliage = true;
 			Profile.RouteSplines = {
-				{ TEXT("Italic.SpawnToSettlement"), { FVector(-9200.0f, -300.0f, 0.0f), FVector(-6200.0f, -360.0f, 0.0f), FVector(-2800.0f, -520.0f, 0.0f), FVector(-1200.0f, -600.0f, 0.0f) }, 700.0f, TEXT("Primary road into the hill settlement.") },
+				{ TEXT("Italic.SpawnToSettlement"), { FVector(-6200.0f, -360.0f, 0.0f), FVector(-4600.0f, -420.0f, 0.0f), FVector(-2800.0f, -520.0f, 0.0f), FVector(-1200.0f, -600.0f, 0.0f) }, 700.0f, TEXT("Primary road into the hill settlement.") },
 				{ TEXT("Italic.SettlementToBoundary"), { FVector(-1200.0f, -600.0f, 0.0f), FVector(-400.0f, 620.0f, 0.0f), FVector(800.0f, 1180.0f, 0.0f), FVector(3800.0f, 2400.0f, 0.0f) }, 700.0f, TEXT("Ritual road and boundary field approach.") },
 				{ TEXT("Italic.SettlementToForge"), { FVector(-1200.0f, -600.0f, 0.0f), FVector(-200.0f, -420.0f, 0.0f), FVector(1000.0f, -260.0f, 0.0f), FVector(1800.0f, -200.0f, 0.0f) }, 620.0f, TEXT("Civic route linking the settlement and forge-law chamber.") }
 			};
@@ -712,8 +712,8 @@ namespace
 			Profile.RegionPcgGraphId = TEXT("PCG.Convergence.SparseScatter");
 			Profile.RegionPcgGraphAsset = FSoftObjectPath(TEXT("/Game/PCG/Regions/PCG_Convergence_SparseScatter.PCG_Convergence_SparseScatter"));
 			Profile.TerrainOrigin = FVector(0.0f, 0.0f, -340.0f);
-			Profile.TerrainExtent = FVector(76000.0f, 52000.0f, 0.0f);
-			Profile.LandscapeComponentCount = FIntPoint(14, 10);
+			Profile.TerrainExtent = FVector(180000.0f, 160000.0f, 0.0f);
+			Profile.LandscapeComponentCount = FIntPoint(20, 18);
 			Profile.HeightAmplitude = 900.0f;
 			Profile.PrimaryHubLocation = FVector(0.0f, 2200.0f, 0.0f);
 			Profile.PrimarySpawnLocation = FVector(-8600.0f, -420.0f, 220.0f);
@@ -1562,6 +1562,18 @@ namespace
 			{ TEXT("State.Region.Opening.Complete") },
 			true);
 
+		SpawnInteractableNpc(
+			World,
+			TEXT("RiverScribe"),
+			FText::FromString(TEXT("Inspect the river ledgers")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("RiverScribe"), 5), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("RiverScribe"), TEXT("Camera.RiverLedger"), TEXT("RiverScribe"), TEXT("egypt_scribe_named"), TEXT("named_scribe"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
+			FVector(-5980.0f, -2480.0f, 88.0f),
+			42.0f,
+			EManyNamesInteractionActionType::QuestDialogue,
+			TEXT("egypt_side_02"),
+			{ TEXT("State.Region.Egypt.Complete") },
+			true);
+
 		SpawnNpc(World, TEXT("TemplePriest_01"), MakeNpcProfile(RoleTags.AmbientRitual, ResolveAmbientCharacter(Assets, TEXT("Egypt.Priests"), 0), Assets.IdleAnimation), FVector(-360.0f, -520.0f, 88.0f), 20.0f);
 		SpawnNpc(World, TEXT("TemplePriest_02"), MakeNpcProfile(RoleTags.AmbientRitual, ResolveAmbientCharacter(Assets, TEXT("Egypt.Priests"), 1), Assets.IdleAnimation), FVector(420.0f, -640.0f, 88.0f), -25.0f);
 		SpawnNpc(World, TEXT("ArchiveScribe_01"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Egypt.Scribes"), 2), Assets.IdleAnimation), FVector(2220.0f, -280.0f, 88.0f), -90.0f);
@@ -1576,8 +1588,10 @@ namespace
 		SpawnNpc(World, TEXT("Citizen_03"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Egypt.Vendors"), 11), Assets.IdleAnimation), FVector(-1820.0f, 980.0f, 88.0f), -60.0f);
 		SpawnAmbientCluster(World, TEXT("EgyptMarketCrowd"), RoleTags.AmbientCivilian, Assets, TEXT("Egypt.Vendors"), FVector(-3000.0f, -220.0f, 88.0f), { FVector(0.0f, 0.0f, 0.0f), FVector(260.0f, 520.0f, 0.0f), FVector(260.0f, -520.0f, 0.0f), FVector(480.0f, 860.0f, 0.0f), FVector(520.0f, -860.0f, 0.0f), FVector(760.0f, 180.0f, 0.0f) }, 90.0f, true);
 		SpawnAmbientCluster(World, TEXT("EgyptTempleCrowd"), RoleTags.AmbientRitual, Assets, TEXT("Egypt.Priests"), FVector(0.0f, -420.0f, 88.0f), { FVector(-620.0f, -120.0f, 0.0f), FVector(620.0f, -120.0f, 0.0f), FVector(-420.0f, 220.0f, 0.0f), FVector(420.0f, 220.0f, 0.0f) }, 180.0f, true);
+		SpawnAmbientCluster(World, TEXT("EgyptAdjudicatorCourt"), RoleTags.AmbientCivilian, Assets, TEXT("Egypt.Adjudicators"), FVector(-880.0f, -1100.0f, 88.0f), { FVector(-240.0f, 40.0f, 0.0f), FVector(220.0f, -20.0f, 0.0f), FVector(20.0f, 260.0f, 0.0f), FVector(-420.0f, 240.0f, 0.0f) }, 25.0f, true);
 		SpawnNpc(World, TEXT("TempleCantor"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("TempleCantor"), 3), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("TempleCantor"), NAME_None, TEXT("TempleCantor"), TEXT("egypt_priest_group"), TEXT("named_ritual"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-260.0f, -760.0f, 88.0f), 10.0f);
 		SpawnNpc(World, TEXT("GranarySteward"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("GranarySteward"), 4), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("GranarySteward"), NAME_None, TEXT("GranarySteward"), TEXT("egypt_market_group"), TEXT("named_steward"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-2120.0f, -1240.0f, 88.0f), 85.0f);
+		SpawnNpc(World, TEXT("TempleAdjudicator"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("TempleAdjudicator"), 6), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("TempleAdjudicator"), NAME_None, TEXT("TempleAdjudicator"), TEXT("egypt_adjudicator_named"), TEXT("named_adjudicator"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-840.0f, -960.0f, 88.0f), 20.0f);
 	}
 
 	void BuildGreeceMap(UWorld* World, const FManyNamesBuildAssets& Assets, const FManyNamesRoleTags& RoleTags)
@@ -1591,6 +1605,7 @@ namespace
 		SpawnEnvironmentController(World, EnvironmentProfile);
 		BuildTerrainSystems(World, TerrainProfile);
 
+		SpawnTerrainShelf(World, TEXT("GreeceArrivalShelf"), Assets.Cube, FVector(-6200.0f, -120.0f, 36.0f), FVector(9.0f, 2.4f, 0.24f), Assets.Basalt);
 		SpawnTerrainShelf(World, TEXT("SanctuaryCourt"), Assets.Cube, FVector(0.0f, -180.0f, 70.0f), FVector(10.0f, 7.0f, 0.8f), Assets.Plaster);
 		SpawnScenic(World, TEXT("StormLandmark"), PickMesh(Assets.GreeceDolmen, Assets.Cone), FVector(0.0f, -1280.0f, 250.0f), FVector(3.0f, 3.0f, 3.0f), nullptr, FRotator(0.0f, 35.0f, 0.0f));
 		SpawnScenic(World, TEXT("MountainRoute"), Assets.Cube, FVector(1800.0f, 1500.0f, 180.0f), FVector(16.0f, 2.4f, 0.3f), Assets.Basalt, FRotator(10.0f, 45.0f, 0.0f));
@@ -1647,6 +1662,18 @@ namespace
 			{ TEXT("State.Region.Opening.Complete") },
 			true);
 
+		SpawnInteractableNpc(
+			World,
+			TEXT("OathBearer"),
+			FText::FromString(TEXT("Hear the oath-bearers")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("OathBearer"), 5), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("OathBearer"), TEXT("Camera.OathShelter"), TEXT("OathBearer"), TEXT("greece_oath_named"), TEXT("named_oath"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
+			FVector(-1860.0f, 540.0f, 88.0f),
+			120.0f,
+			EManyNamesInteractionActionType::QuestDialogue,
+			TEXT("greece_side_02"),
+			{ TEXT("State.Region.Greece.Complete") },
+			true);
+
 		SpawnNpc(World, TEXT("RitualSinger_01"), MakeNpcProfile(RoleTags.AmbientRitual, ResolveAmbientCharacter(Assets, TEXT("Greece.Heralds"), 0), Assets.IdleAnimation), FVector(-420.0f, -360.0f, 88.0f), 110.0f);
 		SpawnNpc(World, TEXT("RitualSinger_02"), MakeNpcProfile(RoleTags.AmbientRitual, ResolveAmbientCharacter(Assets, TEXT("Greece.Heralds"), 1), Assets.IdleAnimation), FVector(420.0f, -350.0f, 88.0f), -110.0f);
 		SpawnNpc(World, TEXT("Guard_Cliff"), MakeNpcProfile(RoleTags.AmbientGuard, ResolveAmbientCharacter(Assets, TEXT("Greece.Guards"), 2), Assets.IdleAnimation), FVector(2350.0f, 1860.0f, 88.0f), -90.0f);
@@ -1656,8 +1683,10 @@ namespace
 		SpawnNpc(World, TEXT("Pilgrim_03"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Greece.Pilgrims"), 6), Assets.IdleAnimation), FVector(620.0f, 640.0f, 88.0f), 160.0f);
 		SpawnAmbientCluster(World, TEXT("GreeceSanctuaryCrowd"), RoleTags.AmbientCivilian, Assets, TEXT("Greece.Pilgrims"), FVector(-240.0f, -120.0f, 88.0f), { FVector(-820.0f, 160.0f, 0.0f), FVector(-420.0f, 380.0f, 0.0f), FVector(240.0f, 420.0f, 0.0f), FVector(760.0f, 160.0f, 0.0f), FVector(320.0f, -260.0f, 0.0f) }, 90.0f, true);
 		SpawnAmbientCluster(World, TEXT("GreeceRitualChorus"), RoleTags.AmbientRitual, Assets, TEXT("Greece.Heralds"), FVector(0.0f, -760.0f, 88.0f), { FVector(-360.0f, 0.0f, 0.0f), FVector(360.0f, 0.0f, 0.0f), FVector(-180.0f, 220.0f, 0.0f), FVector(180.0f, 220.0f, 0.0f) }, 170.0f, true);
+		SpawnAmbientCluster(World, TEXT("GreeceOathkeepers"), RoleTags.AmbientRitual, Assets, TEXT("Greece.Oathkeepers"), FVector(-1320.0f, 420.0f, 88.0f), { FVector(-260.0f, 0.0f, 0.0f), FVector(260.0f, 0.0f, 0.0f), FVector(0.0f, 240.0f, 0.0f), FVector(0.0f, -240.0f, 0.0f) }, 150.0f, true);
 		SpawnNpc(World, TEXT("SanctuaryKeeper"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("SanctuaryKeeper"), 3), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("SanctuaryKeeper"), NAME_None, TEXT("SanctuaryKeeper"), TEXT("greece_ritual_group"), TEXT("named_keeper"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-620.0f, -120.0f, 88.0f), 40.0f);
 		SpawnNpc(World, TEXT("WarSinger"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("WarSinger"), 4), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("WarSinger"), NAME_None, TEXT("WarSinger"), TEXT("greece_pilgrim_group"), TEXT("named_ritual"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(840.0f, -180.0f, 88.0f), -40.0f);
+		SpawnNpc(World, TEXT("HillOracle"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("HillOracle"), 6), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("HillOracle"), NAME_None, TEXT("HillOracle"), TEXT("greece_oracle_named"), TEXT("named_oracle"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(3120.0f, 2960.0f, 88.0f), -120.0f);
 	}
 
 	void BuildItalicMap(UWorld* World, const FManyNamesBuildAssets& Assets, const FManyNamesRoleTags& RoleTags)
@@ -1671,6 +1700,7 @@ namespace
 		SpawnEnvironmentController(World, EnvironmentProfile);
 		BuildTerrainSystems(World, TerrainProfile);
 
+		SpawnTerrainShelf(World, TEXT("ItalicArrivalShelf"), Assets.Cube, FVector(-6200.0f, -360.0f, 48.0f), FVector(9.0f, 2.6f, 0.3f), Assets.Basalt);
 		SpawnTerrainShelf(World, TEXT("HillSettlement"), Assets.Cube, FVector(-1200.0f, -600.0f, 120.0f), FVector(8.0f, 6.0f, 1.4f), Assets.Plaster);
 		SpawnTerrainShelf(World, TEXT("ForgeLawChamber"), Assets.Cube, FVector(1800.0f, -200.0f, 220.0f), FVector(6.5f, 5.0f, 2.0f), Assets.Basalt);
 		SpawnTerrainShelf(World, TEXT("RitualRoad"), Assets.Cube, FVector(250.0f, 1600.0f, 50.0f), FVector(17.0f, 2.0f, 0.25f), Assets.Basalt, FRotator(0.0f, 16.0f, 0.0f));
@@ -1723,6 +1753,18 @@ namespace
 			{ TEXT("State.Region.Opening.Complete") },
 			true);
 
+		SpawnInteractableNpc(
+			World,
+			TEXT("RoadMagistrate"),
+			FText::FromString(TEXT("Judge the road's ownership")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("RoadMagistrate"), 5), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("RoadMagistrate"), TEXT("Camera.RoadMeasure"), TEXT("RoadMagistrate"), TEXT("italic_magistrate_named"), TEXT("named_magistrate"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
+			FVector(120.0f, 1540.0f, 88.0f),
+			80.0f,
+			EManyNamesInteractionActionType::QuestDialogue,
+			TEXT("italic_side_02"),
+			{ TEXT("State.Region.ItalicWest.Complete") },
+			true);
+
 		SpawnNpc(World, TEXT("ForgeGuard_01"), MakeNpcProfile(RoleTags.AmbientGuard, ResolveAmbientCharacter(Assets, TEXT("Italic.Guards"), 0), Assets.IdleAnimation), FVector(1080.0f, -420.0f, 88.0f), 45.0f);
 		SpawnNpc(World, TEXT("ForgeGuard_02"), MakeNpcProfile(RoleTags.AmbientGuard, ResolveAmbientCharacter(Assets, TEXT("Italic.Guards"), 1), Assets.IdleAnimation), FVector(1100.0f, 300.0f, 88.0f), -45.0f);
 		SpawnNpc(World, TEXT("RoadWorker_01"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Italic.Workers"), 2), Assets.IdleAnimation), FVector(-640.0f, 1380.0f, 88.0f), 90.0f);
@@ -1731,8 +1773,10 @@ namespace
 		SpawnNpc(World, TEXT("HillCitizen"), MakeNpcProfile(RoleTags.AmbientCivilian, ResolveAmbientCharacter(Assets, TEXT("Italic.Workers"), 5), Assets.IdleAnimation), FVector(-1420.0f, -460.0f, 88.0f), 0.0f);
 		SpawnAmbientCluster(World, TEXT("ItalicSettlementCrowd"), RoleTags.AmbientCivilian, Assets, TEXT("Italic.Workers"), FVector(-1220.0f, -620.0f, 88.0f), { FVector(-620.0f, 140.0f, 0.0f), FVector(-180.0f, 360.0f, 0.0f), FVector(240.0f, 320.0f, 0.0f), FVector(620.0f, 180.0f, 0.0f) }, 25.0f, true);
 		SpawnAmbientCluster(World, TEXT("ItalicBoundaryCrowd"), RoleTags.AmbientRitual, Assets, TEXT("Italic.Ritual"), FVector(2320.0f, 1480.0f, 88.0f), { FVector(-320.0f, 0.0f, 0.0f), FVector(320.0f, 0.0f, 0.0f), FVector(-140.0f, 220.0f, 0.0f), FVector(160.0f, 220.0f, 0.0f) }, 180.0f, true);
+		SpawnAmbientCluster(World, TEXT("ItalicMagistrateCourt"), RoleTags.AmbientCivilian, Assets, TEXT("Italic.Magistrates"), FVector(-60.0f, 1580.0f, 88.0f), { FVector(-260.0f, 0.0f, 0.0f), FVector(260.0f, 0.0f, 0.0f), FVector(0.0f, 240.0f, 0.0f) }, 120.0f, true);
 		SpawnNpc(World, TEXT("ForgeMatron"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("ForgeMatron"), 3), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("ForgeMatron"), NAME_None, TEXT("ForgeMatron"), TEXT("italic_worker_group"), TEXT("named_worker"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(1420.0f, 120.0f, 88.0f), 70.0f);
 		SpawnNpc(World, TEXT("RoadSurveyor"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("RoadSurveyor"), 4), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("RoadSurveyor"), NAME_None, TEXT("RoadSurveyor"), TEXT("italic_guard_group"), TEXT("named_worker"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(-180.0f, 1480.0f, 88.0f), 95.0f);
+		SpawnNpc(World, TEXT("ForgeApprentice"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("ForgeApprentice"), 6), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("ForgeApprentice"), NAME_None, TEXT("ForgeApprentice"), TEXT("italic_forge_named"), TEXT("named_apprentice"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(980.0f, 220.0f, 88.0f), 30.0f);
 	}
 
 	void BuildConvergenceMap(UWorld* World, const FManyNamesBuildAssets& Assets, const FManyNamesRoleTags& RoleTags)
@@ -1783,10 +1827,25 @@ namespace
 			}
 		}
 
+		SpawnInteractableNpc(
+			World,
+			TEXT("BurialCustodian"),
+			FText::FromString(TEXT("Question the burial custodians")),
+			MakeNpcProfile(RoleTags.NamedInteractable, ResolveNamedCharacter(Assets, TEXT("BurialCustodian"), 5), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("BurialCustodian"), TEXT("Camera.ChorusVault"), TEXT("BurialCustodian"), TEXT("convergence_custodian_named"), TEXT("named_custodian"), EManyNamesCrowdBehaviorTier::StoryFacing, true),
+			FVector(-620.0f, 2460.0f, 88.0f),
+			35.0f,
+			EManyNamesInteractionActionType::QuestDialogue,
+			TEXT("convergence_side_02"),
+			{ TEXT("State.Region.Convergence.Complete") },
+			true);
+
 		SpawnNpc(World, TEXT("BridgeWatcher"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("BridgeWatcher"), 0), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("BridgeWatcher"), TEXT("Camera.BridgeWatcher")), FVector(-460.0f, 2000.0f, 88.0f), 30.0f);
 		SpawnNpc(World, TEXT("SystemsRemnant"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("SystemsRemnant"), 1), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("SystemsRemnant"), TEXT("Camera.SystemsRemnant")), FVector(540.0f, 1950.0f, 88.0f), -30.0f);
 		SpawnNpc(World, TEXT("CompanionChorus"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("CompanionChorus"), 2), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("CompanionChorus"), NAME_None, TEXT("CompanionChorus"), TEXT("convergence_remnant_group"), TEXT("named_uncanny"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(0.0f, 1760.0f, 88.0f), 180.0f);
+		SpawnNpc(World, TEXT("SignalArchivist"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("SignalArchivist"), 6), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("SignalArchivist"), NAME_None, TEXT("SignalArchivist"), TEXT("convergence_archivist_named"), TEXT("named_archivist"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(680.0f, 2560.0f, 88.0f), -150.0f);
+		SpawnNpc(World, TEXT("LoyalistRemnant"), MakeNpcProfile(RoleTags.NamedScenic, ResolveNamedCharacter(Assets, TEXT("LoyalistRemnant"), 7), Assets.IdleAnimation, nullptr, FVector(1.0f), FVector(0.0f, 0.0f, -88.0f), true, TEXT("LoyalistRemnant"), NAME_None, TEXT("LoyalistRemnant"), TEXT("convergence_loyalist_named"), TEXT("named_loyalist"), EManyNamesCrowdBehaviorTier::StoryFacing, true), FVector(420.0f, 1420.0f, 88.0f), 140.0f);
 		SpawnAmbientCluster(World, TEXT("ConvergenceRemnants"), RoleTags.AmbientCivilian, Assets, TEXT("Convergence.Remnants"), FVector(0.0f, 2080.0f, 88.0f), { FVector(-960.0f, -120.0f, 0.0f), FVector(920.0f, -80.0f, 0.0f), FVector(-620.0f, 260.0f, 0.0f) }, 180.0f);
+		SpawnAmbientCluster(World, TEXT("ConvergenceCustodians"), RoleTags.AmbientRitual, Assets, TEXT("Convergence.Custodians"), FVector(-260.0f, 2520.0f, 88.0f), { FVector(-220.0f, 0.0f, 0.0f), FVector(220.0f, 0.0f, 0.0f), FVector(0.0f, 260.0f, 0.0f) }, 180.0f, true);
 	}
 
 	bool SaveBuiltMap(UWorld* World, const FString& MapPath)

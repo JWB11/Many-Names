@@ -154,6 +154,13 @@ bool UManyNamesContentSubsystem::ReloadSupplementalContent()
 	CharacterCastById.Reset();
 	AmbientProfiles.Reset();
 	AmbientProfilesById.Reset();
+	CinematicScenes.Reset();
+	CinematicScenesById.Reset();
+	CinematicScenesByQuestId.Reset();
+	AudioProfiles.Reset();
+	AudioProfilesById.Reset();
+	ExternalAssetLicenses.Reset();
+	ExternalAssetLicensesById.Reset();
 
 	const bool bQuestStepsLoaded = LoadQuestSteps();
 	const bool bConsequencesLoaded = LoadChoiceConsequences();
@@ -161,7 +168,12 @@ bool UManyNamesContentSubsystem::ReloadSupplementalContent()
 	const bool bDialogueScenesLoaded = LoadDialogueScenes();
 	const bool bCharacterCastLoaded = LoadCharacterCast();
 	const bool bAmbientProfilesLoaded = LoadAmbientProfiles();
-	return bQuestStepsLoaded && bConsequencesLoaded && bEndingGatesLoaded && bDialogueScenesLoaded && bCharacterCastLoaded && bAmbientProfilesLoaded;
+	const bool bCinematicScenesLoaded = LoadCinematicScenes();
+	const bool bAudioProfilesLoaded = LoadAudioProfiles();
+	const bool bExternalLicensesLoaded = LoadExternalAssetLicenses();
+	return bQuestStepsLoaded && bConsequencesLoaded && bEndingGatesLoaded && bDialogueScenesLoaded &&
+		bCharacterCastLoaded && bAmbientProfilesLoaded && bCinematicScenesLoaded &&
+		bAudioProfilesLoaded && bExternalLicensesLoaded;
 }
 
 bool UManyNamesContentSubsystem::GetRegionRow(EManyNamesRegionId RegionId, FManyNamesRegionRow& OutRow) const
@@ -205,13 +217,26 @@ TArray<FManyNamesDialogueChoiceRow> UManyNamesContentSubsystem::GetDialogueChoic
 
 bool UManyNamesContentSubsystem::GetDialogueSceneForQuest(FName QuestId, FManyNamesDialogueSceneRecord& OutRecord) const
 {
-	if (const FManyNamesDialogueSceneRecord* Record = DialogueScenesByQuestId.Find(QuestId))
+	if (const TArray<FManyNamesDialogueSceneRecord>* Records = DialogueScenesByQuestId.Find(QuestId))
 	{
-		OutRecord = *Record;
-		return true;
+		if (Records->Num() > 0)
+		{
+			OutRecord = (*Records)[0];
+			return true;
+		}
 	}
 
 	return false;
+}
+
+TArray<FManyNamesDialogueSceneRecord> UManyNamesContentSubsystem::GetDialogueScenesForQuest(FName QuestId) const
+{
+	if (const TArray<FManyNamesDialogueSceneRecord>* Records = DialogueScenesByQuestId.Find(QuestId))
+	{
+		return *Records;
+	}
+
+	return {};
 }
 
 TArray<FManyNamesDialogueSceneRecord> UManyNamesContentSubsystem::GetAllDialogueScenes() const
@@ -249,6 +274,64 @@ bool UManyNamesContentSubsystem::GetAmbientProfile(FName ProfileId, FManyNamesAm
 TArray<FManyNamesAmbientProfileRecord> UManyNamesContentSubsystem::GetAllAmbientProfiles() const
 {
 	return AmbientProfiles;
+}
+
+bool UManyNamesContentSubsystem::GetCinematicScene(FName SceneId, FManyNamesCinematicSceneRecord& OutRecord) const
+{
+	if (const FManyNamesCinematicSceneRecord* Record = CinematicScenesById.Find(SceneId))
+	{
+		OutRecord = *Record;
+		return true;
+	}
+
+	return false;
+}
+
+TArray<FManyNamesCinematicSceneRecord> UManyNamesContentSubsystem::GetAllCinematicScenes() const
+{
+	return CinematicScenes;
+}
+
+TArray<FManyNamesCinematicSceneRecord> UManyNamesContentSubsystem::GetCinematicScenesForQuest(FName QuestId) const
+{
+	if (const TArray<FManyNamesCinematicSceneRecord>* Records = CinematicScenesByQuestId.Find(QuestId))
+	{
+		return *Records;
+	}
+
+	return {};
+}
+
+bool UManyNamesContentSubsystem::GetAudioProfile(FName AudioId, FManyNamesAudioProfileRecord& OutRecord) const
+{
+	if (const FManyNamesAudioProfileRecord* Record = AudioProfilesById.Find(AudioId))
+	{
+		OutRecord = *Record;
+		return true;
+	}
+
+	return false;
+}
+
+TArray<FManyNamesAudioProfileRecord> UManyNamesContentSubsystem::GetAllAudioProfiles() const
+{
+	return AudioProfiles;
+}
+
+bool UManyNamesContentSubsystem::GetExternalAssetLicense(FName AssetId, FManyNamesExternalAssetLicenseRecord& OutRecord) const
+{
+	if (const FManyNamesExternalAssetLicenseRecord* Record = ExternalAssetLicensesById.Find(AssetId))
+	{
+		OutRecord = *Record;
+		return true;
+	}
+
+	return false;
+}
+
+TArray<FManyNamesExternalAssetLicenseRecord> UManyNamesContentSubsystem::GetAllExternalAssetLicenses() const
+{
+	return ExternalAssetLicenses;
 }
 
 TArray<FManyNamesQuestStepRecord> UManyNamesContentSubsystem::GetQuestStepsForQuest(FName QuestId) const
@@ -372,6 +455,7 @@ bool UManyNamesContentSubsystem::LoadPrimaryRegions()
 		Row.HubMap = FSoftObjectPath(Object->GetStringField(TEXT("HubMap")));
 
 		PopulateNameArray(GetStringArrayField(Object, TEXT("QuestIds")), Row.QuestIds);
+		PopulateNameArray(GetStringArrayField(Object, TEXT("EntryConditions")), Row.EntryConditionOutputs);
 		PopulateGameplayTagContainer(GetStringArrayField(Object, TEXT("EntryConditions")), Row.EntryConditions);
 
 		EManyNamesRegionId RegionId;
@@ -533,7 +617,7 @@ bool UManyNamesContentSubsystem::LoadDialogueScenes()
 	{
 		if (!Record.QuestId.IsNone())
 		{
-			DialogueScenesByQuestId.Add(Record.QuestId, Record);
+			DialogueScenesByQuestId.FindOrAdd(Record.QuestId).Add(Record);
 		}
 	}
 
@@ -567,6 +651,58 @@ bool UManyNamesContentSubsystem::LoadAmbientProfiles()
 	for (const FManyNamesAmbientProfileRecord& Record : AmbientProfiles)
 	{
 		AmbientProfilesById.Add(Record.ProfileId, Record);
+	}
+
+	return true;
+}
+
+bool UManyNamesContentSubsystem::LoadCinematicScenes()
+{
+	const UManyNamesDeveloperSettings* Settings = GetDefault<UManyNamesDeveloperSettings>();
+	if (!LoadJsonArrayFile(ResolveDataPath(Settings->CinematicScenesJsonPath), CinematicScenes))
+	{
+		return false;
+	}
+
+	for (const FManyNamesCinematicSceneRecord& Record : CinematicScenes)
+	{
+		CinematicScenesById.Add(Record.SceneId, Record);
+		if (!Record.QuestId.IsNone())
+		{
+			CinematicScenesByQuestId.FindOrAdd(Record.QuestId).Add(Record);
+		}
+	}
+
+	return true;
+}
+
+bool UManyNamesContentSubsystem::LoadAudioProfiles()
+{
+	const UManyNamesDeveloperSettings* Settings = GetDefault<UManyNamesDeveloperSettings>();
+	if (!LoadJsonArrayFile(ResolveDataPath(Settings->AudioProfilesJsonPath), AudioProfiles))
+	{
+		return false;
+	}
+
+	for (const FManyNamesAudioProfileRecord& Record : AudioProfiles)
+	{
+		AudioProfilesById.Add(Record.AudioId, Record);
+	}
+
+	return true;
+}
+
+bool UManyNamesContentSubsystem::LoadExternalAssetLicenses()
+{
+	const UManyNamesDeveloperSettings* Settings = GetDefault<UManyNamesDeveloperSettings>();
+	if (!LoadJsonArrayFile(ResolveDataPath(Settings->ExternalAssetLicensesJsonPath), ExternalAssetLicenses))
+	{
+		return false;
+	}
+
+	for (const FManyNamesExternalAssetLicenseRecord& Record : ExternalAssetLicenses)
+	{
+		ExternalAssetLicensesById.Add(Record.AssetId, Record);
 	}
 
 	return true;

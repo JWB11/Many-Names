@@ -10,3 +10,5 @@ Saved/
 *.sln
 *.xcodeproj
 *.xcworkspace
+__pycache__/
+*.pyc

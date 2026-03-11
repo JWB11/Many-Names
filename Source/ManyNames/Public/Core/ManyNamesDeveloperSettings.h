@@ -47,6 +47,15 @@ public:
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
 	FString AmbientProfilesJsonPath = TEXT("Data/ambient_profiles.json");
 
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
+	FString CinematicScenesJsonPath = TEXT("Data/cinematic_scenes.json");
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
+	FString AudioProfilesJsonPath = TEXT("Data/audio_profiles.json");
+
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Data")
+	FString ExternalAssetLicensesJsonPath = TEXT("Data/external_asset_licenses.json");
+
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category="Save")
 	FString DefaultSaveSlot = TEXT("ManyNames_Autosave");
 };

@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "Data"
 CONTENT = ROOT / "Content" / "Characters" / "MetaHumans"
 MANIFEST_PATH = DATA / "metahuman_manifest.json"
+GENERATED_AUDIO = ROOT / "Generated" / "AudioSources"
 FORBIDDEN_RUNTIME_MARKERS = ("Manny", "Quinn", "SKM_Manny", "SKM_Quinn", "MetaHumanA", "MetaHumanB", "MetaHumanC")
 
 
@@ -25,6 +26,16 @@ def unique(values, label):
         seen.add(value)
 
 
+def asset_path_exists(asset_path: str) -> bool:
+    if not asset_path:
+        return False
+    package = asset_path.split(".", 1)[0]
+    if not package.startswith("/Game/"):
+        return False
+    relative = package[len("/Game/"):]
+    return (ROOT / "Content" / f"{relative}.uasset").exists()
+
+
 def main():
     quests = load_json("quests.json")
     dialogue = load_json("dialogue_choices.json")
@@ -35,6 +46,9 @@ def main():
     cast = load_json("character_cast.json")
     ambient = load_json("ambient_profiles.json")
     manifest = load_json("metahuman_manifest.json")
+    cinematic_scenes = load_json("cinematic_scenes.json")
+    audio_profiles = load_json("audio_profiles.json")
+    external_asset_licenses = load_json("external_asset_licenses.json")
 
     quest_ids = [row["QuestId"] for row in quests]
     choice_ids = [row["ChoiceId"] for row in dialogue]
@@ -48,12 +62,18 @@ def main():
     unique([row["SceneId"] for row in scenes], "scene id")
     unique([row["CharacterId"] for row in cast], "character id")
     unique([row["ProfileId"] for row in ambient], "ambient profile id")
+    unique([row["SceneId"] for row in cinematic_scenes], "cinematic scene id")
+    unique([row["AudioId"] for row in audio_profiles], "audio profile id")
+    unique([row["AssetId"] for row in external_asset_licenses], "external asset license id")
 
     quest_id_set = set(quest_ids)
     choice_id_set = set(choice_ids)
     consequence_choice_id_set = set(consequence_choice_ids)
     scene_quest_ids = {row["QuestId"] for row in scenes if row.get("QuestId")}
     cast_id_set = {row["CharacterId"] for row in cast}
+    cinematic_scene_id_set = {row["SceneId"] for row in cinematic_scenes}
+    audio_profile_id_set = {row["AudioId"] for row in audio_profiles}
+    licensed_asset_ids = {row["AssetId"] for row in external_asset_licenses}
     non_human_projection_ids = {"ConvergenceCore", "LegacyProjection", "OracleFragment"}
     required_named_runtime_ids = sorted(cast_id_set - non_human_projection_ids)
 
@@ -77,6 +97,28 @@ def main():
         for choice_id in row.get("ChoiceIds", []):
             if choice_id not in choice_id_set:
                 raise SystemExit(f"dialogue scene references unknown choice: {choice_id}")
+
+    for row in cinematic_scenes:
+        if row["QuestId"] not in quest_id_set:
+            raise SystemExit(f"cinematic scene references unknown quest: {row['QuestId']}")
+        if row.get("DialogueSceneId") and row["DialogueSceneId"] not in {scene["SceneId"] for scene in scenes}:
+            raise SystemExit(f"cinematic scene references unknown dialogue scene: {row['DialogueSceneId']}")
+        if row.get("CharacterId") and row["CharacterId"] not in cast_id_set:
+            raise SystemExit(f"cinematic scene references unknown character: {row['CharacterId']}")
+        for audio_id in row.get("AudioProfileIds", []):
+            if audio_id not in audio_profile_id_set:
+                raise SystemExit(f"cinematic scene references unknown audio profile: {audio_id}")
+        if row.get("SequenceAsset") and not asset_path_exists(row["SequenceAsset"]):
+            raise SystemExit(f"cinematic scene missing sequence asset: {row['SceneId']}")
+
+    for row in audio_profiles:
+        source_file = row.get("SourceFile", "")
+        if not source_file:
+            raise SystemExit(f"audio profile missing source file: {row['AudioId']}")
+        if not (GENERATED_AUDIO / source_file).exists():
+            raise SystemExit(f"audio profile source file missing on disk: {source_file}")
+        if row.get("SoundAsset") and not asset_path_exists(row["SoundAsset"]):
+            raise SystemExit(f"audio profile missing imported sound asset: {row['AudioId']}")
 
     for row in ambient:
         for character_id in row.get("CharacterIds", []):
@@ -149,12 +191,29 @@ def main():
         consequence_by_quest.setdefault(row["QuestId"], []).append(row)
 
     for region in ["Egypt", "Greece", "ItalicWest"]:
-        side_quest_id = next(row["QuestId"] for row in quests if row["RegionId"] == region and "_side_" in row["QuestId"])
-        side_consequences = consequence_by_quest[side_quest_id]
-        if not any(item["CanAvoidCombat"] for item in side_consequences):
-            raise SystemExit(f"no non-combat path for {side_quest_id}")
-        if not any(item["CanTriggerCombat"] for item in side_consequences):
-            raise SystemExit(f"no combat-capable path for {side_quest_id}")
+        side_quest_ids = [row["QuestId"] for row in quests if row["RegionId"] == region and "_side_" in row["QuestId"]]
+        for side_quest_id in side_quest_ids:
+            side_consequences = consequence_by_quest[side_quest_id]
+            if not any(item["CanAvoidCombat"] for item in side_consequences):
+                raise SystemExit(f"no non-combat path for {side_quest_id}")
+            if not any(item["CanTriggerCombat"] for item in side_consequences):
+                raise SystemExit(f"no combat-capable path for {side_quest_id}")
+
+    required_license_ids = {
+        "tool_blender",
+        "tool_audacity",
+        "tool_ffmpeg",
+        "tool_krita",
+        "tool_gimp",
+        "tool_material_maker",
+        "tool_lmms",
+        "tool_piper",
+        "generated_audio_alpha",
+        "generated_sequences_alpha",
+    }
+    missing_license_ids = sorted(required_license_ids - licensed_asset_ids)
+    if missing_license_ids:
+        raise SystemExit(f"missing external asset license records: {', '.join(missing_license_ids)}")
 
     print("Content validation passed.")
     print(f"Quests: {len(quests)}")
@@ -163,6 +222,9 @@ def main():
     print(f"Choice consequences: {len(consequences)}")
     print(f"Ending gates: {len(endings)}")
     print(f"Dialogue scenes: {len(scenes)}")
+    print(f"Cinematic scenes: {len(cinematic_scenes)}")
+    print(f"Audio profiles: {len(audio_profiles)}")
+    print(f"External licenses: {len(external_asset_licenses)}")
     print(f"Character cast: {len(cast)}")
     print(f"Ambient profiles: {len(ambient)}")
 

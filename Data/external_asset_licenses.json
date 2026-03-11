@@ -1,0 +1,102 @@
+[
+  {
+    "AssetId": "tool_blender",
+    "CategoryId": "Tool",
+    "DisplayName": "Blender",
+    "SourceName": "Blender Foundation",
+    "LicenseName": "GPL",
+    "SourceUrl": "https://www.blender.org/about/license/",
+    "UsageNotes": "Used for free/open geometry, VDB, and support asset generation.",
+    "bGeneratedInProject": false
+  },
+  {
+    "AssetId": "tool_audacity",
+    "CategoryId": "Tool",
+    "DisplayName": "Audacity",
+    "SourceName": "Audacity Team",
+    "LicenseName": "GPL",
+    "SourceUrl": "https://manual.audacityteam.org/man/license.html",
+    "UsageNotes": "Used for audio cleanup and mastering of generated stems.",
+    "bGeneratedInProject": false
+  },
+  {
+    "AssetId": "tool_ffmpeg",
+    "CategoryId": "Tool",
+    "DisplayName": "FFmpeg",
+    "SourceName": "FFmpeg Project",
+    "LicenseName": "LGPL/GPL",
+    "SourceUrl": "https://ffmpeg.org/legal.html",
+    "UsageNotes": "Used for transcode and review media generation.",
+    "bGeneratedInProject": false
+  },
+  {
+    "AssetId": "tool_krita",
+    "CategoryId": "Tool",
+    "DisplayName": "Krita",
+    "SourceName": "Krita Foundation",
+    "LicenseName": "GPL",
+    "SourceUrl": "https://krita.org/en/about/license/",
+    "UsageNotes": "Approved for concept paintovers and texture authoring.",
+    "bGeneratedInProject": false
+  },
+  {
+    "AssetId": "tool_gimp",
+    "CategoryId": "Tool",
+    "DisplayName": "GIMP",
+    "SourceName": "The GIMP Team",
+    "LicenseName": "GPL",
+    "SourceUrl": "https://www.gimp.org/about/COPYING",
+    "UsageNotes": "Approved for texture cleanup and image edits.",
+    "bGeneratedInProject": false
+  },
+  {
+    "AssetId": "tool_material_maker",
+    "CategoryId": "Tool",
+    "DisplayName": "Material Maker",
+    "SourceName": "Romain Dura",
+    "LicenseName": "MIT",
+    "SourceUrl": "https://github.com/RodZill4/material-maker",
+    "UsageNotes": "Approved for procedural material prototyping.",
+    "bGeneratedInProject": false
+  },
+  {
+    "AssetId": "tool_lmms",
+    "CategoryId": "Tool",
+    "DisplayName": "LMMS",
+    "SourceName": "LMMS Developers",
+    "LicenseName": "GPL",
+    "SourceUrl": "https://lmms.io/",
+    "UsageNotes": "Approved for temp music sketching and stem creation.",
+    "bGeneratedInProject": false
+  },
+  {
+    "AssetId": "tool_piper",
+    "CategoryId": "Tool",
+    "DisplayName": "Piper TTS",
+    "SourceName": "Rhasspy",
+    "LicenseName": "MIT",
+    "SourceUrl": "https://github.com/rhasspy/piper",
+    "UsageNotes": "Only use voice models whose model cards explicitly permit intended use.",
+    "bGeneratedInProject": false
+  },
+  {
+    "AssetId": "generated_audio_alpha",
+    "CategoryId": "GeneratedAsset",
+    "DisplayName": "Generated Alpha Audio Source Set",
+    "SourceName": "Many Names Project",
+    "LicenseName": "Project-owned generated output",
+    "SourceUrl": "",
+    "UsageNotes": "Procedurally generated in-project source WAVs for temp ambience, score, and stingers.",
+    "bGeneratedInProject": true
+  },
+  {
+    "AssetId": "generated_sequences_alpha",
+    "CategoryId": "GeneratedAsset",
+    "DisplayName": "Generated Alpha Cinematic Sequences",
+    "SourceName": "Many Names Project",
+    "LicenseName": "Project-owned generated output",
+    "SourceUrl": "",
+    "UsageNotes": "Sequencer assets generated from cinematic scene data for alpha cutscene bootstrap.",
+    "bGeneratedInProject": true
+  }
+]

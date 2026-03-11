@@ -11,6 +11,12 @@ class MANYNAMES_API UManyNamesWorldStateSubsystem : public UGameInstanceSubsyste
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintPure, Category="ManyNames|WorldState")
+	static FName GetCanonicalRegionCompletionOutput(EManyNamesRegionId RegionId);
+
+	UFUNCTION(BlueprintPure, Category="ManyNames|WorldState")
+	bool TryGetDominantAntagonist(EManyNamesCompanionId& OutCompanionId) const;
+
 	UFUNCTION(BlueprintCallable, Category="ManyNames|WorldState")
 	FManyNamesWorldState GetWorldState() const;
 

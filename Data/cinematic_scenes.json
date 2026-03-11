@@ -1,0 +1,511 @@
+[
+  {
+    "SceneId": "cin_opening_arrival",
+    "RegionId": "Opening",
+    "QuestId": "opening_main_01",
+    "DialogueSceneId": "scene_opening_miracle",
+    "Title": "The Descent",
+    "Summary": "Crash arrival and first miracle in the ravine.",
+    "CharacterId": "OracleFragment",
+    "LocationId": "opening.crash_core",
+    "CameraAnchorTag": "Camera.CrashCore",
+    "WeatherStateId": "Opening.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Opening/LS_Opening_Arrival.LS_Opening_Arrival",
+    "AudioProfileIds": [
+      "music_opening_theme",
+      "ambience_opening_ash",
+      "stinger_miracle_pulse"
+    ],
+    "RequiredWorldStateOutputs": [],
+    "EstimatedDurationSeconds": 34.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_opening_witness_aftermath",
+    "RegionId": "Opening",
+    "QuestId": "opening_side_01",
+    "DialogueSceneId": "scene_opening_witness",
+    "Title": "Ash and Rumor",
+    "Summary": "Witness aftermath and myth framing.",
+    "CharacterId": "OpeningWitness",
+    "LocationId": "opening.witness_camp",
+    "CameraAnchorTag": "Camera.WitnessCamp",
+    "WeatherStateId": "Opening.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Opening/LS_Opening_WitnessAftermath.LS_Opening_WitnessAftermath",
+    "AudioProfileIds": [
+      "music_opening_theme",
+      "ambience_opening_ash"
+    ],
+    "RequiredWorldStateOutputs": [
+      "Story.Prologue.Complete"
+    ],
+    "EstimatedDurationSeconds": 28.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_egypt_arrival",
+    "RegionId": "Egypt",
+    "QuestId": "egypt_main_01",
+    "DialogueSceneId": "scene_egypt_main",
+    "Title": "Arrival in the Solar District",
+    "Summary": "First reveal of Egypt's temple and archive axis.",
+    "CharacterId": "ArchiveKeeper",
+    "LocationId": "egypt.temple_court",
+    "CameraAnchorTag": "Camera.EgyptArrival",
+    "WeatherStateId": "Egypt.Baseline",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Egypt/LS_Egypt_Arrival.LS_Egypt_Arrival",
+    "AudioProfileIds": [
+      "music_egypt_solar",
+      "ambience_egypt_market"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Opening.Complete"
+    ],
+    "EstimatedDurationSeconds": 24.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_egypt_archive_reveal",
+    "RegionId": "Egypt",
+    "QuestId": "egypt_main_01",
+    "DialogueSceneId": "scene_egypt_main",
+    "Title": "The Radiant Voice",
+    "Summary": "Archive chamber reveal and the oracle dispute.",
+    "CharacterId": "ArchiveKeeper",
+    "LocationId": "egypt.archive_vault",
+    "CameraAnchorTag": "Camera.ArchiveKeeper",
+    "WeatherStateId": "Egypt.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Egypt/LS_Egypt_ArchiveReveal.LS_Egypt_ArchiveReveal",
+    "AudioProfileIds": [
+      "music_egypt_solar",
+      "stinger_antagonist_shift"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Opening.Complete"
+    ],
+    "EstimatedDurationSeconds": 32.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_egypt_ledger_hearing",
+    "RegionId": "Egypt",
+    "QuestId": "egypt_side_02",
+    "DialogueSceneId": "scene_egypt_side_ledger",
+    "Title": "The River Ledger",
+    "Summary": "Public accounting of the flood record.",
+    "CharacterId": "RiverScribe",
+    "LocationId": "egypt.canal_ledger",
+    "CameraAnchorTag": "Camera.RiverLedger",
+    "WeatherStateId": "Egypt.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Egypt/LS_Egypt_RiverLedger.LS_Egypt_RiverLedger",
+    "AudioProfileIds": [
+      "music_egypt_solar",
+      "ambience_egypt_market"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Egypt.Complete"
+    ],
+    "EstimatedDurationSeconds": 27.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_greece_arrival",
+    "RegionId": "Greece",
+    "QuestId": "greece_main_01",
+    "DialogueSceneId": "scene_greece_main",
+    "Title": "Sanctuary of the High Wind",
+    "Summary": "Arrival at the exposed sanctuary court.",
+    "CharacterId": "StormHerald",
+    "LocationId": "greece.sanctuary_court",
+    "CameraAnchorTag": "Camera.GreeceArrival",
+    "WeatherStateId": "Greece.Baseline",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Greece/LS_Greece_Arrival.LS_Greece_Arrival",
+    "AudioProfileIds": [
+      "music_greece_storm",
+      "ambience_greece_wind"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Opening.Complete"
+    ],
+    "EstimatedDurationSeconds": 24.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_greece_storm_omen",
+    "RegionId": "Greece",
+    "QuestId": "greece_main_01",
+    "DialogueSceneId": "scene_greece_main",
+    "Title": "When the Sky Answers",
+    "Summary": "Storm omen before the warband and sanctuary crowd.",
+    "CharacterId": "StormHerald",
+    "LocationId": "greece.storm_ridge",
+    "CameraAnchorTag": "Camera.StormHerald",
+    "WeatherStateId": "Greece.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Greece/LS_Greece_StormOmen.LS_Greece_StormOmen",
+    "AudioProfileIds": [
+      "music_greece_storm",
+      "stinger_miracle_pulse"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Opening.Complete"
+    ],
+    "EstimatedDurationSeconds": 31.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_greece_oath_tribunal",
+    "RegionId": "Greece",
+    "QuestId": "greece_side_02",
+    "DialogueSceneId": "scene_greece_side_oaths",
+    "Title": "Oaths in the Rain",
+    "Summary": "The oath hearing before the ridge crowd.",
+    "CharacterId": "OathBearer",
+    "LocationId": "greece.oath_shelter",
+    "CameraAnchorTag": "Camera.OathShelter",
+    "WeatherStateId": "Greece.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Greece/LS_Greece_OathTribunal.LS_Greece_OathTribunal",
+    "AudioProfileIds": [
+      "music_greece_storm",
+      "ambience_greece_wind"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Greece.Complete"
+    ],
+    "EstimatedDurationSeconds": 26.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_italic_arrival",
+    "RegionId": "ItalicWest",
+    "QuestId": "italic_main_01",
+    "DialogueSceneId": "scene_italic_main",
+    "Title": "The Hill and the Road",
+    "Summary": "Arrival in the civic road settlement.",
+    "CharacterId": "MeasureKeeper",
+    "LocationId": "italic.hill_settlement",
+    "CameraAnchorTag": "Camera.ItalicArrival",
+    "WeatherStateId": "ItalicWest.Baseline",
+    "SequenceAsset": "/Game/Cinematics/Sequences/ItalicWest/LS_Italic_Arrival.LS_Italic_Arrival",
+    "AudioProfileIds": [
+      "music_italic_road",
+      "ambience_italic_settlement"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Opening.Complete"
+    ],
+    "EstimatedDurationSeconds": 23.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_italic_forge_law",
+    "RegionId": "ItalicWest",
+    "QuestId": "italic_main_01",
+    "DialogueSceneId": "scene_italic_main",
+    "Title": "Law in the Forge",
+    "Summary": "The measure keeper frames service as obedience.",
+    "CharacterId": "MeasureKeeper",
+    "LocationId": "italic.forge_chamber",
+    "CameraAnchorTag": "Camera.MeasureKeeper",
+    "WeatherStateId": "ItalicWest.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/ItalicWest/LS_Italic_ForgeLaw.LS_Italic_ForgeLaw",
+    "AudioProfileIds": [
+      "music_italic_road",
+      "stinger_antagonist_shift"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Opening.Complete"
+    ],
+    "EstimatedDurationSeconds": 29.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_italic_road_measure",
+    "RegionId": "ItalicWest",
+    "QuestId": "italic_side_02",
+    "DialogueSceneId": "scene_italic_side_road",
+    "Title": "Measure of the Road",
+    "Summary": "Public judgment on the road and its owners.",
+    "CharacterId": "RoadMagistrate",
+    "LocationId": "italic.road_embankment",
+    "CameraAnchorTag": "Camera.RoadMeasure",
+    "WeatherStateId": "ItalicWest.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/ItalicWest/LS_Italic_RoadMeasure.LS_Italic_RoadMeasure",
+    "AudioProfileIds": [
+      "music_italic_road",
+      "ambience_italic_settlement"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.ItalicWest.Complete"
+    ],
+    "EstimatedDurationSeconds": 25.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_convergence_arrival",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "The Buried Threshold",
+    "Summary": "Arrival at the sealed ruin and lower descent.",
+    "CharacterId": "BridgeWatcher",
+    "LocationId": "convergence.ruin_shell",
+    "CameraAnchorTag": "Camera.ConvergenceArrival",
+    "WeatherStateId": "Convergence.Baseline",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_Arrival.LS_Convergence_Arrival",
+    "AudioProfileIds": [
+      "music_convergence_core",
+      "ambience_convergence_core"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Egypt.Complete",
+      "State.Region.Greece.Complete",
+      "State.Region.ItalicWest.Complete"
+    ],
+    "EstimatedDurationSeconds": 24.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_convergence_descent",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "Below History",
+    "Summary": "Descent toward the ship core and companion fracture.",
+    "CharacterId": "SystemsRemnant",
+    "LocationId": "convergence.descent_path",
+    "CameraAnchorTag": "Camera.SystemsRemnant",
+    "WeatherStateId": "Convergence.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_Descent.LS_Convergence_Descent",
+    "AudioProfileIds": [
+      "music_convergence_core",
+      "stinger_miracle_pulse"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Egypt.Complete",
+      "State.Region.Greece.Complete",
+      "State.Region.ItalicWest.Complete"
+    ],
+    "EstimatedDurationSeconds": 30.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_convergence_chorus",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_side_02",
+    "DialogueSceneId": "scene_convergence_side_chorus",
+    "Title": "The Chorus Below",
+    "Summary": "Custodian vault and the trapped companion fragments.",
+    "CharacterId": "BurialCustodian",
+    "LocationId": "convergence.custodian_vault",
+    "CameraAnchorTag": "Camera.ChorusVault",
+    "WeatherStateId": "Convergence.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_Chorus.LS_Convergence_Chorus",
+    "AudioProfileIds": [
+      "music_convergence_core",
+      "ambience_convergence_core"
+    ],
+    "RequiredWorldStateOutputs": [
+      "State.Region.Convergence.Complete"
+    ],
+    "EstimatedDurationSeconds": 28.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_antagonist_oracle",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "Oracle Ascendant",
+    "Summary": "OracleAI branch domination cutscene.",
+    "CharacterId": "SignalArchivist",
+    "LocationId": "convergence.bridge_plateau",
+    "CameraAnchorTag": "Camera.AntagonistOracle",
+    "WeatherStateId": "Convergence.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_AntagonistOracle.LS_Convergence_AntagonistOracle",
+    "AudioProfileIds": [
+      "music_oracle_path",
+      "stinger_antagonist_shift"
+    ],
+    "RequiredWorldStateOutputs": [
+      "Story.Antagonist.OracleAI"
+    ],
+    "EstimatedDurationSeconds": 26.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_antagonist_sky",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "Storm Ascendant",
+    "Summary": "SkyRuler branch domination cutscene.",
+    "CharacterId": "LoyalistRemnant",
+    "LocationId": "convergence.bridge_plateau",
+    "CameraAnchorTag": "Camera.AntagonistSky",
+    "WeatherStateId": "Convergence.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_AntagonistSky.LS_Convergence_AntagonistSky",
+    "AudioProfileIds": [
+      "music_sky_path",
+      "stinger_antagonist_shift"
+    ],
+    "RequiredWorldStateOutputs": [
+      "Story.Antagonist.SkyRuler"
+    ],
+    "EstimatedDurationSeconds": 26.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_antagonist_bronze",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "Law Ascendant",
+    "Summary": "BronzeLawgiver branch domination cutscene.",
+    "CharacterId": "BurialCustodian",
+    "LocationId": "convergence.bridge_plateau",
+    "CameraAnchorTag": "Camera.AntagonistBronze",
+    "WeatherStateId": "Convergence.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Convergence/LS_Convergence_AntagonistBronze.LS_Convergence_AntagonistBronze",
+    "AudioProfileIds": [
+      "music_bronze_path",
+      "stinger_antagonist_shift"
+    ],
+    "RequiredWorldStateOutputs": [
+      "Story.Antagonist.BronzeLawgiver"
+    ],
+    "EstimatedDurationSeconds": 26.0,
+    "bSkippable": true,
+    "bEndingScene": false
+  },
+  {
+    "SceneId": "cin_ending_return",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "Return to Future",
+    "Summary": "Ending sequence for leaving myth behind.",
+    "CharacterId": "BridgeWatcher",
+    "LocationId": "convergence.bridge_plateau",
+    "CameraAnchorTag": "Camera.EndingReturn",
+    "WeatherStateId": "Convergence.Baseline",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_ReturnToFuture.LS_Ending_ReturnToFuture",
+    "AudioProfileIds": [
+      "music_convergence_core",
+      "stinger_quest_resolve"
+    ],
+    "RequiredWorldStateOutputs": [
+      "Ending.ReturnToFuture"
+    ],
+    "EstimatedDurationSeconds": 35.0,
+    "bSkippable": true,
+    "bEndingScene": true
+  },
+  {
+    "SceneId": "cin_ending_myth",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "Remain as Myth",
+    "Summary": "Ending sequence for remaining in the ancient world as miracle.",
+    "CharacterId": "CompanionChorus",
+    "LocationId": "convergence.bridge_plateau",
+    "CameraAnchorTag": "Camera.EndingMyth",
+    "WeatherStateId": "Convergence.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_RemainAsMyth.LS_Ending_RemainAsMyth",
+    "AudioProfileIds": [
+      "music_sky_path",
+      "stinger_quest_resolve"
+    ],
+    "RequiredWorldStateOutputs": [
+      "Ending.RemainAsMyth"
+    ],
+    "EstimatedDurationSeconds": 35.0,
+    "bSkippable": true,
+    "bEndingScene": true
+  },
+  {
+    "SceneId": "cin_ending_dismantle",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "Dismantle Divinity",
+    "Summary": "Ending sequence for breaking the divine machine.",
+    "CharacterId": "SystemsRemnant",
+    "LocationId": "convergence.bridge_plateau",
+    "CameraAnchorTag": "Camera.EndingDismantle",
+    "WeatherStateId": "Convergence.Baseline",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_DismantleDivinity.LS_Ending_DismantleDivinity",
+    "AudioProfileIds": [
+      "music_bronze_path",
+      "stinger_quest_resolve"
+    ],
+    "RequiredWorldStateOutputs": [
+      "Ending.DismantleDivinity"
+    ],
+    "EstimatedDurationSeconds": 35.0,
+    "bSkippable": true,
+    "bEndingScene": true
+  },
+  {
+    "SceneId": "cin_ending_replace",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "Replace Companion",
+    "Summary": "Ending sequence for taking a deity mantle.",
+    "CharacterId": "CompanionChorus",
+    "LocationId": "convergence.bridge_plateau",
+    "CameraAnchorTag": "Camera.EndingReplace",
+    "WeatherStateId": "Convergence.Hero",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_ReplaceCompanion.LS_Ending_ReplaceCompanion",
+    "AudioProfileIds": [
+      "music_oracle_path",
+      "stinger_quest_resolve"
+    ],
+    "RequiredWorldStateOutputs": [
+      "Ending.ReplaceCompanion"
+    ],
+    "EstimatedDurationSeconds": 36.0,
+    "bSkippable": true,
+    "bEndingScene": true
+  },
+  {
+    "SceneId": "cin_ending_fragment",
+    "RegionId": "Convergence",
+    "QuestId": "convergence_main_01",
+    "DialogueSceneId": "scene_convergence_main",
+    "Title": "Fragment Legacy",
+    "Summary": "Ending sequence for scattering legacy across witnesses and ruins.",
+    "CharacterId": "BridgeWatcher",
+    "LocationId": "convergence.bridge_plateau",
+    "CameraAnchorTag": "Camera.EndingFragment",
+    "WeatherStateId": "Convergence.Baseline",
+    "SequenceAsset": "/Game/Cinematics/Sequences/Endings/LS_Ending_FragmentLegacy.LS_Ending_FragmentLegacy",
+    "AudioProfileIds": [
+      "music_convergence_core",
+      "stinger_quest_resolve"
+    ],
+    "RequiredWorldStateOutputs": [
+      "Ending.FragmentLegacy"
+    ],
+    "EstimatedDurationSeconds": 33.0,
+    "bSkippable": true,
+    "bEndingScene": true
+  }
+]

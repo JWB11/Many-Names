@@ -183,18 +183,19 @@ def _configure_instance_params(character, seed: str, region_name: str) -> None:
         selection = slot_data.selection
         if not selection or not selection.selected_item:
             continue
+        slot_label = getattr(slot_data, "slot_name", None) or getattr(selection, "slot_name", "UnknownSlot")
         item_path = unreal.MetaHumanPaletteItemPath(item_key=selection.selected_item)
         try:
             parameters = character.internal_collection.default_instance.get_instance_parameters(item_path=item_path)
         except Exception as exc:
             unreal.log_warning(
                 f"[MetaHumanCast] Skipping parameter mutation for slot "
-                f"{slot_data.slot_name}: {exc}"
+                f"{slot_label}: {exc}"
             )
             continue
         if not parameters:
             unreal.log(
-                f"[MetaHumanCast] No editable parameters for slot {slot_data.slot_name}; "
+                f"[MetaHumanCast] No editable parameters for slot {slot_label}; "
                 "keeping safe defaults"
             )
             continue

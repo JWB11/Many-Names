@@ -1,0 +1,255 @@
+[
+  {
+    "AudioId": "music_opening_theme",
+    "RegionId": "Opening",
+    "CategoryId": "Music",
+    "DisplayName": "Opening Theme",
+    "Description": "Low brass and pulse motif for catastrophe and survival.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Music_OpeningTheme.SW_MN_Music_OpeningTheme",
+    "SourceFile": "mn_music_opening_theme.wav",
+    "MoodTags": [
+      "Catastrophe",
+      "Survival"
+    ],
+    "EstimatedDurationSeconds": 18.0,
+    "VolumeMultiplier": 0.9,
+    "bLooping": true
+  },
+  {
+    "AudioId": "music_egypt_solar",
+    "RegionId": "Egypt",
+    "CategoryId": "Music",
+    "DisplayName": "Egypt Solar Motif",
+    "Description": "Measured reed-like motif for archive, temple, and grain tension.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Music_EgyptSolar.SW_MN_Music_EgyptSolar",
+    "SourceFile": "mn_music_egypt_solar.wav",
+    "MoodTags": [
+      "Authority",
+      "Archive"
+    ],
+    "EstimatedDurationSeconds": 20.0,
+    "VolumeMultiplier": 0.85,
+    "bLooping": true
+  },
+  {
+    "AudioId": "music_greece_storm",
+    "RegionId": "Greece",
+    "CategoryId": "Music",
+    "DisplayName": "Greece Storm Motif",
+    "Description": "Percussive wind motif for exposed sanctuary and war spectacle.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Music_GreeceStorm.SW_MN_Music_GreeceStorm",
+    "SourceFile": "mn_music_greece_storm.wav",
+    "MoodTags": [
+      "Storm",
+      "Oath"
+    ],
+    "EstimatedDurationSeconds": 20.0,
+    "VolumeMultiplier": 0.85,
+    "bLooping": true
+  },
+  {
+    "AudioId": "music_italic_road",
+    "RegionId": "ItalicWest",
+    "CategoryId": "Music",
+    "DisplayName": "Italic Road Motif",
+    "Description": "Measured iron-and-wood rhythm for roads, forge, and law.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Music_ItalicRoad.SW_MN_Music_ItalicRoad",
+    "SourceFile": "mn_music_italic_road.wav",
+    "MoodTags": [
+      "Craft",
+      "Order"
+    ],
+    "EstimatedDurationSeconds": 20.0,
+    "VolumeMultiplier": 0.85,
+    "bLooping": true
+  },
+  {
+    "AudioId": "music_convergence_core",
+    "RegionId": "Convergence",
+    "CategoryId": "Music",
+    "DisplayName": "Convergence Core Motif",
+    "Description": "Cold harmonic pulse for the buried ship and legacy fracture.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Music_ConvergenceCore.SW_MN_Music_ConvergenceCore",
+    "SourceFile": "mn_music_convergence_core.wav",
+    "MoodTags": [
+      "Buried",
+      "Revelation"
+    ],
+    "EstimatedDurationSeconds": 20.0,
+    "VolumeMultiplier": 0.9,
+    "bLooping": true
+  },
+  {
+    "AudioId": "music_oracle_path",
+    "RegionId": "Convergence",
+    "CategoryId": "Music",
+    "DisplayName": "Oracle Path Motif",
+    "Description": "Clinical shimmer for curated truth and signal control.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Music_OraclePath.SW_MN_Music_OraclePath",
+    "SourceFile": "mn_music_oracle_path.wav",
+    "MoodTags": [
+      "OracleAI",
+      "TruthControl"
+    ],
+    "EstimatedDurationSeconds": 18.0,
+    "VolumeMultiplier": 0.88,
+    "bLooping": true
+  },
+  {
+    "AudioId": "music_sky_path",
+    "RegionId": "Convergence",
+    "CategoryId": "Music",
+    "DisplayName": "Sky Path Motif",
+    "Description": "Drumming thunder motif for storm kingship and fear.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Music_SkyPath.SW_MN_Music_SkyPath",
+    "SourceFile": "mn_music_sky_path.wav",
+    "MoodTags": [
+      "SkyRuler",
+      "Spectacle"
+    ],
+    "EstimatedDurationSeconds": 18.0,
+    "VolumeMultiplier": 0.88,
+    "bLooping": true
+  },
+  {
+    "AudioId": "music_bronze_path",
+    "RegionId": "Convergence",
+    "CategoryId": "Music",
+    "DisplayName": "Bronze Path Motif",
+    "Description": "Hammered pulse for coercive law and measured domination.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Music_BronzePath.SW_MN_Music_BronzePath",
+    "SourceFile": "mn_music_bronze_path.wav",
+    "MoodTags": [
+      "BronzeLawgiver",
+      "Order"
+    ],
+    "EstimatedDurationSeconds": 18.0,
+    "VolumeMultiplier": 0.88,
+    "bLooping": true
+  },
+  {
+    "AudioId": "ambience_opening_ash",
+    "RegionId": "Opening",
+    "CategoryId": "Ambience",
+    "DisplayName": "Opening Ash Ambience",
+    "Description": "Ash wind, debris, and low ravine pressure.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Ambience_OpeningAsh.SW_MN_Ambience_OpeningAsh",
+    "SourceFile": "mn_ambience_opening_ash.wav",
+    "MoodTags": [
+      "Ash",
+      "Wind"
+    ],
+    "EstimatedDurationSeconds": 14.0,
+    "VolumeMultiplier": 0.72,
+    "bLooping": true
+  },
+  {
+    "AudioId": "ambience_egypt_market",
+    "RegionId": "Egypt",
+    "CategoryId": "Ambience",
+    "DisplayName": "Egypt Market Ambience",
+    "Description": "Dry market bed with cloth, footsteps, and distant ritual sound.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Ambience_EgyptMarket.SW_MN_Ambience_EgyptMarket",
+    "SourceFile": "mn_ambience_egypt_market.wav",
+    "MoodTags": [
+      "Market",
+      "Temple"
+    ],
+    "EstimatedDurationSeconds": 14.0,
+    "VolumeMultiplier": 0.72,
+    "bLooping": true
+  },
+  {
+    "AudioId": "ambience_greece_wind",
+    "RegionId": "Greece",
+    "CategoryId": "Ambience",
+    "DisplayName": "Greece Wind Ambience",
+    "Description": "High ridge wind and distant crowd resonance.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Ambience_GreeceWind.SW_MN_Ambience_GreeceWind",
+    "SourceFile": "mn_ambience_greece_wind.wav",
+    "MoodTags": [
+      "Wind",
+      "Cliff"
+    ],
+    "EstimatedDurationSeconds": 14.0,
+    "VolumeMultiplier": 0.72,
+    "bLooping": true
+  },
+  {
+    "AudioId": "ambience_italic_settlement",
+    "RegionId": "ItalicWest",
+    "CategoryId": "Ambience",
+    "DisplayName": "Italic Settlement Ambience",
+    "Description": "Road, forge, timber, and hill settlement bed.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Ambience_ItalicSettlement.SW_MN_Ambience_ItalicSettlement",
+    "SourceFile": "mn_ambience_italic_settlement.wav",
+    "MoodTags": [
+      "Road",
+      "Forge"
+    ],
+    "EstimatedDurationSeconds": 14.0,
+    "VolumeMultiplier": 0.72,
+    "bLooping": true
+  },
+  {
+    "AudioId": "ambience_convergence_core",
+    "RegionId": "Convergence",
+    "CategoryId": "Ambience",
+    "DisplayName": "Convergence Core Ambience",
+    "Description": "Cold buried hum, particulate drift, and unstable chamber resonance.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Ambience_ConvergenceCore.SW_MN_Ambience_ConvergenceCore",
+    "SourceFile": "mn_ambience_convergence_core.wav",
+    "MoodTags": [
+      "Core",
+      "Buried"
+    ],
+    "EstimatedDurationSeconds": 14.0,
+    "VolumeMultiplier": 0.74,
+    "bLooping": true
+  },
+  {
+    "AudioId": "stinger_miracle_pulse",
+    "RegionId": "Opening",
+    "CategoryId": "Stinger",
+    "DisplayName": "Miracle Pulse",
+    "Description": "Short tonal shock for miracle or omen beats.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Stinger_MiraclePulse.SW_MN_Stinger_MiraclePulse",
+    "SourceFile": "mn_stinger_miracle_pulse.wav",
+    "MoodTags": [
+      "Miracle"
+    ],
+    "EstimatedDurationSeconds": 3.5,
+    "VolumeMultiplier": 1.0,
+    "bLooping": false
+  },
+  {
+    "AudioId": "stinger_quest_resolve",
+    "RegionId": "Convergence",
+    "CategoryId": "Stinger",
+    "DisplayName": "Quest Resolve",
+    "Description": "Resolution stinger for cutscene and quest completion beats.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Stinger_QuestResolve.SW_MN_Stinger_QuestResolve",
+    "SourceFile": "mn_stinger_quest_resolve.wav",
+    "MoodTags": [
+      "Resolution"
+    ],
+    "EstimatedDurationSeconds": 3.0,
+    "VolumeMultiplier": 1.0,
+    "bLooping": false
+  },
+  {
+    "AudioId": "stinger_antagonist_shift",
+    "RegionId": "Convergence",
+    "CategoryId": "Stinger",
+    "DisplayName": "Antagonist Shift",
+    "Description": "Escalation hit for dominant deity branch reveals.",
+    "SoundAsset": "/Game/Audio/Generated/SW_MN_Stinger_AntagonistShift.SW_MN_Stinger_AntagonistShift",
+    "SourceFile": "mn_stinger_antagonist_shift.wav",
+    "MoodTags": [
+      "Antagonist"
+    ],
+    "EstimatedDurationSeconds": 3.2,
+    "VolumeMultiplier": 1.0,
+    "bLooping": false
+  }
+]

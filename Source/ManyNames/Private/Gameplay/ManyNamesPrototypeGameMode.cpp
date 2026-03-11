@@ -1,5 +1,7 @@
 #include "Gameplay/ManyNamesPrototypeGameMode.h"
 
+#include "AudioDevice.h"
+#include "Components/AudioComponent.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Gameplay/ManyNamesDialogueController.h"
@@ -7,11 +9,50 @@
 #include "Gameplay/ManyNamesFirstPersonCharacter.h"
 #include "GameplayTagsManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "LevelSequence.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
 #include "Misc/PackageName.h"
 #include "Systems/ManyNamesContentSubsystem.h"
 #include "Systems/ManyNamesMythSubsystem.h"
 #include "Systems/ManyNamesQuestSubsystem.h"
 #include "Systems/ManyNamesWorldStateSubsystem.h"
+#include "Sound/SoundBase.h"
+
+namespace
+{
+	bool QuestIdHasToken(FName QuestId, const TCHAR* Token)
+	{
+		return QuestId.ToString().Contains(Token);
+	}
+
+	bool SceneIdHasToken(FName SceneId, const FString& Token)
+	{
+		return !Token.IsEmpty() && SceneId.ToString().Contains(Token);
+	}
+
+	void SortQuestRows(TArray<FManyNamesQuestRow>& QuestRows)
+	{
+		QuestRows.Sort([](const FManyNamesQuestRow& Left, const FManyNamesQuestRow& Right)
+		{
+			if (Left.RegionId != Right.RegionId)
+			{
+				return static_cast<uint8>(Left.RegionId) < static_cast<uint8>(Right.RegionId);
+			}
+
+			const FString LeftId = Left.QuestId.ToString();
+			const FString RightId = Right.QuestId.ToString();
+			const bool bLeftMain = LeftId.Contains(TEXT("_main_"));
+			const bool bRightMain = RightId.Contains(TEXT("_main_"));
+			if (bLeftMain != bRightMain)
+			{
+				return bLeftMain;
+			}
+
+			return LeftId < RightId;
+		});
+	}
+}
 
 AManyNamesPrototypeGameMode::AManyNamesPrototypeGameMode()
 {
@@ -77,6 +118,7 @@ void AManyNamesPrototypeGameMode::HandleQuestCompleted(FName QuestId, FName Worl
 	}
 
 	AddQuestRewards(QuestRow);
+	ActivateRegionQuestsIfAvailable(QuestRow.RegionId);
 
 	if (QuestId == TEXT("opening_main_01"))
 	{
@@ -88,7 +130,7 @@ void AManyNamesPrototypeGameMode::HandleQuestCompleted(FName QuestId, FName Worl
 	else if (QuestId == TEXT("opening_side_01"))
 	{
 		WorldStateSubsystem->SetRegionCompleted(EManyNamesRegionId::Opening, true);
-		WorldStateSubsystem->AddWorldStateOutput(TEXT("State.Region.Opening.Complete"));
+		WorldStateSubsystem->AddWorldStateOutput(GetRegionCompletionOutputId(EManyNamesRegionId::Opening));
 		WorldStateSubsystem->SetRegionUnlocked(EManyNamesRegionId::Egypt, true);
 		WorldStateSubsystem->SetRegionUnlocked(EManyNamesRegionId::Greece, true);
 		WorldStateSubsystem->SetRegionUnlocked(EManyNamesRegionId::ItalicWest, true);
@@ -115,10 +157,17 @@ void AManyNamesPrototypeGameMode::HandleQuestCompleted(FName QuestId, FName Worl
 		HandleRegionResolved(EManyNamesRegionId::Convergence);
 		ShowStatusMessage(TEXT("Convergence resolved. One of the final legacy paths is now recorded in this save."), FColor::Green);
 	}
-	else if (QuestId == TEXT("egypt_side_01") || QuestId == TEXT("greece_side_01") || QuestId == TEXT("italic_side_01"))
+	else if (IsRegionMainQuest(QuestRow) && QuestRow.RegionId != EManyNamesRegionId::Opening)
+	{
+		HandleRegionResolved(QuestRow.RegionId);
+		ShowStatusMessage(TEXT("Regional main quest resolved. The local power structure now reflects your chosen myth."), FColor::Green);
+	}
+	else if (IsRegionSideQuest(QuestRow))
 	{
 		ShowStatusMessage(TEXT("Side quest resolved. Journal and rumor state updated."), FColor::Green);
 	}
+
+	BroadcastJournalUpdated();
 }
 
 void AManyNamesPrototypeGameMode::HandleRegionResolved(EManyNamesRegionId RegionId)
@@ -130,26 +179,11 @@ void AManyNamesPrototypeGameMode::HandleRegionResolved(EManyNamesRegionId Region
 	}
 
 	WorldStateSubsystem->SetRegionCompleted(RegionId, true);
-	switch (RegionId)
-	{
-	case EManyNamesRegionId::Egypt:
-		WorldStateSubsystem->AddWorldStateOutput(TEXT("State.Region.Egypt.Complete"));
-		break;
-	case EManyNamesRegionId::Greece:
-		WorldStateSubsystem->AddWorldStateOutput(TEXT("State.Region.Greece.Complete"));
-		break;
-	case EManyNamesRegionId::ItalicWest:
-		WorldStateSubsystem->AddWorldStateOutput(TEXT("State.Region.ItalicWest.Complete"));
-		break;
-	case EManyNamesRegionId::Convergence:
-		WorldStateSubsystem->AddWorldStateOutput(TEXT("State.Region.Convergence.Complete"));
-		break;
-	default:
-		break;
-	}
+	WorldStateSubsystem->AddWorldStateOutput(GetRegionCompletionOutputId(RegionId));
 
 	WorldStateSubsystem->RefreshDominantAntagonist();
 	TryEnterConvergence();
+	BroadcastJournalUpdated();
 }
 
 void AManyNamesPrototypeGameMode::OpenRegionSelect()
@@ -160,9 +194,9 @@ void AManyNamesPrototypeGameMode::OpenRegionSelect()
 void AManyNamesPrototypeGameMode::TryEnterConvergence()
 {
 	UManyNamesWorldStateSubsystem* WorldStateSubsystem = GetWorldStateSubsystem();
-	if (HasWorldStateOutput(TEXT("State.Region.Egypt.Complete")) &&
-		HasWorldStateOutput(TEXT("State.Region.Greece.Complete")) &&
-		HasWorldStateOutput(TEXT("State.Region.ItalicWest.Complete")))
+	if (HasWorldStateOutput(GetRegionCompletionOutputId(EManyNamesRegionId::Egypt)) &&
+		HasWorldStateOutput(GetRegionCompletionOutputId(EManyNamesRegionId::Greece)) &&
+		HasWorldStateOutput(GetRegionCompletionOutputId(EManyNamesRegionId::ItalicWest)))
 	{
 		if (WorldStateSubsystem)
 		{
@@ -217,11 +251,6 @@ void AManyNamesPrototypeGameMode::StartRegionTravel(EManyNamesRegionId RegionId)
 
 void AManyNamesPrototypeGameMode::OpenQuestDialogue(FName QuestId)
 {
-	if (!DialogueController)
-	{
-		return;
-	}
-
 	if (UManyNamesContentSubsystem* ContentSubsystem = GetContentSubsystem())
 	{
 		FManyNamesQuestRow QuestRow;
@@ -235,11 +264,13 @@ void AManyNamesPrototypeGameMode::OpenQuestDialogue(FName QuestId)
 		}
 	}
 
-	DialogueController->OpenDialogue(QuestId);
-	if (!DialogueController->IsDialogueOpen())
+	if (TryPlayQuestCinematic(QuestId))
 	{
-		ShowStatusMessage(TEXT("No valid dialogue options are currently unlocked for that encounter."), FColor::Red);
+		PendingDialogueQuestId = QuestId;
+		return;
 	}
+
+	OpenDialogueInternal(QuestId);
 }
 
 void AManyNamesPrototypeGameMode::HandleMenuSelection(int32 SelectionIndex)
@@ -339,13 +370,14 @@ FString AManyNamesPrototypeGameMode::GetJournalSummary() const
 {
 	const UManyNamesQuestSubsystem* QuestSubsystem = GetQuestSubsystem();
 	const UManyNamesWorldStateSubsystem* WorldStateSubsystem = GetWorldStateSubsystem();
-	if (!QuestSubsystem || !WorldStateSubsystem)
+	const UManyNamesContentSubsystem* ContentSubsystem = GetContentSubsystem();
+	if (!QuestSubsystem || !WorldStateSubsystem || !ContentSubsystem)
 	{
 		return TEXT("Journal unavailable.");
 	}
 
 	const FManyNamesWorldState WorldState = WorldStateSubsystem->GetWorldState();
-	TStringBuilder<2048> Builder;
+	TStringBuilder<4096> Builder;
 	Builder.Append(TEXT("Many Names Journal\n"));
 	Builder.Appendf(TEXT("Visited regions: %d\n"), WorldState.RegionVisitOrder.Num());
 	Builder.Appendf(TEXT("Known outputs: %d\n"), WorldState.WorldStateOutputs.Num());
@@ -353,10 +385,11 @@ FString AManyNamesPrototypeGameMode::GetJournalSummary() const
 		WorldState.RumorProfile.PublicMiracleScore,
 		WorldState.RumorProfile.ConcealmentScore,
 		WorldState.RumorProfile.CombatReputation);
-	if (WorldState.bHasDominantAntagonist)
+	EManyNamesCompanionId DominantCompanionId = EManyNamesCompanionId::OracleAI;
+	if (WorldStateSubsystem->TryGetDominantAntagonist(DominantCompanionId))
 	{
 		const TCHAR* AntagonistName = TEXT("OracleAI");
-		switch (WorldState.DominantAntagonist)
+		switch (DominantCompanionId)
 		{
 		case EManyNamesCompanionId::SkyRuler:
 			AntagonistName = TEXT("SkyRuler");
@@ -370,22 +403,56 @@ FString AManyNamesPrototypeGameMode::GetJournalSummary() const
 		Builder.Appendf(TEXT("Dominant antagonist path: %s\n"), AntagonistName);
 	}
 
-	const auto AppendQuestSummary = [&Builder, QuestSubsystem](const TCHAR* Label, FName QuestId)
+	TArray<FManyNamesQuestRow> QuestRows = ContentSubsystem->GetAllQuestRows();
+	SortQuestRows(QuestRows);
+	EManyNamesRegionId CurrentRegionHeader = EManyNamesRegionId::Convergence;
+	bool bHasRegionHeader = false;
+	const auto AppendQuestSummary = [&Builder, QuestSubsystem, this](const FManyNamesQuestRow& QuestRow)
 	{
-		Builder.Appendf(TEXT("%s: %d\n"), Label, static_cast<int32>(QuestSubsystem->GetQuestState(QuestId)));
+		const EManyNamesQuestState QuestState = QuestSubsystem->GetQuestState(QuestRow.QuestId);
+		const TCHAR* QuestKind = IsRegionMainQuest(QuestRow) ? TEXT("Main") : (IsRegionSideQuest(QuestRow) ? TEXT("Side") : TEXT("Quest"));
+		const TCHAR* QuestStateLabel = TEXT("Locked");
+		switch (QuestState)
+		{
+		case EManyNamesQuestState::Available:
+			QuestStateLabel = TEXT("Available");
+			break;
+		case EManyNamesQuestState::Active:
+			QuestStateLabel = TEXT("Active");
+			break;
+		case EManyNamesQuestState::Completed:
+			QuestStateLabel = TEXT("Completed");
+			break;
+		case EManyNamesQuestState::Failed:
+			QuestStateLabel = TEXT("Failed");
+			break;
+		case EManyNamesQuestState::Escalated:
+			QuestStateLabel = TEXT("Escalated");
+			break;
+		default:
+			break;
+		}
+
+		Builder.Appendf(TEXT("  [%s] %s - %s\n"), QuestKind, *QuestRow.Title.ToString(), QuestStateLabel);
 	};
 
-	AppendQuestSummary(TEXT("opening_main_01"), TEXT("opening_main_01"));
-	AppendQuestSummary(TEXT("opening_side_01"), TEXT("opening_side_01"));
-	AppendQuestSummary(TEXT("egypt_main_01"), TEXT("egypt_main_01"));
-	AppendQuestSummary(TEXT("egypt_side_01"), TEXT("egypt_side_01"));
-	AppendQuestSummary(TEXT("greece_main_01"), TEXT("greece_main_01"));
-	AppendQuestSummary(TEXT("greece_side_01"), TEXT("greece_side_01"));
-	AppendQuestSummary(TEXT("italic_main_01"), TEXT("italic_main_01"));
-	AppendQuestSummary(TEXT("italic_side_01"), TEXT("italic_side_01"));
-	AppendQuestSummary(TEXT("convergence_main_01"), TEXT("convergence_main_01"));
+	for (const FManyNamesQuestRow& QuestRow : QuestRows)
+	{
+		if (!bHasRegionHeader || CurrentRegionHeader != QuestRow.RegionId)
+		{
+			CurrentRegionHeader = QuestRow.RegionId;
+			bHasRegionHeader = true;
+			Builder.Appendf(TEXT("\n%s\n"), *UEnum::GetDisplayValueAsText(QuestRow.RegionId).ToString());
+		}
+		AppendQuestSummary(QuestRow);
+	}
 
 	return Builder.ToString();
+}
+
+FText AManyNamesPrototypeGameMode::GetJournalSummaryText() const
+{
+	return FText::FromString(GetJournalSummary());
 }
 
 void AManyNamesPrototypeGameMode::BootstrapCurrentMap()
@@ -431,62 +498,78 @@ void AManyNamesPrototypeGameMode::BootstrapOpeningMap()
 		OpenRegionSelect();
 	}
 
+	TryPlaySceneById(TEXT("cin_opening_arrival"));
 	ShowStatusMessage(TEXT("Opening objective: trigger the miracle, speak to the witness, then choose your first region."), FColor::Cyan);
 }
 
 void AManyNamesPrototypeGameMode::BootstrapEgyptMap()
 {
-	if (HasWorldStateOutput(TEXT("State.Region.Opening.Complete")))
-	{
-		ActivateQuestIfLocked(TEXT("egypt_main_01"));
-		ActivateQuestIfLocked(TEXT("egypt_side_01"));
-		ShowStatusMessage(TEXT("Egypt objective: enter the archive and resolve the fate of the Radiant Voice."), FColor::Cyan);
-	}
-	else
-	{
-		ShowStatusMessage(TEXT("Egypt should only be reachable after the opening witness scene."), FColor::Red);
-	}
+	BootstrapRegionFromContent(EManyNamesRegionId::Egypt, TEXT("Egypt objective: resolve the archive dispute, the floodplain petition, and the river ledger without turning the district into a public panic."), false);
 }
 
 void AManyNamesPrototypeGameMode::BootstrapGreeceMap()
 {
-	if (HasWorldStateOutput(TEXT("State.Region.Opening.Complete")))
-	{
-		ActivateQuestIfLocked(TEXT("greece_main_01"));
-		ActivateQuestIfLocked(TEXT("greece_side_01"));
-		ShowStatusMessage(TEXT("Greece objective: confront the High One of Storm and decide whether spectacle becomes law or fraud."), FColor::Cyan);
-	}
-	else
-	{
-		ShowStatusMessage(TEXT("Greece should only be reachable after the opening witness scene."), FColor::Red);
-	}
+	BootstrapRegionFromContent(EManyNamesRegionId::Greece, TEXT("Greece objective: confront the storm cult, the warband spectacle, and the oath crisis on the ridge."), false);
 }
 
 void AManyNamesPrototypeGameMode::BootstrapItalicMap()
 {
-	if (HasWorldStateOutput(TEXT("State.Region.Opening.Complete")))
-	{
-		ActivateQuestIfLocked(TEXT("italic_main_01"));
-		ActivateQuestIfLocked(TEXT("italic_side_01"));
-		ShowStatusMessage(TEXT("Italic West objective: test whether measure and boundary become service or domination."), FColor::Cyan);
-	}
-	else
-	{
-		ShowStatusMessage(TEXT("Italic West should only be reachable after the opening witness scene."), FColor::Red);
-	}
+	BootstrapRegionFromContent(EManyNamesRegionId::ItalicWest, TEXT("Italic West objective: decide whether law, labor, and the road become common structure or measured domination."), false);
 }
 
 void AManyNamesPrototypeGameMode::BootstrapConvergenceMap()
 {
-	if (IsConvergenceUnlocked())
+	BootstrapRegionFromContent(EManyNamesRegionId::Convergence, TEXT("Convergence objective: descend into the buried wreck, confront the ascendant companion path, and decide which legacy survives."), true);
+}
+
+void AManyNamesPrototypeGameMode::BootstrapRegionFromContent(EManyNamesRegionId RegionId, const FString& ObjectiveMessage, bool bRequireConvergenceUnlock)
+{
+	if (!HasWorldStateOutput(GetRegionCompletionOutputId(EManyNamesRegionId::Opening)) && RegionId != EManyNamesRegionId::Opening)
 	{
-		ActivateQuestIfLocked(TEXT("convergence_main_01"));
-		ShowStatusMessage(TEXT("Convergence objective: descend into the wreck below history and decide which legacy survives."), FColor::Cyan);
+		ShowStatusMessage(FString::Printf(TEXT("%s should only be reachable after the opening witness scene."), *UEnum::GetDisplayValueAsText(RegionId).ToString()), FColor::Red);
+		return;
 	}
-	else
+
+	if (bRequireConvergenceUnlock && !IsConvergenceUnlocked())
 	{
 		ShowStatusMessage(TEXT("Convergence remains sealed until Egypt, Greece, and Italic West are all resolved."), FColor::Red);
+		return;
 	}
+
+	FManyNamesRegionRow RegionRow;
+	if (const UManyNamesContentSubsystem* ContentSubsystem = GetContentSubsystem(); ContentSubsystem && ContentSubsystem->GetRegionRow(RegionId, RegionRow))
+	{
+		if (!AreRegionEntryConditionsMet(RegionRow))
+		{
+			ShowStatusMessage(TEXT("This region's entry conditions are not yet satisfied in the current save."), FColor::Red);
+			return;
+		}
+	}
+
+	ActivateRegionQuestsIfAvailable(RegionId);
+	FName ArrivalQuestId = NAME_None;
+	switch (RegionId)
+	{
+	case EManyNamesRegionId::Egypt:
+		ArrivalQuestId = TEXT("egypt_main_01");
+		break;
+	case EManyNamesRegionId::Greece:
+		ArrivalQuestId = TEXT("greece_main_01");
+		break;
+	case EManyNamesRegionId::ItalicWest:
+		ArrivalQuestId = TEXT("italic_main_01");
+		break;
+	case EManyNamesRegionId::Convergence:
+		ArrivalQuestId = TEXT("convergence_main_01");
+		break;
+	default:
+		break;
+	}
+	if (!ArrivalQuestId.IsNone())
+	{
+		TryPlayQuestCinematic(ArrivalQuestId, TEXT("arrival"));
+	}
+	ShowStatusMessage(ObjectiveMessage, FColor::Cyan);
 }
 
 void AManyNamesPrototypeGameMode::ReconcileQuestStates()
@@ -503,6 +586,14 @@ void AManyNamesPrototypeGameMode::ReconcileQuestStates()
 		if (!QuestRow.WorldStateOutputId.IsNone() && HasWorldStateOutput(QuestRow.WorldStateOutputId))
 		{
 			QuestSubsystem->SetQuestState(QuestRow.QuestId, EManyNamesQuestState::Completed);
+			if (IsRegionMainQuest(QuestRow))
+			{
+				if (UManyNamesWorldStateSubsystem* WorldStateSubsystem = GetWorldStateSubsystem())
+				{
+					WorldStateSubsystem->SetRegionCompleted(QuestRow.RegionId, true);
+					WorldStateSubsystem->AddWorldStateOutput(GetRegionCompletionOutputId(QuestRow.RegionId));
+				}
+			}
 		}
 	}
 }
@@ -521,6 +612,71 @@ void AManyNamesPrototypeGameMode::ActivateQuestIfLocked(FName QuestId)
 	}
 }
 
+void AManyNamesPrototypeGameMode::ActivateRegionQuestsIfAvailable(EManyNamesRegionId RegionId)
+{
+	UManyNamesContentSubsystem* ContentSubsystem = GetContentSubsystem();
+	UManyNamesQuestSubsystem* QuestSubsystem = GetQuestSubsystem();
+	if (!ContentSubsystem || !QuestSubsystem)
+	{
+		return;
+	}
+
+	TArray<FManyNamesQuestRow> QuestRows = ContentSubsystem->GetAllQuestRows();
+	SortQuestRows(QuestRows);
+	for (const FManyNamesQuestRow& QuestRow : QuestRows)
+	{
+		if (QuestRow.RegionId != RegionId)
+		{
+			continue;
+		}
+
+		const EManyNamesQuestState CurrentState = QuestSubsystem->GetQuestState(QuestRow.QuestId);
+		if (CurrentState == EManyNamesQuestState::Completed || CurrentState == EManyNamesQuestState::Active)
+		{
+			continue;
+		}
+
+		if (AreQuestPrerequisitesMet(QuestRow))
+		{
+			ActivateQuestIfLocked(QuestRow.QuestId);
+		}
+	}
+}
+
+bool AManyNamesPrototypeGameMode::AreQuestPrerequisitesMet(const FManyNamesQuestRow& QuestRow) const
+{
+	const UManyNamesQuestSubsystem* QuestSubsystem = GetQuestSubsystem();
+	if (!QuestSubsystem)
+	{
+		return false;
+	}
+
+	return QuestSubsystem->IsQuestAvailable(QuestRow);
+}
+
+bool AManyNamesPrototypeGameMode::AreRegionEntryConditionsMet(const FManyNamesRegionRow& RegionRow) const
+{
+	for (const FName& RequiredOutput : RegionRow.EntryConditionOutputs)
+	{
+		if (!HasWorldStateOutput(RequiredOutput))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool AManyNamesPrototypeGameMode::IsRegionMainQuest(const FManyNamesQuestRow& QuestRow) const
+{
+	return QuestIdHasToken(QuestRow.QuestId, TEXT("_main_"));
+}
+
+bool AManyNamesPrototypeGameMode::IsRegionSideQuest(const FManyNamesQuestRow& QuestRow) const
+{
+	return QuestIdHasToken(QuestRow.QuestId, TEXT("_side_"));
+}
+
 bool AManyNamesPrototypeGameMode::HasWorldStateOutput(FName OutputId) const
 {
 	if (const UManyNamesWorldStateSubsystem* WorldStateSubsystem = GetWorldStateSubsystem())
@@ -529,6 +685,11 @@ bool AManyNamesPrototypeGameMode::HasWorldStateOutput(FName OutputId) const
 	}
 
 	return false;
+}
+
+FName AManyNamesPrototypeGameMode::GetRegionCompletionOutputId(EManyNamesRegionId RegionId) const
+{
+	return UManyNamesWorldStateSubsystem::GetCanonicalRegionCompletionOutput(RegionId);
 }
 
 void AManyNamesPrototypeGameMode::AddQuestRewards(const FManyNamesQuestRow& QuestRow)
@@ -548,8 +709,210 @@ void AManyNamesPrototypeGameMode::AddQuestRewards(const FManyNamesQuestRow& Ques
 	}
 }
 
+void AManyNamesPrototypeGameMode::BroadcastJournalUpdated() const
+{
+	OnJournalUpdated.Broadcast(GetJournalSummaryText());
+}
+
+void AManyNamesPrototypeGameMode::OpenDialogueInternal(FName QuestId)
+{
+	if (!DialogueController)
+	{
+		return;
+	}
+
+	DialogueController->OpenDialogue(QuestId);
+	OnDialogueStateChanged.Broadcast(QuestId, DialogueController->IsDialogueOpen());
+	BroadcastJournalUpdated();
+
+	if (!DialogueController->IsDialogueOpen())
+	{
+		ShowStatusMessage(TEXT("No valid dialogue options are currently unlocked for that encounter."), FColor::Red);
+	}
+}
+
+bool AManyNamesPrototypeGameMode::TryPlaySceneVoice(FName SceneId)
+{
+	if (SceneId.IsNone())
+	{
+		return false;
+	}
+
+	const FString AssetPath = FString::Printf(TEXT("/Game/Audio/Generated/voices/%s.%s"), *SceneId.ToString(), *SceneId.ToString());
+	if (USoundBase* VoiceSound = Cast<USoundBase>(StaticLoadObject(USoundBase::StaticClass(), nullptr, *AssetPath)))
+	{
+		if (UAudioComponent* Component = UGameplayStatics::SpawnSound2D(this, VoiceSound))
+		{
+			ActiveSceneAudioComponents.Add(Component);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool AManyNamesPrototypeGameMode::TryPlayQuestCinematic(FName QuestId, const FString& SceneToken)
+{
+	const UManyNamesContentSubsystem* ContentSubsystem = GetContentSubsystem();
+	if (!ContentSubsystem)
+	{
+		return false;
+	}
+
+	for (const FManyNamesCinematicSceneRecord& SceneRecord : ContentSubsystem->GetCinematicScenesForQuest(QuestId))
+	{
+		if (SceneRecord.SceneId.IsNone() ||
+			(!SceneToken.IsEmpty() && !SceneIdHasToken(SceneRecord.SceneId, SceneToken)) ||
+			HasWorldStateOutput(FName(*FString::Printf(TEXT("State.Cinematic.%s.Played"), *SceneRecord.SceneId.ToString()))))
+		{
+			continue;
+		}
+
+		bool bAllRequiredOutputsPresent = true;
+		for (const FName& RequiredOutput : SceneRecord.RequiredWorldStateOutputs)
+		{
+			if (!HasWorldStateOutput(RequiredOutput))
+			{
+				bAllRequiredOutputsPresent = false;
+				break;
+			}
+		}
+
+		if (bAllRequiredOutputsPresent && TryPlaySceneById(SceneRecord.SceneId, QuestId))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool AManyNamesPrototypeGameMode::TryPlaySceneById(FName SceneId, FName DialogueQuestId)
+{
+	if (IsCinematicPlaying())
+	{
+		return false;
+	}
+
+	UManyNamesContentSubsystem* ContentSubsystem = GetContentSubsystem();
+	if (!ContentSubsystem)
+	{
+		return false;
+	}
+
+	FManyNamesCinematicSceneRecord SceneRecord;
+	if (!ContentSubsystem->GetCinematicScene(SceneId, SceneRecord))
+	{
+		return false;
+	}
+
+	ULevelSequence* Sequence = Cast<ULevelSequence>(SceneRecord.SequenceAsset.TryLoad());
+	if (!Sequence)
+	{
+		return false;
+	}
+
+	if (!SceneRecord.WeatherStateId.IsNone())
+	{
+		ApplyWeatherState(SceneRecord.WeatherStateId);
+	}
+
+	PendingDialogueQuestId = DialogueQuestId;
+	ActiveCinematicSceneId = SceneId;
+	ALevelSequenceActor* SpawnedSequenceActor = nullptr;
+	ActiveSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), Sequence, FMovieSceneSequencePlaybackSettings(), SpawnedSequenceActor);
+	ActiveSequenceActor = SpawnedSequenceActor;
+	if (!ActiveSequencePlayer)
+	{
+		ActiveCinematicSceneId = NAME_None;
+		PendingDialogueQuestId = NAME_None;
+		return false;
+	}
+
+	for (const FName& AudioId : SceneRecord.AudioProfileIds)
+	{
+		FManyNamesAudioProfileRecord AudioRecord;
+		if (ContentSubsystem->GetAudioProfile(AudioId, AudioRecord))
+		{
+			if (USoundBase* Sound = Cast<USoundBase>(AudioRecord.SoundAsset.TryLoad()))
+			{
+				if (UAudioComponent* Component = UGameplayStatics::SpawnSound2D(this, Sound, AudioRecord.VolumeMultiplier))
+				{
+					ActiveSceneAudioComponents.Add(Component);
+				}
+			}
+		}
+	}
+
+	TryPlaySceneVoice(SceneRecord.SceneId);
+	OnCinematicStateChanged.Broadcast(SceneId, true);
+	ActiveSequencePlayer->OnFinished.AddWeakLambda(this, [this]()
+	{
+		FinishActiveCinematic(false);
+	});
+	ActiveSequencePlayer->Play();
+	return true;
+}
+
+void AManyNamesPrototypeGameMode::FinishActiveCinematic(bool bWasSkipped)
+{
+	const FName FinishedSceneId = ActiveCinematicSceneId;
+	if (UManyNamesWorldStateSubsystem* WorldStateSubsystem = GetWorldStateSubsystem(); !FinishedSceneId.IsNone() && WorldStateSubsystem)
+	{
+		WorldStateSubsystem->AddWorldStateOutput(FName(*FString::Printf(TEXT("State.Cinematic.%s.Played"), *FinishedSceneId.ToString())));
+	}
+
+	for (UAudioComponent* AudioComponent : ActiveSceneAudioComponents)
+	{
+		if (AudioComponent)
+		{
+			AudioComponent->Stop();
+		}
+	}
+	ActiveSceneAudioComponents.Reset();
+
+	if (ActiveSequencePlayer)
+	{
+		ActiveSequencePlayer->Stop();
+		ActiveSequencePlayer = nullptr;
+	}
+	if (ActiveSequenceActor)
+	{
+		ActiveSequenceActor->Destroy();
+		ActiveSequenceActor = nullptr;
+	}
+
+	RestoreBaselineWeather();
+	ActiveCinematicSceneId = NAME_None;
+	OnCinematicStateChanged.Broadcast(FinishedSceneId, false);
+
+	const FName DialogueQuestId = PendingDialogueQuestId;
+	PendingDialogueQuestId = NAME_None;
+	if (!bWasSkipped && !DialogueQuestId.IsNone())
+	{
+		OpenDialogueInternal(DialogueQuestId);
+	}
+}
+
+bool AManyNamesPrototypeGameMode::SkipActiveCinematic()
+{
+	if (!IsCinematicPlaying())
+	{
+		return false;
+	}
+
+	FinishActiveCinematic(true);
+	return true;
+}
+
+bool AManyNamesPrototypeGameMode::IsCinematicPlaying() const
+{
+	return ActiveSequencePlayer != nullptr && !ActiveCinematicSceneId.IsNone();
+}
+
 void AManyNamesPrototypeGameMode::ShowStatusMessage(const FString& Message, FColor Color) const
 {
+	OnStatusMessage.Broadcast(FText::FromString(Message), FLinearColor(Color));
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 6.0f, Color, Message);
@@ -559,24 +922,45 @@ void AManyNamesPrototypeGameMode::ShowStatusMessage(const FString& Message, FCol
 EManyNamesRegionId AManyNamesPrototypeGameMode::GetCurrentRegionId() const
 {
 	const FString LevelName = UGameplayStatics::GetCurrentLevelName(this, true);
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+	if (ResolveRegionFromLevelName(LevelName, RegionId))
+	{
+		return RegionId;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Unknown map '%s' encountered by GetCurrentRegionId(); defaulting to Opening-safe behavior."), *LevelName);
+	return EManyNamesRegionId::Opening;
+}
+
+bool AManyNamesPrototypeGameMode::ResolveRegionFromLevelName(const FString& LevelName, EManyNamesRegionId& OutRegionId) const
+{
 	if (LevelName.Contains(TEXT("Opening")))
 	{
-		return EManyNamesRegionId::Opening;
+		OutRegionId = EManyNamesRegionId::Opening;
+		return true;
 	}
 	if (LevelName.Contains(TEXT("Egypt")))
 	{
-		return EManyNamesRegionId::Egypt;
+		OutRegionId = EManyNamesRegionId::Egypt;
+		return true;
 	}
 	if (LevelName.Contains(TEXT("Greece")))
 	{
-		return EManyNamesRegionId::Greece;
+		OutRegionId = EManyNamesRegionId::Greece;
+		return true;
 	}
 	if (LevelName.Contains(TEXT("Italic")))
 	{
-		return EManyNamesRegionId::ItalicWest;
+		OutRegionId = EManyNamesRegionId::ItalicWest;
+		return true;
+	}
+	if (LevelName.Contains(TEXT("Convergence")))
+	{
+		OutRegionId = EManyNamesRegionId::Convergence;
+		return true;
 	}
 
-	return EManyNamesRegionId::Convergence;
+	return false;
 }
 
 UManyNamesContentSubsystem* AManyNamesPrototypeGameMode::GetContentSubsystem() const

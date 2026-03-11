@@ -151,6 +151,12 @@ struct FManyNamesNpcVisualProfile
 	FName StanceId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ClothTierId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName VoiceId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bLockFacingToPlayer = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -536,6 +542,27 @@ struct FManyNamesWorldState
 };
 
 USTRUCT(BlueprintType)
+struct FManyNamesJournalEntry
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName QuestId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Title;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bMainQuest = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesQuestState QuestState = EManyNamesQuestState::Locked;
+};
+
+USTRUCT(BlueprintType)
 struct FManyNamesRegionRow : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -563,6 +590,9 @@ struct FManyNamesRegionRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTagContainer EntryConditions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> EntryConditionOutputs;
 };
 
 USTRUCT(BlueprintType)
@@ -733,6 +763,15 @@ struct FManyNamesCharacterCastRecord
 	FName StanceId = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ClothTierId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName VoiceId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName FootIkProfileId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bEnableClothSimulation = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -770,6 +809,129 @@ struct FManyNamesAmbientProfileRecord
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 CrowdCountHint = 6;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesCinematicSceneRecord
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName SceneId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName QuestId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName DialogueSceneId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Title;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Summary;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CharacterId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName LocationId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CameraAnchorTag = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName WeatherStateId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSoftObjectPath SequenceAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> AudioProfileIds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> RequiredWorldStateOutputs;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float EstimatedDurationSeconds = 25.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bSkippable = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEndingScene = false;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesAudioProfileRecord
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName AudioId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EManyNamesRegionId RegionId = EManyNamesRegionId::Opening;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CategoryId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FSoftObjectPath SoundAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString SourceFile;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FName> MoodTags;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float EstimatedDurationSeconds = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float VolumeMultiplier = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bLooping = false;
+};
+
+USTRUCT(BlueprintType)
+struct FManyNamesExternalAssetLicenseRecord
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName AssetId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName CategoryId = NAME_None;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText DisplayName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText SourceName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText LicenseName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString SourceUrl;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText UsageNotes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bGeneratedInProject = false;
 };
 
 USTRUCT(BlueprintType)

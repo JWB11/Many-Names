@@ -94,10 +94,48 @@ bool FManyNamesPrimaryContentLoadTest::RunTest(const FString& Parameters)
 	TestTrue(TEXT("Forge matron cast exists"), ContentSubsystem->GetCharacterCastRecord(TEXT("ForgeMatron"), ForgeMatronCast));
 	TestEqual(TEXT("Forge matron is in Italic West"), ForgeMatronCast.RegionId, EManyNamesRegionId::ItalicWest);
 
+	FManyNamesQuestRow EgyptSideTwoQuest;
+	TestTrue(TEXT("Egypt side 02 quest exists"), ContentSubsystem->GetQuestRow(TEXT("egypt_side_02"), EgyptSideTwoQuest));
+	TestEqual(TEXT("Egypt side 02 lives in Egypt"), EgyptSideTwoQuest.RegionId, EManyNamesRegionId::Egypt);
+
+	FManyNamesQuestRow GreeceSideTwoQuest;
+	TestTrue(TEXT("Greece side 02 quest exists"), ContentSubsystem->GetQuestRow(TEXT("greece_side_02"), GreeceSideTwoQuest));
+	TestEqual(TEXT("Greece side 02 lives in Greece"), GreeceSideTwoQuest.RegionId, EManyNamesRegionId::Greece);
+
+	FManyNamesQuestRow ItalicSideTwoQuest;
+	TestTrue(TEXT("Italic side 02 quest exists"), ContentSubsystem->GetQuestRow(TEXT("italic_side_02"), ItalicSideTwoQuest));
+	TestEqual(TEXT("Italic side 02 lives in Italic West"), ItalicSideTwoQuest.RegionId, EManyNamesRegionId::ItalicWest);
+
+	FManyNamesQuestRow ConvergenceSideTwoQuest;
+	TestTrue(TEXT("Convergence side 02 quest exists"), ContentSubsystem->GetQuestRow(TEXT("convergence_side_02"), ConvergenceSideTwoQuest));
+	TestEqual(TEXT("Convergence side 02 lives in Convergence"), ConvergenceSideTwoQuest.RegionId, EManyNamesRegionId::Convergence);
+
 	FManyNamesAmbientProfileRecord EgyptPriestsProfile;
 	TestTrue(TEXT("Egypt priests ambient profile exists"), ContentSubsystem->GetAmbientProfile(TEXT("Egypt.Priests"), EgyptPriestsProfile));
 	TestEqual(TEXT("Egypt priests ambient profile targets Egypt"), EgyptPriestsProfile.RegionId, EManyNamesRegionId::Egypt);
 	TestTrue(TEXT("Egypt priests ambient profile has multiple cast sources"), EgyptPriestsProfile.CharacterIds.Num() >= 2);
+
+	FManyNamesAmbientProfileRecord EgyptAdjudicatorsProfile;
+	TestTrue(TEXT("Egypt adjudicators ambient profile exists"), ContentSubsystem->GetAmbientProfile(TEXT("Egypt.Adjudicators"), EgyptAdjudicatorsProfile));
+	TestEqual(TEXT("Egypt adjudicators ambient profile targets Egypt"), EgyptAdjudicatorsProfile.RegionId, EManyNamesRegionId::Egypt);
+
+	FManyNamesDialogueSceneRecord EgyptLedgerScene;
+	TestTrue(TEXT("Egypt ledger scene exists"), ContentSubsystem->GetDialogueSceneForQuest(TEXT("egypt_side_02"), EgyptLedgerScene));
+	TestEqual(TEXT("Egypt ledger scene exposes three choices"), EgyptLedgerScene.ChoiceIds.Num(), 3);
+
+	FManyNamesCinematicSceneRecord EgyptArrivalCinematic;
+	TestTrue(TEXT("Egypt arrival cinematic exists"), ContentSubsystem->GetCinematicScene(TEXT("cin_egypt_arrival"), EgyptArrivalCinematic));
+	TestEqual(TEXT("Egypt arrival cinematic belongs to Egypt"), EgyptArrivalCinematic.RegionId, EManyNamesRegionId::Egypt);
+
+	const TArray<FManyNamesCinematicSceneRecord> ConvergenceCinematics = ContentSubsystem->GetCinematicScenesForQuest(TEXT("convergence_main_01"));
+	TestTrue(TEXT("Convergence has multiple cinematics"), ConvergenceCinematics.Num() >= 5);
+
+	FManyNamesAudioProfileRecord OpeningTheme;
+	TestTrue(TEXT("Opening theme audio profile exists"), ContentSubsystem->GetAudioProfile(TEXT("music_opening_theme"), OpeningTheme));
+	TestTrue(TEXT("Opening theme loops"), OpeningTheme.bLooping);
+
+	FManyNamesExternalAssetLicenseRecord BlenderLicense;
+	TestTrue(TEXT("Blender license record exists"), ContentSubsystem->GetExternalAssetLicense(TEXT("tool_blender"), BlenderLicense));
 
 	bool bFoundLightChoice = false;
 	bool bFoundDeceptionChoice = false;

@@ -3,7 +3,7 @@
 `Many Names` is a UE5 first-person narrative RPG prototype set in the late 8th century BCE Mediterranean. This repository now includes the project skeleton, core gameplay state code, editor bootstrap scripts, and a first playable opening-to-Egypt bring-up.
 
 ## Included
-- UE5 project file: [ManyNames.uproject](/Users/jacksonwells/Downloads/Many%20Names/ManyNames.uproject)
+- UE5 project file: [ManyNames.uproject](ManyNames.uproject)
 - Runtime module with:
   - world state and save/load flow
   - mythic domain tracking
@@ -23,16 +23,16 @@
   - `/Game/Maps/L_OpeningCatastrophe`
   - `/Game/Maps/L_EgyptHub`
 - Import-ready prototype data:
-  - [regions.json](/Users/jacksonwells/Downloads/Many%20Names/Data/regions.json)
-  - [quests.json](/Users/jacksonwells/Downloads/Many%20Names/Data/quests.json)
-  - [dialogue_choices.json](/Users/jacksonwells/Downloads/Many%20Names/Data/dialogue_choices.json)
-  - [quest_steps.json](/Users/jacksonwells/Downloads/Many%20Names/Data/quest_steps.json)
-  - [choice_consequences.json](/Users/jacksonwells/Downloads/Many%20Names/Data/choice_consequences.json)
-  - [ending_gates.json](/Users/jacksonwells/Downloads/Many%20Names/Data/ending_gates.json)
+  - [regions.json](Data/regions.json)
+  - [quests.json](Data/quests.json)
+  - [dialogue_choices.json](Data/dialogue_choices.json)
+  - [quest_steps.json](Data/quest_steps.json)
+  - [choice_consequences.json](Data/choice_consequences.json)
+  - [ending_gates.json](Data/ending_gates.json)
 - Project config for desktop targeting and startup wiring
 - Blueprint and art build specs:
-  - [blueprint_ui_spec.md](/Users/jacksonwells/Downloads/Many%20Names/Docs/blueprint_ui_spec.md)
-  - [asset_sourcing_bible.md](/Users/jacksonwells/Downloads/Many%20Names/Docs/asset_sourcing_bible.md)
+  - [blueprint_ui_spec.md](Docs/blueprint_ui_spec.md)
+  - [asset_sourcing_bible.md](Docs/asset_sourcing_bible.md)
 
 ## Bring-up scripts
 - `python3 scripts/validate_content.py`
@@ -43,7 +43,7 @@
   - checks imported DataTable columns to confirm tag-heavy fields resolved correctly
 
 ## Next steps in Unreal Editor
-1. Open [ManyNames.uproject](/Users/jacksonwells/Downloads/Many%20Names/ManyNames.uproject) in Unreal Engine 5.x.
+1. Open [ManyNames.uproject](ManyNames.uproject) in Unreal Engine 5.x.
 2. Confirm the project opens on `L_OpeningCatastrophe` and uses `BP_ManyNamesGameMode` as the default game mode.
 3. Press Play and verify the first loop:
    - interact with the miracle anchor
@@ -51,8 +51,8 @@
    - unlock region selection
    - travel to Egypt
    - resolve the archive dialogue in `L_EgyptHub`
-4. Replace greybox geometry with marketplace kits guided by [asset_sourcing_bible.md](/Users/jacksonwells/Downloads/Many%20Names/Docs/asset_sourcing_bible.md).
-5. Build out the next Blueprint/UI layer from [blueprint_ui_spec.md](/Users/jacksonwells/Downloads/Many%20Names/Docs/blueprint_ui_spec.md), starting with a real journal widget and dialogue widget.
+4. Replace greybox geometry with marketplace kits guided by [asset_sourcing_bible.md](Docs/asset_sourcing_bible.md).
+5. Build out the next Blueprint/UI layer from [blueprint_ui_spec.md](Docs/blueprint_ui_spec.md), starting with a real journal widget and dialogue widget.
 6. Stage Greece, Italic west, and convergence maps once the opening-plus-Egypt loop is stable.
 
 ## Suggested folder conventions

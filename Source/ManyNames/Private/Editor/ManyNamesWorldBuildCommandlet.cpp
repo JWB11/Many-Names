@@ -735,7 +735,7 @@ namespace
 		for (TActorIterator<AActor> It(World); It; ++It)
 		{
 			AActor* Actor = *It;
-			if (!Actor || Actor->IsA<AWorldSettings>() || Actor->IsA<ABrush>())
+			if (!Actor || Actor->IsA<AWorldSettings>() || (Actor->IsA<ABrush>() && !Actor->IsA<APostProcessVolume>()))
 			{
 				continue;
 			}
